@@ -1,0 +1,64 @@
+# Ododino : mise à jour hebdomadaire des données OSM et publication sur GitHub Pages.
+name: Site
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 4 * * 1"   # chaque lundi à 04:17 UTC
+  workflow_dispatch:         # bouton « Run workflow » dans l'onglet Actions
+
+permissions:
+  contents: write   # enregistrer les nouvelles données dans le dépôt
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Mettre à jour les données OpenStreetMap
+        if: github.event_name != 'push'
+        # Overpass est parfois surchargé : dans ce cas on publie les données précédentes
+        continue-on-error: true
+        run: python tools/fetch_osm.py
+
+      - name: Enregistrer les nouvelles données
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "Aucun changement."
+          else
+            git commit -m "Données OSM du $(date +%F)"
+            git push
+          fi
+
+      - name: Assembler le site
+        run: python tools/build.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

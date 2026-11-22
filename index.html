@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ododino · Valli del Natisone</title>
+  <meta name="description" content="Punti di interesse e sentieri escursionistici delle Valli del Natisone, dai dati OpenStreetMap.">
+  <link rel="alternate" hreflang="it" href="?lang=it">
+  <link rel="alternate" hreflang="sl" href="?lang=sl">
+  <link rel="alternate" hreflang="en" href="?lang=en">
+  <link rel="alternate" hreflang="de" href="?lang=de">
+  <link rel="alternate" hreflang="fr" href="?lang=fr">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside id="panel">
+    <header class="brand">
+      <div>
+        <h1>Ododino</h1>
+        <p class="sub" data-i18n="subtitle"></p>
+      </div>
+      <div class="brand-tools">
+        <div id="langs" class="langs" role="group"></div>
+        <button id="togglePanel" class="icon-btn" data-i18n-aria="togglePanel">☰</button>
+      </div>
+    </header>
+
+    <div id="safety" class="safety" role="note">
+      <p><span data-i18n="safety"></span> <strong><span data-i18n="emergency"></span> <a href="tel:112">112</a></strong></p>
+      <button id="safetyOk" type="button" data-i18n="ok"></button>
+    </div>
+
+    <nav class="tabs" role="tablist">
+      <button role="tab" class="tab active" data-tab="pois"><span data-i18n="tabPois"></span> <span id="nPois" class="count"></span></button>
+      <button role="tab" class="tab" data-tab="trails"><span data-i18n="tabTrails"></span> <span id="nTrails" class="count"></span></button>
+    </nav>
+
+    <section id="tab-pois" class="tabpane active">
+      <input id="q" type="search" data-i18n-ph="searchPoi" autocomplete="off">
+      <div id="cats" class="chips"></div>
+      <ul id="poiList" class="list"></ul>
+    </section>
+
+    <section id="tab-trails" class="tabpane">
+      <input id="qt" type="search" data-i18n-ph="searchTrail" autocomplete="off">
+      <div id="nets" class="chips"></div>
+      <label class="toggle"><input type="checkbox" id="showPaths" checked> <span data-i18n="showPaths"></span></label>
+      <div id="trailDetail" class="detail" hidden></div>
+      <ul id="trailList" class="list"></ul>
+    </section>
+
+    <footer class="foot">
+      <span data-i18n="dataBy"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" data-i18n="contributors"></a> (ODbL) · <span data-i18n="updated"></span> <span id="updated">—</span><br>
+      <a href="about.html" data-keep-lang data-i18n="about"></a> · <a href="tel:112">SOS 112</a>
+    </footer>
+  </aside>
+
+  <main id="map" data-i18n-aria="map"></main>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+  <!-- Statistiques sans cookies (GoatCounter) : ignorées en local -->
+  <script data-goatcounter="https://ododino.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
