@@ -41,11 +41,11 @@ window.I18N = {
       peak: ['Cime', 'Cima'], viewpoint: ['Punti panoramici', 'Punto panoramico'],
       church: ['Chiese', 'Chiesa'], shrine: ['Ancone e croci', 'Ancona'],
       history: ['Patrimonio storico', 'Luogo storico'], culture: ['Musei e curiosità', 'Attrazione'],
-      cave: ['Grotte', 'Grotta'], water: ['Sorgenti e cascate', 'Sorgente'],
+      cave: ['Grotte', 'Grotta'], water: ['Sorgenti e cascate', "Punto d'acqua"],
       hut: ['Rifugi e ricoveri', 'Ricovero'], outdoor: ['Picnic e campeggi', 'Area picnic'],
       food: ['Ristoranti e bar', 'Ristorante'], sleep: ['Alloggi', 'Alloggio'],
       info: ['Informazioni', 'Punto informazioni'], saddle: ['Passi e selle', 'Passo'],
-      parking: ['Parcheggi', 'Parcheggio'], bus: ['Fermate bus', 'Fermata bus'], train: ['Stazioni', 'Stazione'],
+      parking: ['Parcheggi', 'Parcheggio'], bus: ['Fermate bus', 'Fermata bus'], drinking: ['Acqua potabile', 'Fontanella'], train: ['Stazioni', 'Stazione'],
     },
     nets: { iwn: 'Internazionale', nwn: 'Nazionale (Sentiero Italia…)', rwn: 'Regionale', lwn: 'Locale / CAI' },
     cai: { T: 'T – turistico', E: 'E – escursionistico', EE: 'EE – per escursionisti esperti', EEA: 'EEA – attrezzato (ferrata)' },
@@ -56,6 +56,8 @@ window.I18N = {
     trails: 'Sentieri', directions: 'Come arrivare', noTrail: 'Nessun sentiero corrisponde.',
     noResult: 'Nessun risultato.', path: 'Sentiero', track: 'Pista', sac: 'difficoltà',
     fee: 'A pagamento', capacity: 'Posti', lines: 'Linee', timetable: 'Orari bus (TPL FVG)',
+    drinkingYes: 'segnalata (OSM, non verificata)', drinkingNo: 'non potabile', checked: 'Verificato il',
+    waterNote: 'Controllate i cartelli sul posto; non bevete l’acqua delle sorgenti senza trattarla.',
     report: 'Segnala un errore',
     layerTrails: 'Sentieri segnalati', layerPois: 'Punti di interesse', layerWmt: 'Segnaletica Waymarked Trails',
     baseTopo: 'Topografica (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellite (Esri)',
@@ -69,6 +71,7 @@ window.I18N = {
       <p>Trovate un errore? Il link «Segnala un errore» in ogni scheda apre una nota su OpenStreetMap: la correzione servirà a tutti.</p>
       <h2>Sicurezza</h2>
       <p>I tracciati sono indicativi e possono essere incompleti o non aggiornati. Controllate il meteo e le condizioni del sentiero prima di partire; l'escursione è sotto la vostra responsabilità. In caso di emergenza, in Italia come in Slovenia: <strong>112</strong>.</p>
+      <p><strong>Acqua:</strong> le fontanelle indicate come potabili sono segnalate dai contributori di OpenStreetMap, non da analisi ufficiali, e possono essere asciutte d’estate. Controllate sempre i cartelli sul posto, portate con voi una scorta d’acqua e non bevete l’acqua delle sorgenti senza trattarla.</p>
       <h2>Privacy</h2>
       <ul>
         <li>Nessun cookie. Statistiche di visita anonime e aggregate con <a href="https://www.goatcounter.com/">GoatCounter</a>, senza dati personali.</li>
@@ -95,11 +98,11 @@ window.I18N = {
       peak: ['Vrhovi', 'Vrh'], viewpoint: ['Razgledišča', 'Razgledišče'],
       church: ['Cerkve', 'Cerkev'], shrine: ['Kapelice in križi', 'Kapelica'],
       history: ['Kulturna dediščina', 'Zgodovinski kraj'], culture: ['Muzeji in znamenitosti', 'Znamenitost'],
-      cave: ['Jame', 'Jama'], water: ['Izviri in slapovi', 'Izvir'],
+      cave: ['Jame', 'Jama'], water: ['Izviri in slapovi', 'Vodni vir'],
       hut: ['Koče in zavetišča', 'Zavetišče'], outdoor: ['Piknik in kampi', 'Prostor za piknik'],
       food: ['Restavracije in bari', 'Restavracija'], sleep: ['Prenočišča', 'Prenočišče'],
       info: ['Informacije', 'Informacijska točka'], saddle: ['Prelazi in sedla', 'Sedlo'],
-      parking: ['Parkirišča', 'Parkirišče'], bus: ['Avtobusna postajališča', 'Avtobusno postajališče'], train: ['Železniške postaje', 'Železniška postaja'],
+      parking: ['Parkirišča', 'Parkirišče'], bus: ['Avtobusna postajališča', 'Avtobusno postajališče'], drinking: ['Pitna voda', 'Pitnik'], train: ['Železniške postaje', 'Železniška postaja'],
     },
     nets: { iwn: 'Mednarodne', nwn: 'Nacionalne (Sentiero Italia …)', rwn: 'Regionalne', lwn: 'Lokalne / CAI' },
     cai: { T: 'T – turistična', E: 'E – planinska', EE: 'EE – za izkušene planince', EEA: 'EEA – zavarovana (ferata)' },
@@ -110,6 +113,8 @@ window.I18N = {
     trails: 'Poti', directions: 'Kako do sem', noTrail: 'Nobena pot ne ustreza.',
     noResult: 'Ni zadetkov.', path: 'Steza', track: 'Kolovoz', sac: 'zahtevnost',
     fee: 'Plačljivo', capacity: 'Mest', lines: 'Linije', timetable: 'Vozni red avtobusov (TPL FVG)',
+    drinkingYes: 'označena (OSM, ni preverjeno)', drinkingNo: 'ni pitna', checked: 'Preverjeno',
+    waterNote: 'Preverite oznake na kraju samem; vode iz izvirov ne pijte neprečiščene.',
     report: 'Sporoči napako',
     layerTrails: 'Označene poti', layerPois: 'Zanimivosti', layerWmt: 'Markacije Waymarked Trails',
     baseTopo: 'Topografska (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satelitska (Esri)',
@@ -123,6 +128,7 @@ window.I18N = {
       <p>Ste našli napako? Povezava »Sporoči napako« na vsaki kartici odpre opombo na OpenStreetMap: popravek bo koristil vsem.</p>
       <h2>Varnost</h2>
       <p>Poti so okvirne in so lahko nepopolne ali zastarele. Pred odhodom preverite vreme in stanje poti; na pot se odpravite na lastno odgovornost. V sili, v Italiji in v Sloveniji: <strong>112</strong>.</p>
+      <p><strong>Voda:</strong> pitnike, označene kot pitne, so vnesli sodelavci OpenStreetMap, ne uradne analize, poleti pa so lahko suhi. Vedno preverite oznake na kraju samem, vzemite s seboj zalogo vode in vode iz izvirov ne pijte neprečiščene.</p>
       <h2>Zasebnost</h2>
       <ul>
         <li>Brez piškotkov. Anonimna, združena statistika obiska z orodjem <a href="https://www.goatcounter.com/">GoatCounter</a>, brez osebnih podatkov.</li>
@@ -149,11 +155,11 @@ window.I18N = {
       peak: ['Peaks', 'Peak'], viewpoint: ['Viewpoints', 'Viewpoint'],
       church: ['Churches', 'Church'], shrine: ['Shrines & crosses', 'Shrine'],
       history: ['Heritage', 'Historic site'], culture: ['Museums & sights', 'Sight'],
-      cave: ['Caves', 'Cave'], water: ['Springs & waterfalls', 'Spring'],
+      cave: ['Caves', 'Cave'], water: ['Springs & waterfalls', 'Water point'],
       hut: ['Huts & shelters', 'Shelter'], outdoor: ['Picnic & camping', 'Picnic site'],
       food: ['Restaurants & bars', 'Restaurant'], sleep: ['Accommodation', 'Accommodation'],
       info: ['Information', 'Information point'], saddle: ['Passes & saddles', 'Pass'],
-      parking: ['Car parks', 'Car park'], bus: ['Bus stops', 'Bus stop'], train: ['Train stations', 'Train station'],
+      parking: ['Car parks', 'Car park'], bus: ['Bus stops', 'Bus stop'], drinking: ['Drinking water', 'Drinking water point'], train: ['Train stations', 'Train station'],
     },
     nets: { iwn: 'International', nwn: 'National (Sentiero Italia…)', rwn: 'Regional', lwn: 'Local / CAI' },
     cai: { T: 'T – easy walk', E: 'E – hiking', EE: 'EE – experienced hikers', EEA: 'EEA – equipped (via ferrata)' },
@@ -164,6 +170,8 @@ window.I18N = {
     trails: 'Trails', directions: 'Directions', noTrail: 'No matching trail.',
     noResult: 'No results.', path: 'Path', track: 'Track', sac: 'difficulty',
     fee: 'Paid', capacity: 'Spaces', lines: 'Lines', timetable: 'Bus timetables (TPL FVG)',
+    drinkingYes: 'reported (OSM, unverified)', drinkingNo: 'not drinkable', checked: 'Last checked',
+    waterNote: 'Check the signs on site; do not drink spring water without treating it.',
     report: 'Report an error',
     layerTrails: 'Waymarked trails', layerPois: 'Points of interest', layerWmt: 'Waymarked Trails overlay',
     baseTopo: 'Topographic (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellite (Esri)',
@@ -177,6 +185,7 @@ window.I18N = {
       <p>Found a mistake? The “Report an error” link on every card opens a note on OpenStreetMap, so the fix benefits everyone.</p>
       <h2>Safety</h2>
       <p>Routes are indicative and may be incomplete or out of date. Check the weather and trail conditions before setting off; you hike at your own risk. In an emergency, in Italy and in Slovenia: <strong>112</strong>.</p>
+      <p><strong>Water:</strong> taps and fountains shown as drinkable are reported by OpenStreetMap contributors, not by official testing, and may run dry in summer. Always check the signs on site, carry enough water and do not drink spring water without treating it.</p>
       <h2>Privacy</h2>
       <ul>
         <li>No cookies. Anonymous, aggregated visit statistics with <a href="https://www.goatcounter.com/">GoatCounter</a>, with no personal data.</li>
@@ -203,11 +212,11 @@ window.I18N = {
       peak: ['Gipfel', 'Gipfel'], viewpoint: ['Aussichtspunkte', 'Aussichtspunkt'],
       church: ['Kirchen', 'Kirche'], shrine: ['Bildstöcke & Kreuze', 'Bildstock'],
       history: ['Kulturerbe', 'Historische Stätte'], culture: ['Museen & Sehenswürdigkeiten', 'Sehenswürdigkeit'],
-      cave: ['Höhlen', 'Höhle'], water: ['Quellen & Wasserfälle', 'Quelle'],
+      cave: ['Höhlen', 'Höhle'], water: ['Quellen & Wasserfälle', 'Wasserstelle'],
       hut: ['Hütten & Unterstände', 'Unterstand'], outdoor: ['Picknick & Camping', 'Picknickplatz'],
       food: ['Restaurants & Bars', 'Restaurant'], sleep: ['Unterkünfte', 'Unterkunft'],
       info: ['Information', 'Infopunkt'], saddle: ['Pässe & Sättel', 'Sattel'],
-      parking: ['Parkplätze', 'Parkplatz'], bus: ['Bushaltestellen', 'Bushaltestelle'], train: ['Bahnhöfe', 'Bahnhof'],
+      parking: ['Parkplätze', 'Parkplatz'], bus: ['Bushaltestellen', 'Bushaltestelle'], drinking: ['Trinkwasser', 'Trinkwasserstelle'], train: ['Bahnhöfe', 'Bahnhof'],
     },
     nets: { iwn: 'International', nwn: 'National (Sentiero Italia …)', rwn: 'Regional', lwn: 'Lokal / CAI' },
     cai: { T: 'T – touristisch', E: 'E – Wanderweg', EE: 'EE – für geübte Wanderer', EEA: 'EEA – gesichert (Klettersteig)' },
@@ -218,6 +227,8 @@ window.I18N = {
     trails: 'Wanderwege', directions: 'Route', noTrail: 'Kein passender Wanderweg.',
     noResult: 'Keine Ergebnisse.', path: 'Pfad', track: 'Fahrweg', sac: 'Schwierigkeit',
     fee: 'Gebührenpflichtig', capacity: 'Stellplätze', lines: 'Linien', timetable: 'Busfahrpläne (TPL FVG)',
+    drinkingYes: 'gemeldet (OSM, ungeprüft)', drinkingNo: 'kein Trinkwasser', checked: 'Zuletzt geprüft',
+    waterNote: 'Beschilderung vor Ort beachten; Quellwasser nicht unbehandelt trinken.',
     report: 'Fehler melden',
     layerTrails: 'Markierte Wanderwege', layerPois: 'Sehenswertes', layerWmt: 'Waymarked-Trails-Markierungen',
     baseTopo: 'Topografisch (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellit (Esri)',
@@ -231,6 +242,7 @@ window.I18N = {
       <p>Einen Fehler gefunden? Der Link „Fehler melden“ in jeder Karte öffnet einen Hinweis auf OpenStreetMap – so profitieren alle von der Korrektur.</p>
       <h2>Sicherheit</h2>
       <p>Die Wegverläufe sind Richtwerte und können unvollständig oder veraltet sein. Prüfen Sie vor dem Aufbruch Wetter und Wegzustand; Sie wandern auf eigene Gefahr. Im Notfall, in Italien wie in Slowenien: <strong>112</strong>.</p>
+      <p><strong>Wasser:</strong> Als trinkbar markierte Brunnen beruhen auf Angaben von OpenStreetMap-Mitwirkenden, nicht auf amtlichen Prüfungen, und können im Sommer versiegen. Beachten Sie immer die Beschilderung vor Ort, nehmen Sie genug Wasser mit und trinken Sie Quellwasser nicht unbehandelt.</p>
       <h2>Datenschutz</h2>
       <ul>
         <li>Keine Cookies. Anonyme, zusammengefasste Besuchsstatistik mit <a href="https://www.goatcounter.com/">GoatCounter</a>, ohne personenbezogene Daten.</li>
@@ -257,11 +269,11 @@ window.I18N = {
       peak: ['Sommets', 'Sommet'], viewpoint: ['Panoramas', 'Panorama'],
       church: ['Églises', 'Église'], shrine: ['Ancônes, croix', 'Ancône'],
       history: ['Patrimoine', 'Site historique'], culture: ['Musées, curiosités', 'Curiosité'],
-      cave: ['Grottes', 'Grotte'], water: ['Sources, cascades', 'Source'],
+      cave: ['Grottes', 'Grotte'], water: ['Sources, cascades', "Point d'eau"],
       hut: ['Refuges, abris', 'Abri'], outdoor: ['Pique-nique, camping', 'Aire de pique-nique'],
       food: ['Restaurants, bars', 'Restaurant'], sleep: ['Hébergement', 'Hébergement'],
       info: ['Information', "Point d'information"], saddle: ['Cols', 'Col'],
-      parking: ['Parkings', 'Parking'], bus: ['Arrêts de bus', 'Arrêt de bus'], train: ['Gares', 'Gare'],
+      parking: ['Parkings', 'Parking'], bus: ['Arrêts de bus', 'Arrêt de bus'], drinking: ['Eau potable', "Point d'eau potable"], train: ['Gares', 'Gare'],
     },
     nets: { iwn: 'International', nwn: 'National (Sentiero Italia…)', rwn: 'Régional', lwn: 'Local / CAI' },
     cai: { T: 'T – touristique', E: 'E – randonnée', EE: 'EE – randonneurs expérimentés', EEA: 'EEA – équipé (via ferrata)' },
@@ -272,6 +284,8 @@ window.I18N = {
     trails: 'Sentiers', directions: 'Itinéraire', noTrail: 'Aucun sentier ne correspond.',
     noResult: 'Aucun résultat.', path: 'Sentier', track: 'Piste', sac: 'difficulté',
     fee: 'Payant', capacity: 'Places', lines: 'Lignes', timetable: 'Horaires des bus (TPL FVG)',
+    drinkingYes: 'signalée (OSM, non vérifiée)', drinkingNo: 'non potable', checked: 'Vérifié le',
+    waterNote: "Vérifiez la signalisation sur place ; ne buvez pas l'eau des sources sans la traiter.",
     report: 'Signaler une erreur',
     layerTrails: 'Sentiers balisés', layerPois: "Points d'intérêt", layerWmt: 'Balisage Waymarked Trails',
     baseTopo: 'Topographique (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellite (Esri)',
@@ -285,6 +299,7 @@ window.I18N = {
       <p>Vous avez repéré une erreur ? Le lien « Signaler une erreur » de chaque fiche ouvre une note sur OpenStreetMap : la correction profitera à tous.</p>
       <h2>Sécurité</h2>
       <p>Les tracés sont indicatifs et peuvent être incomplets ou obsolètes. Vérifiez la météo et l'état des sentiers avant de partir ; la randonnée se fait sous votre responsabilité. En cas d'urgence, en Italie comme en Slovénie : <strong>112</strong>.</p>
+      <p><strong>Eau :</strong> les fontaines indiquées comme potables sont signalées par les contributeurs d'OpenStreetMap, pas par des analyses officielles, et peuvent être à sec en été. Vérifiez toujours la signalisation sur place, emportez une réserve d'eau et ne buvez pas l'eau des sources sans la traiter.</p>
       <h2>Confidentialité</h2>
       <ul>
         <li>Aucun cookie. Statistiques de visite anonymes et agrégées avec <a href="https://www.goatcounter.com/">GoatCounter</a>, sans données personnelles.</li>

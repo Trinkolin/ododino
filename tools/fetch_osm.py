@@ -37,6 +37,7 @@ Q_POIS = f"""[out:json][timeout:180];{AREA}
 (
   nwr["natural"~"^(peak|saddle|cave_entrance|spring|waterfall)$"]["name"](area.a);
   nwr["waterway"="waterfall"](area.a);
+  nwr["natural"="spring"]["drinking_water"](area.a);
   nwr["tourism"~"^(viewpoint|attraction|museum|artwork|picnic_site|camp_site|alpine_hut|wilderness_hut|hotel|guest_house|apartment|chalet|hostel|information)$"](area.a);
   nwr["amenity"~"^(place_of_worship|restaurant|bar|cafe|pub|shelter|drinking_water|fountain)$"](area.a);
   nwr["historic"](area.a);
@@ -94,6 +95,18 @@ def line(geom):
     return [[r5(p["lon"]), r5(p["lat"])] for p in geom if p]
 
 
+# ---- Eau potable ---------------------------------------------------------------
+def potability(t: dict):
+    """'yes', 'no' ou None (inconnu), d'après les seules déclarations OSM.
+    Une mention explicite drinking_water=no l'emporte toujours."""
+    dw = t.get("drinking_water")
+    if dw == "no":
+        return "no"
+    if dw in ("yes", "treated") or (t.get("amenity") == "drinking_water" and dw is None):
+        return "yes"
+    return None
+
+
 # ---- Catégories de POI -------------------------------------------------------
 def categorize(t: dict):
     n, tour, am, hist = t.get("natural"), t.get("tourism"), t.get("amenity"), t.get("historic")
@@ -112,7 +125,7 @@ def categorize(t: dict):
     if n == "waterfall" or t.get("waterway") == "waterfall":
         return "water"
     if n == "spring" or am in ("drinking_water", "fountain"):
-        return "water"
+        return "drinking" if potability(t) == "yes" else "water"
     if tour == "viewpoint":
         return "viewpoint"
     if am == "place_of_worship":
@@ -143,7 +156,8 @@ KEEP = ["name", "name:it", "name:sl", "name:en", "name:de", "name:fr", "ele", "d
         "religion", "historic", "tourism", "amenity", "natural", "cuisine", "drinking_water",
         "operator", "information", "image", "wheelchair", "start_date", "heritage", "denomination",
         "addr:street", "addr:place", "addr:city", "inscription", "memorial",
-        "access", "fee", "capacity", "parking", "route_ref", "shelter", "bench"]
+        "access", "fee", "capacity", "parking", "route_ref", "shelter", "bench",
+        "check_date", "check_date:drinking_water", "seasonal", "waterway"]
 
 
 def build_pois(data):
@@ -157,8 +171,9 @@ def build_pois(data):
         if cat == "parking" and t.get("access") in ("private", "no", "customers"):
             continue
         if not t.get("name"):
-            potable = t.get("amenity") == "drinking_water" or t.get("drinking_water") == "yes"
-            if not (cat in ("shrine", "hut", "viewpoint", "parking", "bus", "train") or (cat == "water" and potable)):
+            # points d'eau sans nom : gardés dès qu'OSM se prononce sur la potabilité (oui ou non)
+            if not (cat in ("shrine", "hut", "viewpoint", "parking", "bus", "train", "drinking")
+                    or (cat == "water" and potability(t))):
                 continue
         if "lat" in e:
             lon, lat = e["lon"], e["lat"]
@@ -172,6 +187,8 @@ def build_pois(data):
         seen.add(key)
         props = {k: t[k] for k in KEEP if k in t}
         props["cat"] = cat
+        if cat in ("water", "drinking") and potability(t):
+            props["potable"] = potability(t)
         props["osm"] = f"{e['type']}/{e['id']}"
         feats.append({"type": "Feature", "geometry": {"type": "Point", "coordinates": [r5(lon), r5(lat)]},
                       "properties": props})

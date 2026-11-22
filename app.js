@@ -15,6 +15,7 @@
     church: { color: '#5f3dc4', icon: '✝' }, shrine: { color: '#9775fa', icon: '✟' },
     history: { color: '#a61e4d', icon: '🏛' }, culture: { color: '#c2255c', icon: '★' },
     cave: { color: '#495057', icon: '◐' }, water: { color: '#1c7ed6', icon: '💧' },
+    drinking: { color: '#0c8599', icon: '🚰' },
     hut: { color: '#2b8a3e', icon: '⌂' }, outdoor: { color: '#5c940d', icon: '⛺' },
     food: { color: '#f08c00', icon: '🍴' }, sleep: { color: '#0b7285', icon: '🛏' },
     info: { color: '#868e96', icon: 'i' }, saddle: { color: '#8d6e52', icon: '⌒' },
@@ -359,6 +360,14 @@
     if (window.innerWidth <= 760) $('#panel').classList.add('collapsed');
   }
 
+  // Dates OSM « 2024-06-15 » ou « 2024-06 » → format local
+  function fmtDate(v) {
+    if (!v || !/^\d{4}-\d{2}(-\d{2})?$/.test(v)) return v ? esc(v) : '';
+    const [y, m, d] = v.split('-').map(Number);
+    const opts = d ? { day: 'numeric', month: 'long', year: 'numeric' } : { month: 'long', year: 'numeric' };
+    return esc(new Date(y, m - 1, d || 1).toLocaleDateString(locale(), opts));
+  }
+
   function popupHtml(x) {
     const p = x.p, c = CATS[p.cat];
     const alt = [...new Set([p.name, p['name:sl'], p['name:it']].filter((n) => n && n !== x.title))];
@@ -370,14 +379,16 @@
     return `<div class="pop">
       <h4>${esc(x.title)}</h4>
       ${alt.length ? `<div class="alt">${esc(alt.join(' / '))}</div>` : ''}
-      <span class="tag" style="background:${c.color}">${esc(catLabel(p.cat, true))}</span>
+      ${x.title !== catLabel(p.cat, true) ? `<span class="tag" style="background:${c.color}">${esc(catLabel(p.cat, true))}</span>` : ""}
       <dl>
         ${dd('altitude', p.ele && esc(Math.round(p.ele)) + ' m')}
         ${dd('type', esc(p.historic?.replace(/_/g, ' ') || ''))}
         ${dd('hours', esc(p.opening_hours || ''))}
         ${dd('cuisine', esc(p.cuisine?.replace(/;/g, ', ') || ''))}
         ${dd('phone', phone && `<a href="tel:${esc(phone)}">${esc(phone)}</a>`)}
-        ${dd('drinking', p.drinking_water === 'yes' || p.amenity === 'drinking_water' ? esc(t('yes')) : '')}
+        ${dd('drinking', p.potable === 'yes' ? `<span class="dw-yes">${esc(t('drinkingYes'))}</span>`
+    : p.potable === 'no' ? `<strong class="dw-no">${esc(t('drinkingNo'))}</strong>` : '')}
+        ${dd('checked', fmtDate(p['check_date:drinking_water'] || p.check_date))}
         ${dd('inscription', esc(p.inscription || ''))}
         ${dd('fee', p.fee === 'yes' ? esc(t('yes')) : p.fee === 'no' ? esc(t('no')) : '')}
         ${dd('capacity', esc(p.capacity || ''))}
@@ -385,6 +396,7 @@
         ${dd('trails', near.length ? near.slice(0, 6).map((n) => `<a href="#trail=${n.id}" style="color:${n.color}">${esc(n.p.ref || n.title)}</a>`).join(', ') : '')}
       </dl>
       ${p.description ? `<p>${esc(p.description)}</p>` : ''}
+      ${p.cat === 'water' || p.cat === 'drinking' ? `<p class="water-note">⚠ ${esc(t('waterNote'))}</p>` : ''}
       <div class="links">
         <a href="https://www.openstreetmap.org/directions?to=${x.lat},${x.lon}" target="_blank" rel="noopener">${esc(t('directions'))} ↗</a>
         ${web ? `<a href="${esc(web)}" target="_blank" rel="noopener">${esc(t('website'))} ↗</a>` : ''}

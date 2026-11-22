@@ -114,6 +114,8 @@ a { color: var(--accent); }
   .safety button { background: #2b2010; color: #ffe8cc; border-color: #7a4f12; }
 }
 a.report { color: #c92a2a; }
+.pop .dw-no { color: #c92a2a; }
+.pop .water-note { margin: 8px 0 0; padding: 6px 8px; border-radius: 6px; background: #fff4e6; color: #5c3b0b; font-size: 12px; }
 
 /* Page « À propos » */
 body.page { display: block; height: auto; }
