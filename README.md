@@ -46,4 +46,26 @@ est refusée, pour ne pas publier des données tronquées.
    Si ce code est pris, remplacer `ododino.goatcounter.com` dans `index.html` et `about.html`.
    Les visites depuis `localhost` ne sont pas comptées.
 
+## Sécurité
+**Déjà dans le code**
+- Liens venant d'OSM filtrés : seuls les liens `http(s)` sont acceptés, donc pas de `javascript:` ;
+  le code langue Wikipédia est vérifié. Tout le texte OSM est échappé avant affichage.
+- Politique de sécurité du contenu (CSP) dans `index.html` et `about.html` : seuls les scripts du site
+  s'exécutent ; les images sont limitées aux 4 fonds de carte. Si vous ajoutez un fond de carte,
+  ajoutez son domaine à `img-src`.
+- Aucun script ni police chargé depuis un autre site (Leaflet, polices et GoatCounter sont dans `vendor/` et `fonts/`).
+- GitHub Action : actions figées sur un commit, droits minimaux par job, Dependabot pour les mises à jour.
+
+**À faire sur vos comptes** (c'est là que se trouve le vrai risque)
+- [ ] GitHub : double authentification (2FA).
+- [ ] GitHub : *Settings → Branches* pour protéger `main` (pas de force-push ni de suppression).
+- [ ] GitHub : *Settings → Pages* pour vérifier le domaine (protège contre sa réutilisation) et cocher *Enforce HTTPS*.
+- [ ] Registrar : 2FA et verrouillage du domaine contre les transferts (« transfer lock »).
+- [ ] DNS : enregistrement `CAA 0 issue "letsencrypt.org"` (seul le certificat de GitHub Pages pourra être délivré).
+- [ ] E-mail : enregistrements SPF et DMARC (`v=DMARC1; p=reject`) pour empêcher les faux mails au nom de ododino.it.
+
+Limite : GitHub Pages ne permet pas d'ajouter certains en-têtes de sécurité (par exemple celui qui interdit
+d'afficher le site dans le cadre d'un autre site). Le risque reste faible tant qu'il n'y a ni connexion
+ni formulaire ; sinon, placer Cloudflare devant le site.
+
 Données © contributeurs OpenStreetMap, licence ODbL : l'attribution doit rester visible.

@@ -34,6 +34,16 @@
 
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Les données OSM sont modifiables par tous : un lien n'est accepté que s'il est en http(s).
+  // Bloque javascript:, data:, etc. Renvoie l'URL échappée pour un attribut, ou '' si refusée.
+  const safeUrl = (u) => {
+    const s = String(u ?? '').trim();
+    const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(s) ? s : 'https://' + s; // « www.exemple.it » → https://
+    try {
+      const url = new URL(withScheme);
+      return url.protocol === 'https:' || url.protocol === 'http:' ? esc(url.href) : '';
+    } catch { return ''; }
+  };
   const norm = (s) => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
   // ---------- Carte ----------
@@ -280,7 +290,7 @@
       <div class="actions">
         <a href="https://hiking.waymarkedtrails.org/#route?id=${p.osm.split('/')[1]}" target="_blank" rel="noopener">${esc(t('profile'))} ↗</a>
         <a href="https://www.openstreetmap.org/${p.osm}" target="_blank" rel="noopener">${esc(t('viewOsm'))} ↗</a>
-        ${p.website ? `<a href="${esc(p.website)}" target="_blank" rel="noopener">${esc(t('website'))} ↗</a>` : ''}
+        ${safeUrl(p.website) ? `<a href="${safeUrl(p.website)}" target="_blank" rel="noopener noreferrer">${esc(t('website'))} ↗</a>` : ''}
         <a class="report" href="${noteUrl(sel.line.getCenter().lat, sel.line.getCenter().lng)}" target="_blank" rel="noopener">⚑ ${esc(t('report'))}</a>
       </div>`;
     $('#trailDetail').hidden = false;
@@ -374,7 +384,8 @@
     const dd = (k, v) => (v ? `<dt>${esc(t(k))}</dt><dd>${v}</dd>` : '');
     const web = p.website || p['contact:website'] || p.url;
     const phone = p.phone || p['contact:phone'];
-    const wiki = p.wikipedia && p.wikipedia.split(':');
+    // « it:Titre » : la langue finit dans le nom de domaine, elle doit donc être un vrai code de langue
+    const wiki = p.wikipedia && /^[a-z]{2,3}(-[a-z]+)?:./.test(p.wikipedia) ? p.wikipedia.split(':') : null;
     const near = trailsNear(x.lon, x.lat);
     return `<div class="pop">
       <h4>${esc(x.title)}</h4>
@@ -399,8 +410,8 @@
       ${p.cat === 'water' || p.cat === 'drinking' ? `<p class="water-note">⚠ ${esc(t('waterNote'))}</p>` : ''}
       <div class="links">
         <a href="https://www.openstreetmap.org/directions?to=${x.lat},${x.lon}" target="_blank" rel="noopener">${esc(t('directions'))} ↗</a>
-        ${web ? `<a href="${esc(web)}" target="_blank" rel="noopener">${esc(t('website'))} ↗</a>` : ''}
-        ${wiki ? `<a href="https://${esc(wiki[0])}.wikipedia.org/wiki/${esc(encodeURIComponent(wiki.slice(1).join(':')))}" target="_blank" rel="noopener">Wikipedia ↗</a>` : ''}
+        ${safeUrl(web) ? `<a href="${safeUrl(web)}" target="_blank" rel="noopener noreferrer">${esc(t('website'))} ↗</a>` : ''}
+        ${wiki ? `<a href="https://${wiki[0]}.wikipedia.org/wiki/${esc(encodeURIComponent(wiki.slice(1).join(':')))}" target="_blank" rel="noopener">Wikipedia ↗</a>` : ''}
         ${p.cat === 'bus' ? `<a href="${I.TIMETABLE_URL}" target="_blank" rel="noopener">${esc(t('timetable'))} ↗</a>` : ''}
         <a href="https://www.openstreetmap.org/${p.osm}" target="_blank" rel="noopener">OSM ↗</a>
         <a class="report" href="${noteUrl(x.lat, x.lon)}" target="_blank" rel="noopener">⚑ ${esc(t('report'))}</a>
