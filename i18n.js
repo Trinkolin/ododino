@@ -9,6 +9,9 @@ window.I18N = {
     ['fr', 'FR', 'Français', 'fr-FR'],
   ],
   CONTACT: 'contact@ododino.it',
+  // Responsable du traitement (RGPD, art. 13) : prénom + initiale du nom
+  CONTROLLER: 'Jess C.',
+  PRIVACY_UPDATED: '2026-11-26',
   TIMETABLE_URL: 'https://www.tplfvg.it/',
 
   // Langue : ?lang= > choix mémorisé > langue du navigateur > italien
@@ -73,15 +76,18 @@ window.I18N = {
       <h2>Sicurezza</h2>
       <p>I tracciati sono indicativi e possono essere incompleti o non aggiornati. Controllate il meteo e le condizioni del sentiero prima di partire; l'escursione è sotto la vostra responsabilità. In caso di emergenza, in Italia come in Slovenia: <strong>112</strong>.</p>
       <p><strong>Acqua:</strong> le fontanelle indicate come potabili sono segnalate dai contributori di OpenStreetMap, non da analisi ufficiali, e possono essere asciutte d’estate. Controllate sempre i cartelli sul posto, portate con voi una scorta d’acqua e non bevete l’acqua delle sorgenti senza trattarla.</p>
-      <h2>Privacy</h2>
+      <h2>Privacy (GDPR)</h2>
+      <p><strong>Titolare del trattamento:</strong> {controller}, {contact}. Ododino è un sito personale, senza scopo di lucro: niente account, niente pubblicità, nessun cookie.</p>
       <ul>
-        <li>Nessun cookie. Statistiche di visita anonime e aggregate con <a href="https://www.goatcounter.com/">GoatCounter</a>, senza dati personali.</li>
-        <li>La lingua scelta è memorizzata solo nel vostro browser.</li>
-        <li>Le tessere della mappa vengono caricate dai server di OpenTopoMap, OpenStreetMap o Esri, che vedono il vostro indirizzo IP come per qualsiasi sito.</li>
-        <li>Font e librerie sono ospitati sul sito stesso.</li>
+        <li><strong>Hosting:</strong> il sito è ospitato da GitHub Pages (GitHub Inc., Stati Uniti), che registra l’indirizzo IP dei visitatori nei log del server per motivi di sicurezza. Il trasferimento verso gli Stati Uniti è coperto dal Data Privacy Framework UE–USA. Base giuridica: legittimo interesse a far funzionare un sito sicuro (art. 6.1.f GDPR).</li>
+        <li><strong>Statistiche:</strong> GoatCounter conta le visite in forma anonima e aggregata, senza cookie e senza conservare dati personali (art. 6.1.f).</li>
+        <li><strong>Mappe:</strong> le tessere vengono caricate direttamente dai server della mappa scelta, che vedono il vostro indirizzo IP e la zona visualizzata: OpenTopoMap (sfondo predefinito), OpenStreetMap Foundation (Regno Unito), Waymarked Trails (solo se attivate il livello) ed Esri (Stati Uniti, solo se scegliete il satellite).</li>
+        <li><strong>Memoria del browser:</strong> la lingua scelta e la chiusura dell’avviso di sicurezza sono salvate solo nel vostro browser (localStorage) e non vengono mai inviate. Potete cancellarle dalle impostazioni del browser.</li>
+        <li><strong>E-mail:</strong> se ci scrivete, il vostro indirizzo e il messaggio servono solo a rispondervi e vengono cancellati al più tardi 12 mesi dopo.</li>
+        <li><strong>Link esterni</strong> (OpenStreetMap, Wikipedia, siti dei luoghi): si applica la loro informativa.</li>
       </ul>
-      <h2>Contatto</h2>
-      <p>{contact}</p>`,
+      <p><strong>I vostri diritti:</strong> accesso, rettifica, cancellazione, limitazione e opposizione, scrivendo a {contact}. Potete anche presentare reclamo all’Autorità per la protezione dei dati belga (<a href="https://www.dataprotectionauthority.be">www.dataprotectionauthority.be</a>) o a quella del vostro paese.</p>
+      <p class="muted">Ultimo aggiornamento: {updated}</p>`,
   },
 
   sl: {
@@ -131,15 +137,18 @@ window.I18N = {
       <h2>Varnost</h2>
       <p>Poti so okvirne in so lahko nepopolne ali zastarele. Pred odhodom preverite vreme in stanje poti; na pot se odpravite na lastno odgovornost. V sili, v Italiji in v Sloveniji: <strong>112</strong>.</p>
       <p><strong>Voda:</strong> pitnike, označene kot pitne, so vnesli sodelavci OpenStreetMap, ne uradne analize, poleti pa so lahko suhi. Vedno preverite oznake na kraju samem, vzemite s seboj zalogo vode in vode iz izvirov ne pijte neprečiščene.</p>
-      <h2>Zasebnost</h2>
+      <h2>Varstvo osebnih podatkov (GDPR)</h2>
+      <p><strong>Upravljavec:</strong> {controller}, {contact}. Ododino je osebna, nepridobitna stran: brez računov, brez oglasov, brez piškotkov.</p>
       <ul>
-        <li>Brez piškotkov. Anonimna, združena statistika obiska z orodjem <a href="https://www.goatcounter.com/">GoatCounter</a>, brez osebnih podatkov.</li>
-        <li>Izbrani jezik se shrani samo v vašem brskalniku.</li>
-        <li>Ploščice zemljevida se nalagajo s strežnikov OpenTopoMap, OpenStreetMap ali Esri, ki vidijo vaš naslov IP kot pri vsaki spletni strani.</li>
-        <li>Pisave in knjižnice gostujejo na sami strani.</li>
+        <li><strong>Gostovanje:</strong> stran gostuje na GitHub Pages (GitHub Inc., ZDA), ki zaradi varnosti v strežniške dnevnike beleži naslov IP obiskovalcev. Prenos v ZDA pokriva okvir EU–ZDA za zasebnost podatkov (Data Privacy Framework). Pravna podlaga: zakoniti interes za varno delovanje strani (člen 6(1)(f) GDPR).</li>
+        <li><strong>Statistika:</strong> GoatCounter šteje obiske anonimno in združeno, brez piškotkov in brez shranjevanja osebnih podatkov (člen 6(1)(f)).</li>
+        <li><strong>Zemljevidi:</strong> ploščice se nalagajo neposredno s strežnikov izbrane podlage, ki vidijo vaš naslov IP in prikazano območje: OpenTopoMap (privzeta podlaga), OpenStreetMap Foundation (Združeno kraljestvo), Waymarked Trails (le če vklopite sloj) in Esri (ZDA, le če izberete satelitsko podlago).</li>
+        <li><strong>Shramba brskalnika:</strong> izbrani jezik in zaprto varnostno opozorilo se shranita le v vašem brskalniku (localStorage) in se nikoli ne pošljeta. Izbrišete ju lahko v nastavitvah brskalnika.</li>
+        <li><strong>E-pošta:</strong> če nam pišete, se vaš naslov in sporočilo uporabita le za odgovor in se izbrišeta najpozneje po 12 mesecih.</li>
+        <li><strong>Zunanje povezave</strong> (OpenStreetMap, Wikipedija, spletne strani krajev): velja njihova politika zasebnosti.</li>
       </ul>
-      <h2>Stik</h2>
-      <p>{contact}</p>`,
+      <p><strong>Vaše pravice:</strong> dostop, popravek, izbris, omejitev in ugovor – pišite na {contact}. Pritožbo lahko vložite tudi pri belgijskem organu za varstvo podatkov (<a href="https://www.dataprotectionauthority.be">www.dataprotectionauthority.be</a>) ali pri organu v vaši državi.</p>
+      <p class="muted">Zadnja posodobitev: {updated}</p>`,
   },
 
   en: {
@@ -189,15 +198,18 @@ window.I18N = {
       <h2>Safety</h2>
       <p>Routes are indicative and may be incomplete or out of date. Check the weather and trail conditions before setting off; you hike at your own risk. In an emergency, in Italy and in Slovenia: <strong>112</strong>.</p>
       <p><strong>Water:</strong> taps and fountains shown as drinkable are reported by OpenStreetMap contributors, not by official testing, and may run dry in summer. Always check the signs on site, carry enough water and do not drink spring water without treating it.</p>
-      <h2>Privacy</h2>
+      <h2>Privacy (GDPR)</h2>
+      <p><strong>Data controller:</strong> {controller}, {contact}. Ododino is a personal, non-commercial website: no accounts, no advertising, no cookies.</p>
       <ul>
-        <li>No cookies. Anonymous, aggregated visit statistics with <a href="https://www.goatcounter.com/">GoatCounter</a>, with no personal data.</li>
-        <li>Your chosen language is stored only in your browser.</li>
-        <li>Map tiles are loaded from OpenTopoMap, OpenStreetMap or Esri servers, which see your IP address as with any website.</li>
-        <li>Fonts and libraries are hosted on this site.</li>
+        <li><strong>Hosting:</strong> the site is hosted on GitHub Pages (GitHub Inc., United States), which records visitors’ IP addresses in its server logs for security purposes. The transfer to the United States is covered by the EU–US Data Privacy Framework. Legal basis: legitimate interest in running a secure website (Art. 6(1)(f) GDPR).</li>
+        <li><strong>Statistics:</strong> GoatCounter counts visits anonymously and in aggregate, without cookies and without storing personal data (Art. 6(1)(f)).</li>
+        <li><strong>Maps:</strong> tiles are loaded directly from the servers of the chosen map, which see your IP address and the area displayed: OpenTopoMap (default), the OpenStreetMap Foundation (United Kingdom), Waymarked Trails (only if you enable that layer) and Esri (United States, only if you choose satellite).</li>
+        <li><strong>Browser storage:</strong> your chosen language and the dismissed safety notice are stored only in your browser (localStorage) and are never sent anywhere. You can clear them in your browser settings.</li>
+        <li><strong>E-mail:</strong> if you write to us, your address and message are used only to reply and are deleted within 12 months at the latest.</li>
+        <li><strong>External links</strong> (OpenStreetMap, Wikipedia, places’ websites): their own privacy policies apply.</li>
       </ul>
-      <h2>Contact</h2>
-      <p>{contact}</p>`,
+      <p><strong>Your rights:</strong> access, rectification, erasure, restriction and objection, by writing to {contact}. You can also lodge a complaint with the Belgian Data Protection Authority (<a href="https://www.dataprotectionauthority.be">www.dataprotectionauthority.be</a>) or with the authority of your own country.</p>
+      <p class="muted">Last updated: {updated}</p>`,
   },
 
   de: {
@@ -247,15 +259,18 @@ window.I18N = {
       <h2>Sicherheit</h2>
       <p>Die Wegverläufe sind Richtwerte und können unvollständig oder veraltet sein. Prüfen Sie vor dem Aufbruch Wetter und Wegzustand; Sie wandern auf eigene Gefahr. Im Notfall, in Italien wie in Slowenien: <strong>112</strong>.</p>
       <p><strong>Wasser:</strong> Als trinkbar markierte Brunnen beruhen auf Angaben von OpenStreetMap-Mitwirkenden, nicht auf amtlichen Prüfungen, und können im Sommer versiegen. Beachten Sie immer die Beschilderung vor Ort, nehmen Sie genug Wasser mit und trinken Sie Quellwasser nicht unbehandelt.</p>
-      <h2>Datenschutz</h2>
+      <h2>Datenschutz (DSGVO)</h2>
+      <p><strong>Verantwortlich:</strong> {controller}, {contact}. Ododino ist eine private, nichtkommerzielle Website: keine Konten, keine Werbung, keine Cookies.</p>
       <ul>
-        <li>Keine Cookies. Anonyme, zusammengefasste Besuchsstatistik mit <a href="https://www.goatcounter.com/">GoatCounter</a>, ohne personenbezogene Daten.</li>
-        <li>Die gewählte Sprache wird nur in Ihrem Browser gespeichert.</li>
-        <li>Kartenkacheln werden von den Servern von OpenTopoMap, OpenStreetMap oder Esri geladen, die – wie bei jeder Website – Ihre IP-Adresse sehen.</li>
-        <li>Schriften und Bibliotheken werden auf dieser Website selbst gehostet.</li>
+        <li><strong>Hosting:</strong> Die Website liegt bei GitHub Pages (GitHub Inc., USA), das die IP-Adressen der Besucher aus Sicherheitsgründen in Server-Logs speichert. Die Übermittlung in die USA ist durch das EU-US Data Privacy Framework abgedeckt. Rechtsgrundlage: berechtigtes Interesse am sicheren Betrieb der Website (Art. 6 Abs. 1 lit. f DSGVO).</li>
+        <li><strong>Statistik:</strong> GoatCounter zählt Besuche anonym und zusammengefasst, ohne Cookies und ohne Speicherung personenbezogener Daten (Art. 6 Abs. 1 lit. f).</li>
+        <li><strong>Karten:</strong> Kartenkacheln werden direkt von den Servern der gewählten Karte geladen, die Ihre IP-Adresse und den angezeigten Ausschnitt sehen: OpenTopoMap (Standard), OpenStreetMap Foundation (Vereinigtes Königreich), Waymarked Trails (nur wenn Sie die Ebene einschalten) und Esri (USA, nur wenn Sie Satellit wählen).</li>
+        <li><strong>Browserspeicher:</strong> Die gewählte Sprache und der geschlossene Sicherheitshinweis werden nur in Ihrem Browser gespeichert (localStorage) und nie übertragen. Sie können sie in den Browsereinstellungen löschen.</li>
+        <li><strong>E-Mail:</strong> Wenn Sie uns schreiben, werden Ihre Adresse und Nachricht nur zur Antwort verwendet und spätestens nach 12 Monaten gelöscht.</li>
+        <li><strong>Externe Links</strong> (OpenStreetMap, Wikipedia, Websites der Orte): Es gelten deren Datenschutzerklärungen.</li>
       </ul>
-      <h2>Kontakt</h2>
-      <p>{contact}</p>`,
+      <p><strong>Ihre Rechte:</strong> Auskunft, Berichtigung, Löschung, Einschränkung und Widerspruch – schreiben Sie an {contact}. Sie können sich außerdem bei der belgischen Datenschutzbehörde (<a href="https://www.dataprotectionauthority.be">www.dataprotectionauthority.be</a>) oder bei der Behörde Ihres Landes beschweren.</p>
+      <p class="muted">Zuletzt aktualisiert: {updated}</p>`,
   },
 
   fr: {
@@ -305,14 +320,17 @@ window.I18N = {
       <h2>Sécurité</h2>
       <p>Les tracés sont indicatifs et peuvent être incomplets ou obsolètes. Vérifiez la météo et l'état des sentiers avant de partir ; la randonnée se fait sous votre responsabilité. En cas d'urgence, en Italie comme en Slovénie : <strong>112</strong>.</p>
       <p><strong>Eau :</strong> les fontaines indiquées comme potables sont signalées par les contributeurs d'OpenStreetMap, pas par des analyses officielles, et peuvent être à sec en été. Vérifiez toujours la signalisation sur place, emportez une réserve d'eau et ne buvez pas l'eau des sources sans la traiter.</p>
-      <h2>Confidentialité</h2>
+      <h2>Confidentialité (RGPD)</h2>
+      <p><strong>Responsable du traitement :</strong> {controller}, {contact}. Ododino est un site personnel et non commercial : pas de compte, pas de publicité, aucun cookie.</p>
       <ul>
-        <li>Aucun cookie. Statistiques de visite anonymes et agrégées avec <a href="https://www.goatcounter.com/">GoatCounter</a>, sans données personnelles.</li>
-        <li>La langue choisie est enregistrée uniquement dans votre navigateur.</li>
-        <li>Les tuiles de la carte sont chargées depuis les serveurs d'OpenTopoMap, d'OpenStreetMap ou d'Esri, qui voient votre adresse IP comme pour n'importe quel site.</li>
-        <li>Les polices et bibliothèques sont hébergées sur le site lui-même.</li>
+        <li><strong>Hébergement :</strong> le site est hébergé par GitHub Pages (GitHub Inc., États-Unis), qui enregistre l'adresse IP des visiteurs dans ses journaux de serveur pour des raisons de sécurité. Le transfert vers les États-Unis est couvert par le cadre de protection des données UE–États-Unis (Data Privacy Framework). Base légale : l'intérêt légitime à faire fonctionner un site sûr (art. 6.1.f du RGPD).</li>
+        <li><strong>Statistiques :</strong> GoatCounter compte les visites de façon anonyme et agrégée, sans cookie et sans conserver de données personnelles (art. 6.1.f).</li>
+        <li><strong>Cartes :</strong> les tuiles sont chargées directement depuis les serveurs du fond choisi, qui voient votre adresse IP et la zone affichée : OpenTopoMap (fond par défaut), OpenStreetMap Foundation (Royaume-Uni), Waymarked Trails (seulement si vous activez la couche) et Esri (États-Unis, seulement si vous choisissez le satellite).</li>
+        <li><strong>Stockage du navigateur :</strong> la langue choisie et la fermeture de l'avertissement de sécurité sont enregistrées uniquement dans votre navigateur (localStorage) et ne sont jamais envoyées. Vous pouvez les effacer dans les réglages du navigateur.</li>
+        <li><strong>E-mails :</strong> si vous nous écrivez, votre adresse et votre message servent uniquement à vous répondre et sont supprimés au plus tard 12 mois après.</li>
+        <li><strong>Liens externes</strong> (OpenStreetMap, Wikipédia, sites des lieux) : leur propre politique de confidentialité s'applique.</li>
       </ul>
-      <h2>Contact</h2>
-      <p>{contact}</p>`,
+      <p><strong>Vos droits :</strong> accès, rectification, effacement, limitation et opposition, en écrivant à {contact}. Vous pouvez aussi introduire une réclamation auprès de l'Autorité de protection des données belge (<a href="https://www.autoriteprotectiondonnees.be">autoriteprotectiondonnees.be</a>) ou de celle de votre pays.</p>
+      <p class="muted">Dernière mise à jour : {updated}</p>`,
   },
 };

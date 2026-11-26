@@ -12,8 +12,13 @@
     document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = T[el.dataset.i18n]; });
     document.querySelectorAll('a[data-keep-lang]').forEach((a) => { a.href = 'index.html?lang=' + lang; });
     const mail = `<a href="mailto:${esc(I.CONTACT)}">${esc(I.CONTACT)}</a>`;
+    const [y, m, d] = I.PRIVACY_UPDATED.split('-').map(Number);
+    const updated = new Date(y, m - 1, d).toLocaleDateString(I.locale(lang), { day: 'numeric', month: 'long', year: 'numeric' });
     // aboutHtml vient de i18n.js (texte du site, pas de données externes)
-    document.getElementById('content').innerHTML = `<h1 class="title">${esc(T.about)}</h1>` + T.aboutHtml.replace('{contact}', mail);
+    const html = T.aboutHtml.split('{contact}').join(mail)
+      .split('{controller}').join(esc(I.CONTROLLER))
+      .split('{updated}').join(esc(updated));
+    document.getElementById('content').innerHTML = `<h1 class="title">${esc(T.about)}</h1>` + html;
     document.getElementById('langs').innerHTML = I.LANGS.map(([c, short, name]) =>
       `<button data-lang="${c}" class="${c === lang ? 'on' : ''}" title="${esc(name)}" lang="${c}" aria-pressed="${c === lang}">${short}</button>`).join('');
   }
