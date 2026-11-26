@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Ododino" xmlns="http://www.topografix.com/GPX/1/1">
+<metadata>
+<name>Sentiero CAI 750a</name>
+<link href="https://ododino.it"><text>Ododino</text></link>
+<desc>Tracciato indicativo / Indicative route. Dati © contributori OpenStreetMap (ODbL), https://www.openstreetmap.org/relation/2984944 ; altitudini Copernicus DEM GLO-30. Emergenza / Emergency: 112</desc>
+</metadata>
+<wpt lat="46.20920" lon="13.52499"><ele>1550</ele><name>Dom na Matajure</name><desc>Rifugio o ricovero / Hut or shelter</desc><sym>Lodge</sym></wpt>
+<trk><name>Sentiero CAI 750a</name>
+<trkseg>
+<trkpt lat="46.20901" lon="13.53142"><ele>1521</ele></trkpt>
+<trkpt lat="46.20902" lon="13.53137"><ele>1522</ele></trkpt>
+<trkpt lat="46.20902" lon="13.53134"><ele>1522</ele></trkpt>
+<trkpt lat="46.20904" lon="13.53124"><ele>1524</ele></trkpt>
+<trkpt lat="46.20908" lon="13.53103"><ele>1526</ele></trkpt>
+<trkpt lat="46.20915" lon="13.53074"><ele>1529</ele></trkpt>
+<trkpt lat="46.20920" lon="13.53044"><ele>1533</ele></trkpt>
+<trkpt lat="46.20922" lon="13.53019"><ele>1535</ele></trkpt>
+<trkpt lat="46.20921" lon="13.53008"><ele>1536</ele></trkpt>
+<trkpt lat="46.20922" lon="13.52998"><ele>1537</ele></trkpt>
+<trkpt lat="46.20923" lon="13.52989"><ele>1538</ele></trkpt>
+<trkpt lat="46.20922" lon="13.52980"><ele>1538</ele></trkpt>
+<trkpt lat="46.20918" lon="13.52960"><ele>1538</ele></trkpt>
+<trkpt lat="46.20919" lon="13.52944"><ele>1541</ele></trkpt>
+<trkpt lat="46.20916" lon="13.52932"><ele>1541</ele></trkpt>
+<trkpt lat="46.20912" lon="13.52922"><ele>1541</ele></trkpt>
+<trkpt lat="46.20911" lon="13.52905"><ele>1544</ele></trkpt>
+<trkpt lat="46.20904" lon="13.52887"><ele>1544</ele></trkpt>
+<trkpt lat="46.20888" lon="13.52818"><ele>1547</ele></trkpt>
+<trkpt lat="46.20886" lon="13.52808"><ele>1547</ele></trkpt>
+<trkpt lat="46.20885" lon="13.52793"><ele>1548</ele></trkpt>
+<trkpt lat="46.20883" lon="13.52781"><ele>1547</ele></trkpt>
+<trkpt lat="46.20884" lon="13.52762"><ele>1549</ele></trkpt>
+<trkpt lat="46.20882" lon="13.52699"><ele>1553</ele></trkpt>
+<trkpt lat="46.20883" lon="13.52687"><ele>1554</ele></trkpt>
+<trkpt lat="46.20882" lon="13.52681"><ele>1554</ele></trkpt>
+<trkpt lat="46.20882" lon="13.52667"><ele>1554</ele></trkpt>
+<trkpt lat="46.20883" lon="13.52651"><ele>1554</ele></trkpt>
+<trkpt lat="46.20880" lon="13.52637"><ele>1553</ele></trkpt>
+<trkpt lat="46.20881" lon="13.52626"><ele>1553</ele></trkpt>
+<trkpt lat="46.20884" lon="13.52615"><ele>1552</ele></trkpt>
+<trkpt lat="46.20884" lon="13.52608"><ele>1552</ele></trkpt>
+<trkpt lat="46.20887" lon="13.52595"><ele>1551</ele></trkpt>
+<trkpt lat="46.20892" lon="13.52582"><ele>1552</ele></trkpt>
+<trkpt lat="46.20900" lon="13.52545"><ele>1549</ele></trkpt>
+<trkpt lat="46.20905" lon="13.52527"><ele>1548</ele></trkpt>
+<trkpt lat="46.20907" lon="13.52519"><ele>1547</ele></trkpt>
+<trkpt lat="46.20908" lon="13.52512"><ele>1547</ele></trkpt>
+<trkpt lat="46.20907" lon="13.52508"><ele>1546</ele></trkpt>
+</trkseg>
+</trk>
+</gpx>

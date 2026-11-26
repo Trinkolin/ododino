@@ -60,6 +60,11 @@
   const wmt = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
     maxZoom: 18, opacity: .7, attribution: '© waymarkedtrails.org' });
 
+  // Relief ombré maison (Copernicus GLO-30), tuiles natives jusqu'au zoom 14 puis agrandies
+  const relief = L.tileLayer('tiles/hillshade/{z}/{x}/{y}.png', {
+    minZoom: 10, maxNativeZoom: 14, maxZoom: 19, bounds: [[46.03, 13.35], [46.30, 13.73]],
+    attribution: 'Relief © Copernicus DEM GLO-30 (ESA/EU)' });
+
   map.createPane('paths').style.zIndex = 405;
   map.createPane('trails').style.zIndex = 420;
   map.createPane('boundary').style.zIndex = 400;
@@ -76,7 +81,7 @@
     if (layerCtl) layerCtl.remove();
     layerCtl = L.control.layers(
       { [t('baseTopo')]: bases.topo, [t('baseOsm')]: bases.osm, [t('baseSat')]: bases.sat },
-      { [t('layerTrails')]: layers.trails, [t('layerPois')]: layers.pois, [t('layerWmt')]: wmt },
+      { [t('layerTrails')]: layers.trails, [t('layerPois')]: layers.pois, [t('layerRelief')]: relief, [t('layerWmt')]: wmt },
       { collapsed: true }).addTo(map);
   }
   L.control.scale({ imperial: false }).addTo(map);
@@ -270,6 +275,7 @@
       x.line.setStyle({ weight: x === sel ? 7 : 4, opacity: dim ? .3 : .95 });
       x.casing.setStyle({ weight: x === sel ? 12 : 8, opacity: dim ? .2 : .9, color: x === sel ? '#111' : '#fff' });
     });
+    hideProfileMarker();
     if (!sel) {
       $('#trailDetail').hidden = true;
       if (prev) { document.querySelectorAll('#trailList li.sel').forEach((li) => li.classList.remove('sel')); setHash(''); }
@@ -278,26 +284,91 @@
     sel.casing.bringToFront(); sel.line.bringToFront();
     if (fit) map.fitBounds(sel.line.getBounds(), { padding: [40, 40] });
     showTab('trails');
-    const p = sel.p;
+    const p = sel.p, st = p.stats;
+    const rid = p.osm.split('/')[1];
     const row = (k, v) => (v ? `<span>${esc(t(k))} <b>${esc(v)}</b></span>` : '');
+    const m = (v) => `${Math.round(v).toLocaleString(locale())} m`;
+    // Difficulté : cotation CAI d'OSM, sinon le tronçon le plus dur (clairement présentée comme une estimation)
+    const diff = T().cai[p.cai_scale] || p.cai_scale
+      || (p.sac_max ? t('sacEst').replace('{x}', p.sac_max) : t('notRated'));
+    // Durée : celle du CAI si OSM la donne, sinon le temps calculé, marqué « indicatif »
+    const dur = p.duration ? row('durationCai', p.duration.replace(/^0?(\d+):(\d\d).*/, '$1 h $2'))
+      : st ? row('timeEst', hm(st.minutes)) : '';
     $('#trailDetail').innerHTML = `
       <button class="close" aria-label="${esc(t('close'))}">✕</button>
       <h3>${esc(p.ref ? p.ref + ' · ' : '')}${esc(sel.title)}</h3>
-      <div class="row">${row('length', km(sel.km) + ' km')}${row('difficulty', T().cai[p.cai_scale] || p.cai_scale)}
-        ${row('duration', p.duration)}${row('ascent', p.ascent && p.ascent + ' m')}</div>
+      <div class="row">${row('length', km(st ? st.km : sel.km) + ' km')}${dur}${row('difficulty', diff)}</div>
+      ${st ? `<div class="row">${row('ascent', m(st.gain))}${row('descent', m(st.loss))}${row('altRange', `${m(st.min)} – ${m(st.max)}`)}</div>` : ''}
       <div class="row">${row('from', p.from)}${row('to', p.to)}${row('network', T().nets[sel.net])}</div>
+      <div id="profile" class="profile">${p.ordered ? '' : `<p class="muted">${esc(t('profileNA'))}</p>`}</div>
       ${p.description ? `<p>${esc(p.description)}</p>` : ''}
       <div class="actions">
-        <a href="https://hiking.waymarkedtrails.org/#route?id=${p.osm.split('/')[1]}" target="_blank" rel="noopener">${esc(t('profile'))} ↗</a>
+        <a href="data/gpx/${rid}.gpx" download="ododino-${esc((p.ref || rid).replace(/[^\w-]+/g, '_'))}.gpx">⬇ ${esc(t('gpx'))}</a>
         <a href="https://www.openstreetmap.org/${p.osm}" target="_blank" rel="noopener">${esc(t('viewOsm'))} ↗</a>
         ${safeUrl(p.website) ? `<a href="${safeUrl(p.website)}" target="_blank" rel="noopener noreferrer">${esc(t('website'))} ↗</a>` : ''}
         <a class="report" href="${noteUrl(sel.line.getCenter().lat, sel.line.getCenter().lng)}" target="_blank" rel="noopener">⚑ ${esc(t('report'))}</a>
       </div>`;
     $('#trailDetail').hidden = false;
     $('#trailDetail .close').onclick = () => selectTrail(null);
+    if (p.ordered) loadProfile(rid).then((prof) => { if (state.selTrail === sel && prof) drawProfile(prof, sel.color); });
     document.querySelectorAll('#trailList li').forEach((li) => li.classList.toggle('sel', li.dataset.id === sel.id));
     document.querySelector(`#trailList li[data-id="${sel.id}"]`)?.scrollIntoView({ block: 'nearest' });
     setHash('trail=' + sel.id);
+  }
+
+  const hm = (min) => `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')}`;
+
+  // ---------- Profil d'altitude (SVG maison, sans bibliothèque) ----------
+  const profiles = new Map();
+  function loadProfile(rid) {
+    if (!profiles.has(rid)) {
+      profiles.set(rid, fetch(`data/profiles/${rid}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null));
+    }
+    return profiles.get(rid);
+  }
+  let profileMarker = null;
+  function hideProfileMarker() { if (profileMarker) { profileMarker.remove(); profileMarker = null; } }
+
+  function drawProfile(pr, color) {
+    const box = $('#profile'); if (!box) return;
+    const W = 340, H = 120, L0 = 34, R0 = 6, T0 = 8, B0 = 18;
+    const n = pr.d.length, dmax = pr.d[n - 1];
+    const emin = Math.min(...pr.e), emax = Math.max(...pr.e);
+    const pad = Math.max(20, (emax - emin) * 0.08);
+    const lo = emin - pad, hi = emax + pad;
+    const X = (d) => L0 + (d / dmax) * (W - L0 - R0);
+    const Y = (e) => T0 + (1 - (e - lo) / (hi - lo)) * (H - T0 - B0);
+    const pts = pr.d.map((d, i) => `${X(d).toFixed(1)},${Y(pr.e[i]).toFixed(1)}`).join(' ');
+    const base = Y(lo).toFixed(1);
+    const kmLbl = (d) => `${km(d / 1000)} km`;
+    box.innerHTML = `
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('profileLabel'))}">
+        <polygon points="${X(0)},${base} ${pts} ${X(dmax)},${base}" fill="${color}" fill-opacity=".18"/>
+        <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>
+        <g class="ax"><text x="${L0 - 4}" y="${Y(emax) + 4}" text-anchor="end">${Math.round(emax)}</text>
+          <text x="${L0 - 4}" y="${Y(emin) + 4}" text-anchor="end">${Math.round(emin)}</text>
+          <text x="${L0}" y="${H - 4}">0</text><text x="${W - R0}" y="${H - 4}" text-anchor="end">${kmLbl(dmax)}</text></g>
+        <line class="cursor" y1="${T0}" y2="${H - B0}" visibility="hidden"/>
+        <text class="cursor-lbl" y="${T0 + 10}" visibility="hidden"></text>
+        <rect x="${L0}" y="0" width="${W - L0 - R0}" height="${H}" fill="transparent"/>
+      </svg>`;
+    const svg = box.querySelector('svg'), cur = svg.querySelector('.cursor'), lbl = svg.querySelector('.cursor-lbl');
+    const move = (ev) => {
+      const r = svg.getBoundingClientRect();
+      const d = Math.max(0, Math.min(dmax, ((ev.clientX - r.left) / r.width * W - L0) / (W - L0 - R0) * dmax));
+      let i = pr.d.findIndex((v) => v >= d); if (i < 0) i = n - 1;
+      const x = X(pr.d[i]);
+      cur.setAttribute('x1', x); cur.setAttribute('x2', x); cur.setAttribute('visibility', 'visible');
+      lbl.textContent = `${Math.round(pr.e[i])} m · ${kmLbl(pr.d[i])}`;
+      lbl.setAttribute('x', Math.min(x + 4, W - 110)); lbl.setAttribute('visibility', 'visible');
+      const ll = [pr.lat[i], pr.lon[i]];
+      if (!profileMarker) {
+        profileMarker = L.circleMarker(ll, { radius: 7, color: '#fff', weight: 3, fillColor: color, fillOpacity: 1, pane: 'markerPane', interactive: false }).addTo(map);
+      } else profileMarker.setLatLng(ll);
+    };
+    svg.addEventListener('pointermove', move);
+    svg.addEventListener('pointerdown', move);
+    svg.addEventListener('pointerleave', () => { cur.setAttribute('visibility', 'hidden'); lbl.setAttribute('visibility', 'hidden'); hideProfileMarker(); });
   }
 
   function trailsNear(lon, lat, m = 250) {

@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "_site"
 FILES = ["index.html", "about.html", "style.css", "app.js", "about.js", "i18n.js"]
-DIRS = ["data", "vendor", "fonts"]
+DIRS = ["data", "vendor", "fonts", "tiles"]
 
 
 def main():

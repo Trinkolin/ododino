@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Ododino" xmlns="http://www.topografix.com/GPX/1/1">
+<metadata>
+<name>Rupa Trail</name>
+<link href="https://ododino.it"><text>Ododino</text></link>
+<desc>Tracciato indicativo / Indicative route. Dati © contributori OpenStreetMap (ODbL), https://www.openstreetmap.org/relation/19974055 ; altitudini Copernicus DEM GLO-30. Emergenza / Emergency: 112</desc>
+</metadata>
+<trk><name>Rupa Trail</name>
+<trkseg>
+<trkpt lat="46.14934" lon="13.50149"><ele>416</ele></trkpt>
+<trkpt lat="46.14935" lon="13.50142"><ele>414</ele></trkpt>
+<trkpt lat="46.14932" lon="13.50134"><ele>413</ele></trkpt>
+<trkpt lat="46.14933" lon="13.50129"><ele>412</ele></trkpt>
+<trkpt lat="46.14930" lon="13.50125"><ele>412</ele></trkpt>
+<trkpt lat="46.14927" lon="13.50123"><ele>412</ele></trkpt>
+<trkpt lat="46.14924" lon="13.50119"><ele>411</ele></trkpt>
+<trkpt lat="46.14923" lon="13.50115"><ele>410</ele></trkpt>
+<trkpt lat="46.14916" lon="13.50112"><ele>410</ele></trkpt>
+<trkpt lat="46.14907" lon="13.50111"><ele>410</ele></trkpt>
+<trkpt lat="46.14901" lon="13.50114"><ele>411</ele></trkpt>
+<trkpt lat="46.14897" lon="13.50114"><ele>411</ele></trkpt>
+<trkpt lat="46.14893" lon="13.50112"><ele>410</ele></trkpt>
+<trkpt lat="46.14893" lon="13.50107"><ele>409</ele></trkpt>
+<trkpt lat="46.14895" lon="13.50099"><ele>407</ele></trkpt>
+<trkpt lat="46.14893" lon="13.50096"><ele>406</ele></trkpt>
+<trkpt lat="46.14891" lon="13.50095"><ele>406</ele></trkpt>
+<trkpt lat="46.14888" lon="13.50093"><ele>405</ele></trkpt>
+<trkpt lat="46.14886" lon="13.50090"><ele>404</ele></trkpt>
+<trkpt lat="46.14887" lon="13.50078"><ele>400</ele></trkpt>
+<trkpt lat="46.14884" lon="13.50075"><ele>399</ele></trkpt>
+<trkpt lat="46.14877" lon="13.50079"><ele>400</ele></trkpt>
+<trkpt lat="46.14850" lon="13.50090"><ele>398</ele></trkpt>
+<trkpt lat="46.14839" lon="13.50088"><ele>395</ele></trkpt>
+<trkpt lat="46.14831" lon="13.50081"><ele>391</ele></trkpt>
+<trkpt lat="46.14832" lon="13.50072"><ele>389</ele></trkpt>
+<trkpt lat="46.14827" lon="13.50068"><ele>387</ele></trkpt>
+<trkpt lat="46.14828" lon="13.50063"><ele>386</ele></trkpt>
+<trkpt lat="46.14828" lon="13.50057"><ele>384</ele></trkpt>
+<trkpt lat="46.14823" lon="13.50046"><ele>381</ele></trkpt>
+<trkpt lat="46.14819" lon="13.50030"><ele>376</ele></trkpt>
+<trkpt lat="46.14807" lon="13.50015"><ele>373</ele></trkpt>
+<trkpt lat="46.14797" lon="13.49979"><ele>366</ele></trkpt>
+<trkpt lat="46.14779" lon="13.49963"><ele>363</ele></trkpt>
+<trkpt lat="46.14774" lon="13.49956"><ele>362</ele></trkpt>
+<trkpt lat="46.14775" lon="13.49943"><ele>359</ele></trkpt>
+<trkpt lat="46.14762" lon="13.49935"><ele>357</ele></trkpt>
+<trkpt lat="46.14756" lon="13.49919"><ele>353</ele></trkpt>
+<trkpt lat="46.14748" lon="13.49912"><ele>350</ele></trkpt>
+<trkpt lat="46.14726" lon="13.49926"><ele>349</ele></trkpt>
+<trkpt lat="46.14705" lon="13.49912"><ele>341</ele></trkpt>
+<trkpt lat="46.14704" lon="13.49902"><ele>339</ele></trkpt>
+<trkpt lat="46.14695" lon="13.49893"><ele>335</ele></trkpt>
+<trkpt lat="46.14682" lon="13.49870"><ele>329</ele></trkpt>
+<trkpt lat="46.14667" lon="13.49840"><ele>322</ele></trkpt>
+<trkpt lat="46.14664" lon="13.49833"><ele>321</ele></trkpt>
+<trkpt lat="46.14654" lon="13.49836"><ele>320</ele></trkpt>
+<trkpt lat="46.14637" lon="13.49826"><ele>316</ele></trkpt>
+<trkpt lat="46.14600" lon="13.49828"><ele>309</ele></trkpt>
+<trkpt lat="46.14601" lon="13.49799"><ele>308</ele></trkpt>
+<trkpt lat="46.14579" lon="13.49743"><ele>294</ele></trkpt>
+<trkpt lat="46.14587" lon="13.49626"><ele>270</ele></trkpt>
+<trkpt lat="46.14548" lon="13.49620"><ele>267</ele></trkpt>
+<trkpt lat="46.14544" lon="13.49535"><ele>259</ele></trkpt>
+<trkpt lat="46.14484" lon="13.49414"><ele>220</ele></trkpt>
+<trkpt lat="46.14471" lon="13.49355"><ele>217</ele></trkpt>
+<trkpt lat="46.14436" lon="13.49287"><ele>208</ele></trkpt>
+<trkpt lat="46.14439" lon="13.49269"><ele>207</ele></trkpt>
+</trkseg>
+</trk>
+</gpx>

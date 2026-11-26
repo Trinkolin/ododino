@@ -78,7 +78,8 @@ input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .detail h3 { margin: 0 0 4px; font-size: 15px; }
 .detail .row { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); font-size: 12.5px; margin: 6px 0; }
 .detail .row b { color: var(--ink); font-weight: 600; }
-.detail .actions { display: flex; gap: 10px; margin-top: 8px; font-size: 12.5px; }
+.detail .actions { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 8px; font-size: 12.5px; }
+.detail .actions a { white-space: nowrap; }
 .detail .close { float: right; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 16px; }
 
 a { color: var(--accent); }
@@ -114,6 +115,14 @@ a { color: var(--accent); }
   .safety button { background: #2b2010; color: #ffe8cc; border-color: #7a4f12; }
 }
 a.report { color: #c92a2a; }
+
+/* Profil d'altitude */
+.profile { margin: 8px 0 4px; }
+.profile svg { width: 100%; height: auto; display: block; touch-action: pan-y; cursor: crosshair; }
+.profile .ax text { font: 10px Inter, sans-serif; fill: var(--muted); }
+.profile .cursor { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; }
+.profile .cursor-lbl { font: 600 11px Inter, sans-serif; fill: var(--ink); }
+.profile .muted { color: var(--muted); font-size: 12.5px; margin: 0; }
 .pop .dw-no { color: #c92a2a; }
 .pop .water-note { margin: 8px 0 0; padding: 6px 8px; border-radius: 6px; background: #fff4e6; color: #5c3b0b; font-size: 12px; }
 

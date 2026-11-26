@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Ododino" xmlns="http://www.topografix.com/GPX/1/1">
+<metadata>
+<name>Sentiero delle Krivapete</name>
+<link href="https://ododino.it"><text>Ododino</text></link>
+<desc>Tracciato indicativo / Indicative route. Dati © contributori OpenStreetMap (ODbL), https://www.openstreetmap.org/relation/8362520 ; altitudini Copernicus DEM GLO-30. Emergenza / Emergency: 112</desc>
+</metadata>
+<wpt lat="46.17323" lon="13.48446"><ele>184</ele><name>Acqua / Water</name><desc>Acqua potabile segnalata da OSM, non verificata / Drinking water reported by OSM, not verified</desc><sym>Drinking Water</sym></wpt>
+<trk><name>Sentiero delle Krivapete</name>
+<trkseg>
+<trkpt lat="46.17428" lon="13.48332"><ele>183</ele></trkpt>
+<trkpt lat="46.17429" lon="13.48341"><ele>183</ele></trkpt>
+<trkpt lat="46.17428" lon="13.48357"><ele>185</ele></trkpt>
+<trkpt lat="46.17428" lon="13.48362"><ele>185</ele></trkpt>
+<trkpt lat="46.17426" lon="13.48368"><ele>186</ele></trkpt>
+<trkpt lat="46.17415" lon="13.48397"><ele>187</ele></trkpt>
+<trkpt lat="46.17400" lon="13.48426"><ele>184</ele></trkpt>
+<trkpt lat="46.17397" lon="13.48431"><ele>184</ele></trkpt>
+<trkpt lat="46.17392" lon="13.48439"><ele>184</ele></trkpt>
+<trkpt lat="46.17385" lon="13.48452"><ele>184</ele></trkpt>
+</trkseg>
+</trk>
+</gpx>

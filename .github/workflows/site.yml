@@ -37,6 +37,9 @@ jobs:
         continue-on-error: true
         run: python tools/fetch_osm.py
 
+      - name: Altitudes, profils et GPX des sentiers
+        run: python tools/enrich_trails.py
+
       - name: Enregistrer les nouvelles données
         run: |
           git config user.name "github-actions[bot]"

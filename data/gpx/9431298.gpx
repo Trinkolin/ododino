@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Ododino" xmlns="http://www.topografix.com/GPX/1/1">
+<metadata>
+<name>TPb · I Prati di Tribil - bretella</name>
+<link href="https://ododino.it"><text>Ododino</text></link>
+<desc>Tracciato indicativo / Indicative route. Dati © contributori OpenStreetMap (ODbL), https://www.openstreetmap.org/relation/9431298 ; altitudini Copernicus DEM GLO-30. Emergenza / Emergency: 112</desc>
+</metadata>
+<trk><name>TPb · I Prati di Tribil - bretella</name>
+<trkseg>
+<trkpt lat="46.11719" lon="13.58016"><ele>575</ele></trkpt>
+<trkpt lat="46.11724" lon="13.58027"><ele>576</ele></trkpt>
+<trkpt lat="46.11732" lon="13.58037"><ele>578</ele></trkpt>
+<trkpt lat="46.11740" lon="13.58047"><ele>580</ele></trkpt>
+<trkpt lat="46.11750" lon="13.58062"><ele>581</ele></trkpt>
+<trkpt lat="46.11761" lon="13.58082"><ele>581</ele></trkpt>
+<trkpt lat="46.11773" lon="13.58098"><ele>579</ele></trkpt>
+<trkpt lat="46.11783" lon="13.58104"><ele>578</ele></trkpt>
+<trkpt lat="46.11795" lon="13.58111"><ele>574</ele></trkpt>
+<trkpt lat="46.11804" lon="13.58117"><ele>571</ele></trkpt>
+<trkpt lat="46.11815" lon="13.58119"><ele>568</ele></trkpt>
+<trkpt lat="46.11829" lon="13.58120"><ele>564</ele></trkpt>
+<trkpt lat="46.11838" lon="13.58125"><ele>560</ele></trkpt>
+<trkpt lat="46.11849" lon="13.58139"><ele>557</ele></trkpt>
+<trkpt lat="46.11854" lon="13.58148"><ele>557</ele></trkpt>
+<trkpt lat="46.11861" lon="13.58163"><ele>557</ele></trkpt>
+<trkpt lat="46.11866" lon="13.58176"><ele>557</ele></trkpt>
+<trkpt lat="46.11872" lon="13.58187"><ele>557</ele></trkpt>
+<trkpt lat="46.11881" lon="13.58197"><ele>557</ele></trkpt>
+<trkpt lat="46.11890" lon="13.58205"><ele>557</ele></trkpt>
+<trkpt lat="46.11899" lon="13.58212"><ele>558</ele></trkpt>
+<trkpt lat="46.11901" lon="13.58213"><ele>558</ele></trkpt>
+<trkpt lat="46.11903" lon="13.58225"><ele>560</ele></trkpt>
+<trkpt lat="46.11907" lon="13.58246"><ele>563</ele></trkpt>
+<trkpt lat="46.11912" lon="13.58260"><ele>565</ele></trkpt>
+<trkpt lat="46.11923" lon="13.58272"><ele>569</ele></trkpt>
+<trkpt lat="46.11945" lon="13.58284"><ele>572</ele></trkpt>
+<trkpt lat="46.11953" lon="13.58296"><ele>573</ele></trkpt>
+<trkpt lat="46.11977" lon="13.58326"><ele>578</ele></trkpt>
+<trkpt lat="46.11994" lon="13.58340"><ele>582</ele></trkpt>
+<trkpt lat="46.12011" lon="13.58336"><ele>585</ele></trkpt>
+<trkpt lat="46.12017" lon="13.58358"><ele>588</ele></trkpt>
+<trkpt lat="46.12041" lon="13.58367"><ele>591</ele></trkpt>
+<trkpt lat="46.12062" lon="13.58382"><ele>587</ele></trkpt>
+</trkseg>
+</trk>
+</gpx>

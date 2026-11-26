@@ -19,17 +19,28 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 | `i18n.js` | toutes les traductions, la détection de langue et l'adresse de contact |
 | `data/*.geojson` | données OSM générées (ne pas modifier à la main) |
 | `vendor/`, `fonts/` | Leaflet et polices auto-hébergés, sans appel à un CDN ni à Google |
+| `data/profiles/`, `data/gpx/` | profils d'altitude et GPX des sentiers (générés) |
+| `tiles/hillshade/` | relief ombré (généré une fois) |
 | `tools/fetch_osm.py` | télécharge les données OSM via Overpass |
+| `tools/enrich_trails.py` | ordre des tronçons, altitudes, dénivelés, temps, profils et GPX |
+| `tools/prepare_dem.py` | prépare une fois les altitudes Copernicus et le relief ombré |
+| `tools/dem/` | altitudes de la zone (2 Mo), lues par `enrich_trails.py` |
 | `tools/build.py` | assemble le site publiable dans `_site/` |
 | `.github/workflows/site.yml` | mise à jour hebdomadaire et publication |
 
 ## Mettre à jour les données à la main
 ```
 py tools/fetch_osm.py
+py tools/enrich_trails.py
 ```
-Ce script régénère `data/*.geojson` : limites des communes, POI, sentiers balisés et chemins.
+Le premier script régénère `data/*.geojson` : limites des communes, POI, sentiers balisés et chemins.
 Si Overpass renvoie nettement moins d'éléments qu'avant (moins de 70 %), la mise à jour de ce fichier
-est refusée, pour ne pas publier des données tronquées.
+est refusée, pour ne pas publier des données tronquées. Le second **doit toujours suivre** : il ajoute
+profils, dénivelés, temps et GPX aux sentiers (sans lui, les fiches affichent « profil indisponible »).
+
+Les altitudes (Copernicus GLO-30) et le relief ombré ne changent pas : `tools/prepare_dem.py` n'est à
+relancer que pour agrandir la zone. Il demande numpy, Pillow, tifffile et imagecodecs, dans un
+environnement séparé (voir l'en-tête du script).
 
 ## Mise en ligne (à faire une fois)
 1. **GitHub** : créer un compte, puis un dépôt **public** nommé `ododino`, et y pousser ce dossier.

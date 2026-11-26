@@ -61,8 +61,11 @@ out center tags;
 """
 
 Q_ROUTES = f"""[out:json][timeout:180];{AREA}
-rel["route"~"^(hiking|foot)$"](area.a);
-out geom;
+rel["route"~"^(hiking|foot)$"](area.a)->.r;
+.r out geom;
+// difficulté de chaque tronçon (échelle SAC), pour estimer celle des sentiers sans cotation CAI
+way(r.r)["sac_scale"];
+out tags;
 """
 
 Q_PATHS = f"""[out:json][timeout:180];{AREA}
@@ -195,14 +198,20 @@ def build_pois(data):
     return feats
 
 
+SAC_ORDER = ["hiking", "mountain_hiking", "demanding_mountain_hiking", "alpine_hiking",
+             "demanding_alpine_hiking", "difficult_alpine_hiking"]
+
+
 def build_routes(data):
     feats = []
+    sac = {e["id"]: e["tags"]["sac_scale"] for e in data["elements"]
+           if e["type"] == "way" and e.get("tags", {}).get("sac_scale") in SAC_ORDER}
     for e in data["elements"]:
         if e["type"] != "relation":
             continue
         t = e.get("tags", {})
-        parts = [line(m["geometry"]) for m in e.get("members", [])
-                 if m["type"] == "way" and m.get("geometry")]
+        members = [m for m in e.get("members", []) if m["type"] == "way" and m.get("geometry")]
+        parts = [line(m["geometry"]) for m in members]
         parts = [p for p in parts if len(p) > 1]
         if not parts:
             continue
@@ -210,6 +219,9 @@ def build_routes(data):
                                    "description", "osmc:symbol", "cai_scale", "website", "duration",
                                    "ascent", "descent", "roundtrip", "symbol") if k in t}
         props["osm"] = f"relation/{e['id']}"
+        levels = [SAC_ORDER.index(sac[m["ref"]]) for m in members if m["ref"] in sac]
+        if levels:
+            props["sac_max"] = f"T{max(levels) + 1}"   # tronçon le plus difficile, échelle SAC T1–T6
         feats.append({"type": "Feature", "geometry": {"type": "MultiLineString", "coordinates": parts},
                       "properties": props})
     return feats

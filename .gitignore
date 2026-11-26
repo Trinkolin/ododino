@@ -4,3 +4,5 @@ __pycache__/
 .claude/settings.local.json
 Thumbs.db
 .DS_Store
+.venv-dem/
+tools/dem/cache/

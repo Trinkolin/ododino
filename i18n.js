@@ -58,6 +58,7 @@ window.I18N = {
     fee: 'A pagamento', capacity: 'Posti', lines: 'Linee', timetable: 'Orari bus (TPL FVG)',
     drinkingYes: 'segnalata (OSM, non verificata)', drinkingNo: 'non potabile', checked: 'Verificato il',
     waterNote: 'Controllate i cartelli sul posto; non bevete l’acqua delle sorgenti senza trattarla.',
+    sacEst: "stimata dai tratti (SAC {x})", notRated: "non indicata", durationCai: "Durata CAI", timeEst: "Tempo indicativo", descent: "Dislivello −", altRange: "Quota", profileNA: "Profilo non disponibile: sentiero in più tratti separati.", profileLabel: "Profilo altimetrico", gpx: "GPX", layerRelief: "Rilievo ombreggiato",
     report: 'Segnala un errore',
     layerTrails: 'Sentieri segnalati', layerPois: 'Punti di interesse', layerWmt: 'Segnaletica Waymarked Trails',
     baseTopo: 'Topografica (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellite (Esri)',
@@ -67,7 +68,7 @@ window.I18N = {
       <h2>Che cos'è Ododino?</h2>
       <p>Ododino è una mappa indipendente e senza scopo di lucro delle Valli del Natisone (Benecia), pensata per chi vuole camminare: sentieri segnalati, cime, chiese, sorgenti, grotte, rifugi, ma anche parcheggi e fermate dell'autobus.</p>
       <h2>Da dove vengono i dati?</h2>
-      <p>Tutti i luoghi e i sentieri provengono da <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© contributori OpenStreetMap, licenza ODbL) e sono aggiornati ogni settimana. Sfondi: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri.</p>
+      <p>Tutti i luoghi e i sentieri provengono da <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© contributori OpenStreetMap, licenza ODbL) e sono aggiornati ogni settimana. Sfondi: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri. Altitudini e rilievo: Copernicus DEM GLO-30 (© DLR e.V. 2010-2014 e © Airbus Defence and Space GmbH 2014-2018, fornito nell’ambito di COPERNICUS dall’Unione europea e dall’ESA); i dislivelli e i tempi sono stime.</p>
       <p>Trovate un errore? Il link «Segnala un errore» in ogni scheda apre una nota su OpenStreetMap: la correzione servirà a tutti.</p>
       <h2>Sicurezza</h2>
       <p>I tracciati sono indicativi e possono essere incompleti o non aggiornati. Controllate il meteo e le condizioni del sentiero prima di partire; l'escursione è sotto la vostra responsabilità. In caso di emergenza, in Italia come in Slovenia: <strong>112</strong>.</p>
@@ -115,6 +116,7 @@ window.I18N = {
     fee: 'Plačljivo', capacity: 'Mest', lines: 'Linije', timetable: 'Vozni red avtobusov (TPL FVG)',
     drinkingYes: 'označena (OSM, ni preverjeno)', drinkingNo: 'ni pitna', checked: 'Preverjeno',
     waterNote: 'Preverite oznake na kraju samem; vode iz izvirov ne pijte neprečiščene.',
+    sacEst: "ocena po odsekih (SAC {x})", notRated: "ni podatka", durationCai: "Čas po CAI", timeEst: "Okvirni čas", descent: "Spust", altRange: "Višina", profileNA: "Profil ni na voljo: pot je sestavljena iz ločenih odsekov.", profileLabel: "Višinski profil", gpx: "GPX", layerRelief: "Senčen relief",
     report: 'Sporoči napako',
     layerTrails: 'Označene poti', layerPois: 'Zanimivosti', layerWmt: 'Markacije Waymarked Trails',
     baseTopo: 'Topografska (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satelitska (Esri)',
@@ -124,7 +126,7 @@ window.I18N = {
       <h2>Kaj je Ododino?</h2>
       <p>Ododino je neodvisen in nepridobiten zemljevid Nediških dolin (Benečije), namenjen pohodnikom: označene poti, vrhovi, cerkve, izviri, jame, zavetišča, pa tudi parkirišča in avtobusna postajališča.</p>
       <h2>Od kod so podatki?</h2>
-      <p>Vsi kraji in poti so iz <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© sodelavci OpenStreetMap, licenca ODbL) in se posodabljajo vsak teden. Podlage: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri.</p>
+      <p>Vsi kraji in poti so iz <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© sodelavci OpenStreetMap, licenca ODbL) in se posodabljajo vsak teden. Podlage: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri. Višine in relief: Copernicus DEM GLO-30 (© DLR e.V. 2010-2014 in © Airbus Defence and Space GmbH 2014-2018, v okviru programa COPERNICUS zagotavljata Evropska unija in ESA); višinske razlike in časi so ocene.</p>
       <p>Ste našli napako? Povezava »Sporoči napako« na vsaki kartici odpre opombo na OpenStreetMap: popravek bo koristil vsem.</p>
       <h2>Varnost</h2>
       <p>Poti so okvirne in so lahko nepopolne ali zastarele. Pred odhodom preverite vreme in stanje poti; na pot se odpravite na lastno odgovornost. V sili, v Italiji in v Sloveniji: <strong>112</strong>.</p>
@@ -172,6 +174,7 @@ window.I18N = {
     fee: 'Paid', capacity: 'Spaces', lines: 'Lines', timetable: 'Bus timetables (TPL FVG)',
     drinkingYes: 'reported (OSM, unverified)', drinkingNo: 'not drinkable', checked: 'Last checked',
     waterNote: 'Check the signs on site; do not drink spring water without treating it.',
+    sacEst: "estimated from sections (SAC {x})", notRated: "not given", durationCai: "CAI time", timeEst: "Indicative time", descent: "Descent", altRange: "Altitude", profileNA: "Profile not available: this trail is made of separate sections.", profileLabel: "Elevation profile", gpx: "GPX", layerRelief: "Hillshade",
     report: 'Report an error',
     layerTrails: 'Waymarked trails', layerPois: 'Points of interest', layerWmt: 'Waymarked Trails overlay',
     baseTopo: 'Topographic (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellite (Esri)',
@@ -181,7 +184,7 @@ window.I18N = {
       <h2>What is Ododino?</h2>
       <p>Ododino is an independent, non-commercial map of the Natisone Valleys (Benečija) for walkers: waymarked trails, peaks, churches, springs, caves, shelters, as well as car parks and bus stops.</p>
       <h2>Where does the data come from?</h2>
-      <p>All places and trails come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© OpenStreetMap contributors, ODbL licence) and are updated every week. Base maps: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri.</p>
+      <p>All places and trails come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© OpenStreetMap contributors, ODbL licence) and are updated every week. Base maps: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri. Elevation and hillshade: Copernicus DEM GLO-30 (© DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA); ascents and times are estimates.</p>
       <p>Found a mistake? The “Report an error” link on every card opens a note on OpenStreetMap, so the fix benefits everyone.</p>
       <h2>Safety</h2>
       <p>Routes are indicative and may be incomplete or out of date. Check the weather and trail conditions before setting off; you hike at your own risk. In an emergency, in Italy and in Slovenia: <strong>112</strong>.</p>
@@ -229,6 +232,7 @@ window.I18N = {
     fee: 'Gebührenpflichtig', capacity: 'Stellplätze', lines: 'Linien', timetable: 'Busfahrpläne (TPL FVG)',
     drinkingYes: 'gemeldet (OSM, ungeprüft)', drinkingNo: 'kein Trinkwasser', checked: 'Zuletzt geprüft',
     waterNote: 'Beschilderung vor Ort beachten; Quellwasser nicht unbehandelt trinken.',
+    sacEst: "geschätzt nach Abschnitten (SAC {x})", notRated: "keine Angabe", durationCai: "Gehzeit (CAI)", timeEst: "Gehzeit (Richtwert)", descent: "Abstieg", altRange: "Höhe", profileNA: "Kein Höhenprofil: Der Weg besteht aus getrennten Abschnitten.", profileLabel: "Höhenprofil", gpx: "GPX", layerRelief: "Schummerung",
     report: 'Fehler melden',
     layerTrails: 'Markierte Wanderwege', layerPois: 'Sehenswertes', layerWmt: 'Waymarked-Trails-Markierungen',
     baseTopo: 'Topografisch (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellit (Esri)',
@@ -238,7 +242,7 @@ window.I18N = {
       <h2>Was ist Ododino?</h2>
       <p>Ododino ist eine unabhängige, nichtkommerzielle Karte der Natisonetäler (Benečija) für Wanderer: markierte Wege, Gipfel, Kirchen, Quellen, Höhlen, Unterstände sowie Parkplätze und Bushaltestellen.</p>
       <h2>Woher stammen die Daten?</h2>
-      <p>Alle Orte und Wege stammen aus <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© OpenStreetMap-Mitwirkende, Lizenz ODbL) und werden wöchentlich aktualisiert. Hintergrundkarten: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri.</p>
+      <p>Alle Orte und Wege stammen aus <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© OpenStreetMap-Mitwirkende, Lizenz ODbL) und werden wöchentlich aktualisiert. Hintergrundkarten: OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri. Höhen und Schummerung: Copernicus DEM GLO-30 (© DLR e.V. 2010-2014 und © Airbus Defence and Space GmbH 2014-2018, bereitgestellt im Rahmen von COPERNICUS durch die Europäische Union und die ESA); Höhenmeter und Gehzeiten sind Schätzungen.</p>
       <p>Einen Fehler gefunden? Der Link „Fehler melden“ in jeder Karte öffnet einen Hinweis auf OpenStreetMap – so profitieren alle von der Korrektur.</p>
       <h2>Sicherheit</h2>
       <p>Die Wegverläufe sind Richtwerte und können unvollständig oder veraltet sein. Prüfen Sie vor dem Aufbruch Wetter und Wegzustand; Sie wandern auf eigene Gefahr. Im Notfall, in Italien wie in Slowenien: <strong>112</strong>.</p>
@@ -286,6 +290,7 @@ window.I18N = {
     fee: 'Payant', capacity: 'Places', lines: 'Lignes', timetable: 'Horaires des bus (TPL FVG)',
     drinkingYes: 'signalée (OSM, non vérifiée)', drinkingNo: 'non potable', checked: 'Vérifié le',
     waterNote: "Vérifiez la signalisation sur place ; ne buvez pas l'eau des sources sans la traiter.",
+    sacEst: "d'après les tronçons (SAC {x})", notRated: "non renseignée", durationCai: "Durée CAI", timeEst: "Temps indicatif", descent: "Dénivelé −", altRange: "Altitude", profileNA: "Profil indisponible : sentier en plusieurs tronçons séparés.", profileLabel: "Profil d'altitude", gpx: "GPX", layerRelief: "Relief ombré",
     report: 'Signaler une erreur',
     layerTrails: 'Sentiers balisés', layerPois: "Points d'intérêt", layerWmt: 'Balisage Waymarked Trails',
     baseTopo: 'Topographique (OpenTopoMap)', baseOsm: 'OpenStreetMap', baseSat: 'Satellite (Esri)',
@@ -295,7 +300,7 @@ window.I18N = {
       <h2>Qu'est-ce qu'Ododino ?</h2>
       <p>Ododino est une carte indépendante et non commerciale des vallées du Natisone (Benečija), pensée pour les marcheurs : sentiers balisés, sommets, églises, sources, grottes, abris, mais aussi parkings et arrêts de bus.</p>
       <h2>D'où viennent les données ?</h2>
-      <p>Tous les lieux et sentiers proviennent d'<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© contributeurs OpenStreetMap, licence ODbL) et sont mis à jour chaque semaine. Fonds de carte : OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri.</p>
+      <p>Tous les lieux et sentiers proviennent d'<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (© contributeurs OpenStreetMap, licence ODbL) et sont mis à jour chaque semaine. Fonds de carte : OpenTopoMap (CC-BY-SA), OpenStreetMap, Esri. Altitudes et relief : Copernicus DEM GLO-30 (© DLR e.V. 2010-2014 et © Airbus Defence and Space GmbH 2014-2018, fourni dans le cadre de COPERNICUS par l'Union européenne et l'ESA) ; dénivelés et temps sont des estimations.</p>
       <p>Vous avez repéré une erreur ? Le lien « Signaler une erreur » de chaque fiche ouvre une note sur OpenStreetMap : la correction profitera à tous.</p>
       <h2>Sécurité</h2>
       <p>Les tracés sont indicatifs et peuvent être incomplets ou obsolètes. Vérifiez la météo et l'état des sentiers avant de partir ; la randonnée se fait sous votre responsabilité. En cas d'urgence, en Italie comme en Slovénie : <strong>112</strong>.</p>

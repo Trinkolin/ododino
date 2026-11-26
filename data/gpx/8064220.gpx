@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Ododino" xmlns="http://www.topografix.com/GPX/1/1">
+<metadata>
+<name>Sentiero Hum - variante</name>
+<link href="https://ododino.it"><text>Ododino</text></link>
+<desc>Tracciato indicativo / Indicative route. Dati © contributori OpenStreetMap (ODbL), https://www.openstreetmap.org/relation/8064220 ; altitudini Copernicus DEM GLO-30. Emergenza / Emergency: 112</desc>
+</metadata>
+<trk><name>Sentiero Hum - variante</name>
+<trkseg>
+<trkpt lat="46.15118" lon="13.62177"><ele>669</ele></trkpt>
+<trkpt lat="46.15121" lon="13.62183"><ele>672</ele></trkpt>
+<trkpt lat="46.15107" lon="13.62204"><ele>675</ele></trkpt>
+<trkpt lat="46.15061" lon="13.62266"><ele>681</ele></trkpt>
+<trkpt lat="46.15015" lon="13.62311"><ele>686</ele></trkpt>
+<trkpt lat="46.14979" lon="13.62357"><ele>692</ele></trkpt>
+<trkpt lat="46.14935" lon="13.62401"><ele>695</ele></trkpt>
+<trkpt lat="46.14928" lon="13.62405"><ele>693</ele></trkpt>
+<trkpt lat="46.14924" lon="13.62408"><ele>693</ele></trkpt>
+<trkpt lat="46.14913" lon="13.62414"><ele>691</ele></trkpt>
+<trkpt lat="46.14898" lon="13.62420"><ele>690</ele></trkpt>
+<trkpt lat="46.14899" lon="13.62429"><ele>693</ele></trkpt>
+<trkpt lat="46.14914" lon="13.62430"><ele>697</ele></trkpt>
+<trkpt lat="46.14925" lon="13.62429"><ele>700</ele></trkpt>
+<trkpt lat="46.14950" lon="13.62428"><ele>709</ele></trkpt>
+<trkpt lat="46.15005" lon="13.62424"><ele>725</ele></trkpt>
+<trkpt lat="46.15061" lon="13.62398"><ele>725</ele></trkpt>
+<trkpt lat="46.15091" lon="13.62364"><ele>725</ele></trkpt>
+<trkpt lat="46.15121" lon="13.62334"><ele>726</ele></trkpt>
+<trkpt lat="46.15128" lon="13.62329"><ele>726</ele></trkpt>
+<trkpt lat="46.15136" lon="13.62328"><ele>726</ele></trkpt>
+<trkpt lat="46.15143" lon="13.62331"><ele>726</ele></trkpt>
+<trkpt lat="46.15146" lon="13.62339"><ele>728</ele></trkpt>
+<trkpt lat="46.15109" lon="13.62370"><ele>733</ele></trkpt>
+<trkpt lat="46.15098" lon="13.62395"><ele>736</ele></trkpt>
+<trkpt lat="46.15085" lon="13.62402"><ele>732</ele></trkpt>
+<trkpt lat="46.15082" lon="13.62416"><ele>736</ele></trkpt>
+<trkpt lat="46.15088" lon="13.62419"><ele>738</ele></trkpt>
+<trkpt lat="46.15105" lon="13.62416"><ele>742</ele></trkpt>
+<trkpt lat="46.15108" lon="13.62420"><ele>743</ele></trkpt>
+<trkpt lat="46.15098" lon="13.62435"><ele>745</ele></trkpt>
+<trkpt lat="46.15056" lon="13.62471"><ele>749</ele></trkpt>
+<trkpt lat="46.15025" lon="13.62504"><ele>758</ele></trkpt>
+<trkpt lat="46.14994" lon="13.62529"><ele>761</ele></trkpt>
+<trkpt lat="46.14960" lon="13.62562"><ele>763</ele></trkpt>
+<trkpt lat="46.14934" lon="13.62580"><ele>763</ele></trkpt>
+<trkpt lat="46.14924" lon="13.62595"><ele>768</ele></trkpt>
+<trkpt lat="46.14920" lon="13.62627"><ele>778</ele></trkpt>
+<trkpt lat="46.14924" lon="13.62633"><ele>780</ele></trkpt>
+<trkpt lat="46.14938" lon="13.62625"><ele>780</ele></trkpt>
+<trkpt lat="46.14946" lon="13.62636"><ele>783</ele></trkpt>
+<trkpt lat="46.14946" lon="13.62659"><ele>790</ele></trkpt>
+<trkpt lat="46.14926" lon="13.62677"><ele>797</ele></trkpt>
+<trkpt lat="46.14902" lon="13.62708"><ele>809</ele></trkpt>
+<trkpt lat="46.14886" lon="13.62718"><ele>812</ele></trkpt>
+<trkpt lat="46.14876" lon="13.62728"><ele>814</ele></trkpt>
+</trkseg>
+</trk>
+</gpx>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Ododino" xmlns="http://www.topografix.com/GPX/1/1">
+<metadata>
+<name>COD-b · Cobilza - Oblizza - Dughe - bretella</name>
+<link href="https://ododino.it"><text>Ododino</text></link>
+<desc>Tracciato indicativo / Indicative route. Dati © contributori OpenStreetMap (ODbL), https://www.openstreetmap.org/relation/9431287 ; altitudini Copernicus DEM GLO-30. Emergenza / Emergency: 112</desc>
+</metadata>
+<trk><name>COD-b · Cobilza - Oblizza - Dughe - bretella</name>
+<trkseg>
+<trkpt lat="46.13439" lon="13.58862"><ele>426</ele></trkpt>
+<trkpt lat="46.13434" lon="13.58895"><ele>428</ele></trkpt>
+<trkpt lat="46.13426" lon="13.58938"><ele>430</ele></trkpt>
+<trkpt lat="46.13426" lon="13.58962"><ele>435</ele></trkpt>
+<trkpt lat="46.13419" lon="13.58989"><ele>438</ele></trkpt>
+<trkpt lat="46.13414" lon="13.59013"><ele>443</ele></trkpt>
+<trkpt lat="46.13417" lon="13.59032"><ele>448</ele></trkpt>
+<trkpt lat="46.13425" lon="13.59053"><ele>456</ele></trkpt>
+<trkpt lat="46.13434" lon="13.59071"><ele>462</ele></trkpt>
+<trkpt lat="46.13440" lon="13.59092"><ele>465</ele></trkpt>
+<trkpt lat="46.13452" lon="13.59117"><ele>468</ele></trkpt>
+<trkpt lat="46.13471" lon="13.59144"><ele>473</ele></trkpt>
+<trkpt lat="46.13486" lon="13.59175"><ele>473</ele></trkpt>
+<trkpt lat="46.13497" lon="13.59195"><ele>474</ele></trkpt>
+<trkpt lat="46.13501" lon="13.59223"><ele>475</ele></trkpt>
+<trkpt lat="46.13490" lon="13.59244"><ele>474</ele></trkpt>
+<trkpt lat="46.13487" lon="13.59271"><ele>476</ele></trkpt>
+<trkpt lat="46.13490" lon="13.59290"><ele>480</ele></trkpt>
+<trkpt lat="46.13488" lon="13.59328"><ele>485</ele></trkpt>
+<trkpt lat="46.13489" lon="13.59352"><ele>487</ele></trkpt>
+<trkpt lat="46.13498" lon="13.59374"><ele>493</ele></trkpt>
+<trkpt lat="46.13493" lon="13.59390"><ele>493</ele></trkpt>
+<trkpt lat="46.13502" lon="13.59401"><ele>498</ele></trkpt>
+<trkpt lat="46.13476" lon="13.59424"><ele>499</ele></trkpt>
+<trkpt lat="46.13468" lon="13.59457"><ele>505</ele></trkpt>
+<trkpt lat="46.13466" lon="13.59472"><ele>508</ele></trkpt>
+<trkpt lat="46.13458" lon="13.59510"><ele>511</ele></trkpt>
+<trkpt lat="46.13464" lon="13.59518"><ele>516</ele></trkpt>
+<trkpt lat="46.13453" lon="13.59532"><ele>515</ele></trkpt>
+<trkpt lat="46.13445" lon="13.59552"><ele>516</ele></trkpt>
+<trkpt lat="46.13444" lon="13.59568"><ele>519</ele></trkpt>
+<trkpt lat="46.13443" lon="13.59587"><ele>521</ele></trkpt>
+<trkpt lat="46.13440" lon="13.59619"><ele>522</ele></trkpt>
+<trkpt lat="46.13434" lon="13.59647"><ele>517</ele></trkpt>
+<trkpt lat="46.13432" lon="13.59681"><ele>509</ele></trkpt>
+<trkpt lat="46.13441" lon="13.59731"><ele>496</ele></trkpt>
+<trkpt lat="46.13469" lon="13.59772"><ele>491</ele></trkpt>
+<trkpt lat="46.13484" lon="13.59789"><ele>491</ele></trkpt>
+<trkpt lat="46.13486" lon="13.59813"><ele>487</ele></trkpt>
+<trkpt lat="46.13468" lon="13.59855"><ele>474</ele></trkpt>
+<trkpt lat="46.13464" lon="13.59878"><ele>468</ele></trkpt>
+<trkpt lat="46.13469" lon="13.59901"><ele>465</ele></trkpt>
+<trkpt lat="46.13481" lon="13.59934"><ele>463</ele></trkpt>
+<trkpt lat="46.13481" lon="13.59954"><ele>461</ele></trkpt>
+<trkpt lat="46.13475" lon="13.59977"><ele>458</ele></trkpt>
+<trkpt lat="46.13464" lon="13.60001"><ele>452</ele></trkpt>
+<trkpt lat="46.13461" lon="13.60023"><ele>451</ele></trkpt>
+<trkpt lat="46.13466" lon="13.60063"><ele>451</ele></trkpt>
+<trkpt lat="46.13474" lon="13.60082"><ele>452</ele></trkpt>
+<trkpt lat="46.13496" lon="13.60112"><ele>453</ele></trkpt>
+<trkpt lat="46.13513" lon="13.60144"><ele>450</ele></trkpt>
+<trkpt lat="46.13519" lon="13.60169"><ele>444</ele></trkpt>
+<trkpt lat="46.13529" lon="13.60178"><ele>444</ele></trkpt>
+<trkpt lat="46.13542" lon="13.60181"><ele>445</ele></trkpt>
+<trkpt lat="46.13551" lon="13.60180"><ele>447</ele></trkpt>
+<trkpt lat="46.13556" lon="13.60183"><ele>446</ele></trkpt>
+<trkpt lat="46.13566" lon="13.60195"><ele>442</ele></trkpt>
+<trkpt lat="46.13579" lon="13.60202"><ele>440</ele></trkpt>
+<trkpt lat="46.13600" lon="13.60205"><ele>442</ele></trkpt>
+<trkpt lat="46.13611" lon="13.60207"><ele>444</ele></trkpt>
+<trkpt lat="46.13613" lon="13.60214"><ele>443</ele></trkpt>
+<trkpt lat="46.13606" lon="13.60269"><ele>431</ele></trkpt>
+<trkpt lat="46.13599" lon="13.60310"><ele>426</ele></trkpt>
+<trkpt lat="46.13598" lon="13.60329"><ele>425</ele></trkpt>
+<trkpt lat="46.13604" lon="13.60358"><ele>425</ele></trkpt>
+<trkpt lat="46.13608" lon="13.60384"><ele>422</ele></trkpt>
+<trkpt lat="46.13623" lon="13.60418"><ele>418</ele></trkpt>
+<trkpt lat="46.13638" lon="13.60455"><ele>413</ele></trkpt>
+<trkpt lat="46.13644" lon="13.60476"><ele>407</ele></trkpt>
+</trkseg>
+</trk>
+</gpx>

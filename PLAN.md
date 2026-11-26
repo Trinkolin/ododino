@@ -27,6 +27,27 @@ Décisions prises le 22/11/2026.
   le téléchargement en masse des tuiles).
 - Avertissement de sécurité avec le 112, et un lien « Signaler une erreur » (note OSM) sur chaque fiche.
 
+### Détail de l'étape 2 (décidé le 26/11/2026)
+- Altitudes : Copernicus GLO-30 (30 m), une seule source des deux côtés de la frontière, crédit affiché.
+- Sentiers en morceaux : tronçons remis en ordre automatiquement (départ → arrivée). S'il n'y a pas
+  de ligne unique, le GPX est proposé en plusieurs segments, sans profil (« profil indisponible » expliqué).
+- Fiche : profil interactif (point qui suit le survol sur la carte), dénivelés + et −, altitudes min/max,
+  temps « indicatif » (4 km/h, 300 m/h en montée, 500 m/h en descente), ou la durée CAI si OSM la donne.
+- Difficulté : la cotation CAI d'OSM, sinon le tronçon le plus dur, affiché « d'après les tronçons (SAC Tx) ».
+- GPX : le tracé, plus les points utiles à moins de 250 m (eau potable avec « non vérifiée », abris,
+  refuges, sommets).
+- Relief ombré : calculé une fois, en couche optionnelle, réutilisé hors ligne à l'étape 3.
+
+### Étape 2 bis : traceur d'itinéraire
+- Calcul dans le navigateur sur nos données (sentiers, pistes, petites routes) : sans serveur ni service
+  tiers, utilisable hors ligne. Zone = les communes plus une marge de 2 km, Slovénie comprise.
+- Option « sentiers balisés uniquement ». Passages T4+ évités par défaut (option pour les autoriser),
+  avertissement et tronçons colorés dès qu'un passage T3+ est emprunté.
+- Profil, dénivelés et temps en direct, avec la même méthode que pour les sentiers.
+- Tracé gardé dans le lien de la page (points de passage, recalculé à l'ouverture), export et import GPX,
+  rien côté serveur.
+- Mobile soigné : Annuler / Effacer, points déplaçables au doigt, profil repliable.
+
 ## Infrastructure
 - Dépôt GitHub public `ododino`, publié sur GitHub Pages. La génération du site est faite par des scripts Python.
 - Domaine `ododino.it` (sinon `ododino.eu`), avec `contact@ododino.it` redirigé vers la boîte de l'auteur.
@@ -40,5 +61,6 @@ relire les fiches en français, valider le logo et la liste des lieux phares.
 1. [ ] **Base en ligne** : dépôt, Pages, domaine, mise à jour hebdomadaire, Cividale, catégories
    d'accès, avertissement et signalement, GoatCounter, page « À propos ».
 2. [ ] **Randonnée** : GPX, profil d'altitude, relief ombré.
+   - [ ] **2 bis – Traceur d'itinéraire** : calcul dans le navigateur, export/import GPX, lien partageable.
 3. [ ] **Hors ligne** : PWA, fond vectoriel, position GPS, logo et icône.
 4. [ ] **Contenu** : liste des 20 lieux phares, puis rédaction, traduction, relecture et pages par langue.
