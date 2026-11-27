@@ -47,3 +47,4 @@ Thumbs.db
 /.site
 /src/app/i18n/messages.generated.ts
 /public/m
+/src/app/cards/generated/

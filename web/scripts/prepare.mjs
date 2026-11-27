@@ -34,7 +34,7 @@ fs.writeFileSync(target,
 const ICONS = [
   'explore', 'location_on', 'hiking', 'route', 'download', 'download_done', 'translate', 'install_desktop', 'mobile',
   'favorite', 'favorite_border', 'close', 'my_location', 'fit_screen', 'search', 'menu_book',
-  'add_location_alt', 'layers', 'info', 'arrow_back', 'tune',
+  'add_location_alt', 'layers', 'info', 'arrow_back', 'tune', 'map',
 ];
 const src = path.join(web, 'node_modules', '@material-symbols', 'svg-400', 'outlined');
 const dest = path.join(web, 'public', 'm');
@@ -56,8 +56,18 @@ for (const dir of ['data', 'fonts', 'tiles', 'icons']) {
 // ---------- 4. Fiches : index pour la carte, liste « Découvrir », vignettes (tools/export_app.py) ----------
 // Python s'appelle « py » sous Windows, « python3 » ou « python » ailleurs (GitHub Actions).
 const pythons = process.platform === 'win32' ? ['py', 'python'] : ['python3', 'python'];
-const ok = pythons.some((py) => spawnSync(py, [path.join(root, 'tools', 'export_app.py'), site],
-  { cwd: root, stdio: 'inherit' }).status === 0);
+// Fiches (une par fichier JSON) dans src/app/cards/generated/ (ignoré par git) ; ODODINO_DRAFTS=1 ajoute les brouillons.
+const fiches = path.join(web, 'src', 'app', 'cards', 'generated');
+const exportArgs = [path.join(root, 'tools', 'export_app.py'), site, fiches, ...(process.env.ODODINO_DRAFTS ? ['--drafts'] : [])];
+const ok = pythons.some((py) => spawnSync(py, exportArgs, { cwd: root, stdio: 'inherit' }).status === 0);
 if (!ok) { console.error('tools/export_app.py a échoué (Python 3 introuvable ?)'); process.exit(1); }
+// Chargeurs : chaque fiche est un morceau JS à part, chargé seulement quand on l'ouvre (et au pré-rendu)
+const { slugs } = JSON.parse(fs.readFileSync(path.join(fiches, 'index.json'), 'utf8'));
+fs.writeFileSync(path.join(fiches, 'loaders.ts'), [
+  '// Généré par scripts/prepare.mjs : ne pas modifier.',
+  "import type { Fiche } from '../fiche';",
+  'export const LOADERS: Record<string, () => Promise<Fiche>> = {',
+  ...slugs.map((s) => `  '${s}': () => import('./${s}.json').then((m) => m.default as unknown as Fiche),`),
+  '};', ''].join('\n'));
 
 console.log(`i18n : ${langs.length} langues · icônes : ${ICONS.length} · fichiers du site copiés dans web/.site/`);

@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, Routes } from '@angular/router';
 import { I18nService, isLang } from './i18n/i18n.service';
 
 /** /<langue>/… : langue connue → elle devient la langue courante ; sinon retour à la langue du visiteur. */
@@ -18,8 +18,9 @@ export const routes: Routes = [
     canActivate: [langGuard],
     children: [
       { path: '', loadComponent: () => import('./pages/map-page').then((m) => m.MapPage) },
-      // Fiches phares : phase 4 de la migration
-      { path: ':slug', loadComponent: () => import('./pages/card-page').then((m) => m.CardPage) },
+      // Fiches phares : contenu chargé avant l'affichage (pré-rendu complet)
+      { path: ':slug', loadComponent: () => import('./pages/card-page').then((m) => m.CardPage),
+        resolve: { fiche: (r: ActivatedRouteSnapshot, s: RouterStateSnapshot) => import('./cards/fiche').then((m) => m.ficheResolver(r, s)) } },
     ],
   },
   { path: '**', redirectTo: '' },

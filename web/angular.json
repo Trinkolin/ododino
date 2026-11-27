@@ -49,7 +49,7 @@
                 "output": "icons"
               },
               {
-                "glob": "*.jpg",
+                "glob": "**/*.jpg",
                 "input": ".site/cards",
                 "output": "cards"
               }

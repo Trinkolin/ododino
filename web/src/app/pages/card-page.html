@@ -1,0 +1,65 @@
+@if (fiche(); as f) {
+  @if (text(); as t) {
+    <article [attr.lang]="i18n.lang()">
+      <a class="back" [routerLink]="['/', i18n.lang()]" [fragment]="mapFragment()">{{ L().viewOnMap }}</a>
+      @if (f.draft) { <p class="draft">{{ L().draft }}</p> }
+      <h1>{{ t.title }}</h1>
+
+      @if (f.photo; as p) {
+        <figure class="hero">
+          <img [src]="p.src" [alt]="t.alt" [width]="p.width" [height]="p.height" />
+          <figcaption>{{ L().photo }} : <a [href]="p.sourceUrl" target="_blank" rel="noopener">{{ p.author }}</a>,
+            <a [href]="p.licenseUrl" target="_blank" rel="noopener">{{ p.license }}</a></figcaption>
+        </figure>
+      }
+
+      @if (f.altitude != null || f.lonLat || f.trails.length) {
+        <aside class="facts">
+          <h2>{{ L().practical }}</h2>
+          @if (f.altitude != null || f.lonLat) {
+            <dl>
+              @if (f.altitude != null) { <dt>{{ L().altitude }}</dt><dd>{{ i18n.num(f.altitude) }} m</dd> }
+              @if (f.lonLat; as c) { <dt>{{ L().coords }}</dt><dd>{{ c[1].toFixed(5) }}, {{ c[0].toFixed(5) }}</dd> }
+            </dl>
+          }
+          @if (f.trails.length) {
+            <h3>{{ L().trails }}</h3>
+            <ul class="trails">
+              @for (tr of f.trails; track tr.id) {
+                <li>
+                  <a [routerLink]="['/', i18n.lang()]" [fragment]="'trail=' + tr.id">{{ tr.name }}</a>
+                  @if (tr.km != null) {
+                    <span class="muted"> — {{ i18n.num(tr.km, 1) }} km, +{{ tr.gain }} m / −{{ tr.loss }} m, {{ L().timeEst }} {{ hm(tr.minutes ?? 0) }}</span>
+                  }
+                  @if (tr.experts) { <span class="experts"> ⚠ {{ L().experts }}</span> }
+                </li>
+              }
+            </ul>
+          }
+          <a mat-stroked-button [routerLink]="['/', i18n.lang()]" [fragment]="mapFragment()"><odo-icon name="map" /> {{ L().viewOnMap.replace('← ', '') }}</a>
+        </aside>
+      }
+
+      <!-- HTML produit par le Markdown réduit (tools/content.py) : aucune balise venue du texte -->
+      <div class="body" [innerHTML]="t.body" (click)="bodyClick($event)"></div>
+
+      @if (intro(); as slug) {
+        <p class="intro-link"><a [routerLink]="['/', i18n.lang(), slug]">{{ L().intro }}</a></p>
+      }
+      <p class="safety">{{ L().safety }} <strong>112</strong></p>
+
+      <h2>{{ L().sources }}</h2>
+      <ul class="sources">
+        @for (s of f.sources; track s.url) {
+          <li><a [href]="s.url" target="_blank" rel="noopener">{{ s.title }}</a>@if (s.consulted) { ({{ L().consulted }} {{ date(s.consulted) }}) }</li>
+        }
+      </ul>
+      <p class="muted">{{ L().updated }} {{ date(f.updated) }}</p>
+    </article>
+  }
+} @else {
+  <article>
+    <a class="back" [routerLink]="['/', i18n.lang()]">{{ L().viewOnMap }}</a>
+    <h1>404</h1>
+  </article>
+}

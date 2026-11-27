@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import {
   ChangeDetectionStrategy, Component, PLATFORM_ID, computed, effect, inject, untracked, viewChild,
 } from '@angular/core';
@@ -36,6 +37,7 @@ export class MapPage {
   protected readonly state = inject(MapStateService);
   private readonly data = inject(DataService);
   private readonly route = inject(RouteService);
+  private readonly activated = inject(ActivatedRoute);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly mapView = viewChild(MapView);
   protected readonly tabIndex = computed(() => TABS.indexOf(this.state.tab()));
@@ -45,7 +47,8 @@ export class MapPage {
     effect(() => {
       if (!this.data.loaded()) return;
       untracked(() => {
-        const m = location.hash.match(/^#(poi|trail|route)=(.+)$/);
+        // fragment du routeur : à jour même quand on arrive d'une fiche (« Voir sur la carte »)
+        const m = ('#' + (this.activated.snapshot.fragment ?? '')).match(/^#(poi|trail|route)=(.+)$/);
         if (!m) return;
         if (m[1] === 'route') {
           this.state.tab.set('route');

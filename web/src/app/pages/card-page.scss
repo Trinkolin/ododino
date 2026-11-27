@@ -1,0 +1,54 @@
+// la page défile seule sous la barre du haut (la carte, elle, occupe toute la hauteur)
+:host { display: block; height: 100%; overflow: auto; background: var(--mat-sys-surface); }
+
+article {
+  max-width: 760px; margin: 0 auto; padding: 16px 20px 48px;
+  font: var(--mat-sys-body-large); color: var(--mat-sys-on-surface);
+}
+a { color: var(--mat-sys-primary); }
+.back { display: inline-block; margin: 4px 0 8px; font: var(--mat-sys-label-large); text-decoration: none; }
+.back:hover { text-decoration: underline; }
+h1 { font: 600 clamp(30px, 5vw, 42px)/1.15 Fraunces, Georgia, serif; margin: 8px 0 18px; color: var(--mat-sys-primary); }
+h2 { font: 600 24px/1.25 Fraunces, Georgia, serif; margin: 32px 0 10px; }
+h3 { font: var(--mat-sys-title-small); margin: 14px 0 6px; }
+.muted { color: var(--mat-sys-on-surface-variant); font: var(--mat-sys-body-small); }
+.draft { background: var(--mat-sys-error-container); color: var(--mat-sys-on-error-container); padding: 8px 12px; border-radius: 10px; }
+
+.hero { margin: 0 0 20px; }
+.hero img { display: block; width: 100%; height: auto; max-height: 60vh; object-fit: cover; border-radius: 16px; }
+.hero figcaption { margin-top: 6px; color: var(--mat-sys-on-surface-variant); font: var(--mat-sys-body-small); }
+
+.facts {
+  background: var(--mat-sys-surface-container-low); border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px; padding: 4px 18px 16px; margin: 0 0 8px;
+}
+.facts h2 { margin-top: 12px; font-size: 20px; }
+.facts dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
+.facts dt { color: var(--mat-sys-on-surface-variant); }
+.facts dd { margin: 0; }
+.trails { margin: 0 0 14px; padding-left: 20px; }
+.trails li { margin: 4px 0; }
+.experts { color: #c92a2a; font: var(--mat-sys-body-small); }
+.facts odo-icon { width: 18px; height: 18px; margin-right: 4px; }
+
+// texte de la fiche (HTML du Markdown réduit)
+.body { line-height: 1.65; }
+.body ::ng-deep p { margin: 0 0 14px; }
+.body ::ng-deep ul { padding-left: 22px; margin: 0 0 14px; }
+.body ::ng-deep li { margin: 4px 0; }
+
+.intro-link { margin: 24px 0 0; font: var(--mat-sys-title-medium); }
+.intro-link a { text-decoration: none; }
+.safety {
+  margin: 24px 0 0; padding: 10px 14px; border-radius: 12px; font: var(--mat-sys-body-medium);
+  background: var(--mat-sys-tertiary-container); color: var(--mat-sys-on-tertiary-container);
+}
+.sources { padding-left: 20px; font: var(--mat-sys-body-medium); }
+.sources li { margin: 4px 0; }
+
+@media (max-width: 760px) {
+  article { padding: 12px 16px 40px; }
+  .hero { margin-inline: -16px; }
+  .hero img { border-radius: 0; }
+  .hero figcaption { padding-inline: 16px; }
+}

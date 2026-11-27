@@ -34,7 +34,9 @@ cd web && npx ng test --watch=false   # tests Angular (Vitest)
 `web/scripts/prepare.mjs` (lancé avant chaque build) génère les traductions depuis `../i18n.js` (seule source),
 copie les icônes Material Symbols choisies (liste dans le script) et les dossiers `data/ fonts/ tiles/ icons/`
 dans `web/.site/` (Angular refuse les fichiers hors de `web/`), puis lance `tools/export_app.py` (Python requis)
-pour les fiches (`featured.json`, `cards.json`, vignettes). Carte : `web/src/app/map/` (Leaflet chargé seulement
+pour les fiches (`featured.json`, `cards.json`, vignettes, photos ; et une fiche par fichier JSON dans
+`web/src/app/cards/generated/`, ignoré par git, chargée par `ficheResolver` et pré-rendue en 5 langues ;
+`ODODINO_DRAFTS=1` ajoute les brouillons). `npx ng build` seul ne relance pas `prepare.mjs` : passer par `npm run build`. Carte : `web/src/app/map/` (Leaflet chargé seulement
 dans le navigateur, `MapStateService` = état partagé : onglet, tiroir, filtres, sélection). Pas de Google Fonts ni de police d'icônes :
 polices du site et SVG via `<odo-icon>`.
 
