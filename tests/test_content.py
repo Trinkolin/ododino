@@ -25,7 +25,8 @@ class Fiches(unittest.TestCase):
                     page = (Path(tmp) / lang / f["slug"] / "index.html").read_text(encoding="utf-8")
                     self.assertIn(f'<html lang="{lang}">', page)
                     self.assertEqual(bool(f["meta"].get("photo")), 'class="hero"' in page, f["slug"])
-                self.assertIn(f["meta"]["osm"], index)
+                for osm in ([f["meta"]["osm"]] if f["meta"].get("osm") else []) + f["meta"].get("also", []):
+                    self.assertEqual(index[osm]["slug"], f["slug"])
 
     def test_seules_les_fiches_relues_sont_publiees(self):
         publiees = {f["slug"] for f in content.load()}
@@ -52,6 +53,20 @@ class Markdown(unittest.TestCase):
 
     def test_pas_de_lien_non_https(self):
         self.assertNotIn("<a ", content.markdown("[x](javascript:alert(1))"))
+        self.assertNotIn("<a ", content.markdown("[x](../../etc/)"))
+
+    def test_lien_vers_une_autre_fiche(self):
+        self.assertIn('<a href="../matajur/">le Matajur</a>', content.markdown("[le Matajur](../matajur/)"))
+
+    def test_les_liens_entre_fiches_menent_a_une_fiche(self):
+        # une fiche publiée ne peut renvoyer qu'à une fiche publiée (un brouillon n'est pas en ligne)
+        tous = {f["slug"] for f in content.load(include_drafts=True)}
+        publies = {f["slug"] for f in content.load()}
+        for f in content.load(include_drafts=True):
+            cibles = publies if f["meta"]["status"] == "relu" else tous
+            for lang, (_, body) in f["texts"].items():
+                for target in __import__("re").findall(r"\]\(\.\./([a-z0-9-]+)/\)", body):
+                    self.assertIn(target, cibles, f"{f['slug']}/{lang}.md → {target}")
 
 
 if __name__ == "__main__":

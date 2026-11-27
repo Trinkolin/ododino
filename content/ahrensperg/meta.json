@@ -1,0 +1,20 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "node/6375753843",
+  "also": ["node/6124702523"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Cascafico",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:La_lastra_della_Banca_di_Antro.jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (sl) – Grad Ahrensperg", "url": "https://sl.wikipedia.org/wiki/Grad_Ahrensperg", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Slavia friulana (banche, lastre di pietra)", "url": "https://it.wikipedia.org/wiki/Slavia_friulana", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Pulfero", "url": "https://it.wikipedia.org/wiki/Pulfero", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org/node/6375753843" }
+  ],
+  "_notes": "Fiche commune château + lastra (voce 14). Chiesa di Biacis : Wikipedia sl dice SS. Giacomo e Anna costruita nel 1511 sul luogo del castello ; voce Pulfero dice San Giacomo, origini XII-XIII s., forma attuale 1520 : seguita la voce Pulfero. Foto del castello su Commons (Ahrensperg 1-3.tif) con ponteggi : scelta la foto della lastra. Nome sloveno di Tarcetta (Tarčet ?) da verificare."
+}

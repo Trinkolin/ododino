@@ -87,7 +87,9 @@ def _inline(s):
     s = html.escape(s, quote=True)
     s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"(?<![*\w])\*(?!\s)(.+?)(?<!\s)\*(?![*\w])", r"<em>\1</em>", s)
-    return re.sub(r"\[([^\]]+)\]\((https://[^)\s]+)\)", r'<a href="\2" rel="noopener">\1</a>', s)
+    s = re.sub(r"\[([^\]]+)\]\((https://[^)\s]+)\)", r'<a href="\2" rel="noopener">\1</a>', s)
+    # lien vers une autre fiche, dans la même langue : [le Matajur](../matajur/)
+    return re.sub(r"\[([^\]]+)\]\((\.\./[a-z0-9-]+/)\)", r'<a href="\2">\1</a>', s)
 
 
 def markdown(text):
@@ -137,14 +139,19 @@ def _fmt_date(iso, lang):
     return DATE_FORMATS[lang].format(d=d, m=m, y=y)
 
 
-def render(fiche, lang, labels, places, trails, draft):
+def render(fiche, lang, labels, places, trails, draft, intro=None):
+    """intro : slug de la fiche d'introduction à proposer en bas de page (si elle sera en ligne)."""
     L, meta, slug = labels[lang], fiche["meta"], fiche["slug"]
     head, body = fiche["texts"][lang]
     e = lambda s: html.escape(str(s), quote=True)  # noqa: E731
     # Une fiche décrit un lieu (data/pois.geojson) ou un sentier (data/trails.geojson). Pour un sentier, la
     # carte s'ouvre sur le sentier, qui vient en tête de la liste « Sentiers », et on n'affiche pas de
     # coordonnées : le premier point du tracé OSM n'est pas toujours le départ (relation saisie à l'envers).
-    if meta["osm"] in places:
+    # Sans « osm » : fiche d'introduction (la Benečija), qui renvoie simplement à la carte.
+    if not meta.get("osm"):
+        map_url = f"../../index.html?lang={lang}"
+        coords, trail_ids = [], meta.get("trails", [])
+    elif meta["osm"] in places:
         lon, lat = places[meta["osm"]]
         map_url = f"../../index.html?lang={lang}#poi={meta['osm']}"
         coords = [f"<dt>{e(L['coords'])}</dt><dd>{lat:.5f}, {lon:.5f}</dd>"]
@@ -228,13 +235,14 @@ def render(fiche, lang, labels, places, trails, draft):
     <p><a href="{map_url}">{e(L['viewOnMap'])}</a></p>
     <h1 class="title">{e(head['title'])}</h1>
     {hero}
-    <aside class="facts">
+    {f'''<aside class="facts">
       <h2>{e(L['practical'])}</h2>
       {f"<dl>{''.join(rows)}</dl>" if rows else ''}
       {f"<h3>{e(L['trails'])}</h3><ul>{''.join(trail_items)}</ul>" if trail_items else ''}
       <p><a href="{map_url}">{e(L['viewOnMap'])}</a></p>
-    </aside>
+    </aside>''' if rows or trail_items else ''}
     {markdown(body)}
+    {f'<p class="intro-link"><a href="../{intro}/">{e(L["intro"])}</a></p>' if intro and intro != slug else ''}
     <p class="safety-note">{e(L['safety'])} <strong>112</strong></p>
     <h2>{e(L['sources'])}</h2>
     <ul class="sources">{sources}</ul>
@@ -259,12 +267,15 @@ def build(out, include_drafts=False):
     labels = json.loads((CONTENT / "labels.json").read_text(encoding="utf-8"))
     places, trails = _places_and_trails()
     written, index, urls = [], {}, []
-    for f in load(include_drafts):
+    fiches = load(include_drafts)
+    # la fiche d'introduction (sans lieu sur la carte) est proposée en bas de toutes les autres
+    intro = next((f["slug"] for f in fiches if not f["meta"].get("osm")), None)
+    for f in fiches:
         draft = f["meta"]["status"] != "relu"
         for lang in LANGS:
             d = out / lang / f["slug"]
             d.mkdir(parents=True, exist_ok=True)
-            (d / "index.html").write_text(render(f, lang, labels, places, trails, draft), encoding="utf-8")
+            (d / "index.html").write_text(render(f, lang, labels, places, trails, draft, intro), encoding="utf-8")
             written.append(f"{lang}/{f['slug']}/index.html")
             if f["meta"].get("photo"):
                 name = f["meta"]["photo"]["file"]
@@ -272,5 +283,11 @@ def build(out, include_drafts=False):
                 written.append(f"{lang}/{f['slug']}/{name}")
             if not draft:
                 urls.append(f"{SITE_URL}/{lang}/{f['slug']}/")
-        index[f["meta"]["osm"]] = {"slug": f["slug"], "titles": {l: f["texts"][l][0]["title"] for l in LANGS}}
+        # « Lire la fiche » sur la carte : le lieu principal, et les lieux voisins décrits par la même fiche
+        # (« also » : la lastra de Biacis pour la fiche du château d'Ahrensperg, par exemple)
+        entry = {"slug": f["slug"], "titles": {l: f["texts"][l][0]["title"] for l in LANGS}}
+        for osm in ([f["meta"]["osm"]] if f["meta"].get("osm") else []) + f["meta"].get("also", []):
+            if osm not in places and osm not in trails:
+                raise ContentError(f"{f['slug']} : « {osm} » absent de data/pois.geojson et de data/trails.geojson")
+            index[osm] = entry
     return written, index, urls
