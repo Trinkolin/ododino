@@ -20,6 +20,18 @@ Décisions prises le 22/11/2026.
 - Photos : celles de l'auteur, sinon Wikimedia Commons avec crédit.
 - Une page par fiche phare et par langue (`/de/matajur`…), pour le référencement.
 
+### Liste des 20 lieux phares (validée le 27/11/2026)
+1. Matajur · 2. Monte San Martino · 3. Monte Cum / Hum · 4. Monte Mia (Grande Guerre)
+5. Grotte de San Giovanni d'Antro · 6. Le Natisone
+7. San Volfango (Drenchia) · 8. Santa Maria del Buonconsiglio (Liessa) · 9. San Quirino (San Pietro)
+10. Santi Ermacora e Fortunato (Savogna) · 11. San Leonardo
+12. La Benečija / Slavia friulana (introduction) · 13. SMO – Slovensko multimedijsko okno
+14. Château d'Ahrensperg et Lastra della Banca di Antro · 15. Refuge Solarie et bivouac Zanuso
+16. Sentiero Naturalistico del Matajur · 17. Sentiero Hum · 18. Trail nelle Valli del Natisone
+19. Alpe Adria Trail (E27–E28) · 20. Cividale, porte d'entrée (Tempietto longobardo, Ponte del Diavolo)
+En réserve : San Paolo (Stregna), Sentiero delle Krivapete (tracé OSM incomplet).
+Ordre de travail : une fiche pilote (Matajur) relue par l'auteur, puis les 19 autres.
+
 ## Randonnée
 - Fichier GPX et profil d'altitude intégrés dans la fiche de chaque sentier, relief ombré.
 - Site installable (PWA) et utilisable hors connexion : POI, sentiers, position GPS, fond vectoriel

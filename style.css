@@ -176,6 +176,34 @@ body.page { display: block; height: auto; }
 .about li { margin-bottom: 6px; }
 .about .muted { color: var(--muted); font-size: 13px; }
 
+/* Fiches phares (pages générées par tools/content.py) */
+.h1like { font: 600 24px/1.1 Fraunces, Georgia, serif; margin: 0; }
+.h1like a { color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.h1like .logo { border-radius: 7px; }
+.langs a { color: var(--muted); font: 600 11.5px Inter, sans-serif; padding: 6px 7px; text-decoration: none; }
+.langs a + a { border-left: 1px solid var(--line); }
+.langs a.on { background: var(--accent); color: #fff; }
+.fiche .title { font-size: 34px; margin-top: 10px; }
+.fiche .draft { background: #fff3bf; color: #5c4a00; border: 1px solid #ffe066; border-radius: 8px; padding: 8px 12px; font-weight: 600; }
+.fiche .hero { margin: 12px 0 20px; }
+.fiche .hero img { width: 100%; height: auto; border-radius: 12px; display: block; }
+.fiche .hero figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.fiche .facts { border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: 14px 16px; margin: 0 0 20px; }
+.fiche .facts h2 { margin-top: 0; }
+.fiche .facts h3 { font-size: 14px; margin: 12px 0 4px; }
+.fiche .facts dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; font-size: 14px; }
+.fiche .facts dt { color: var(--muted); }
+.fiche .facts dd { margin: 0; }
+.fiche .facts ul { padding-left: 18px; margin: 4px 0; }
+.fiche .facts li { font-size: 14px; }
+.fiche .safety-note { background: #fff4e6; color: #5c3b0b; border: 1px solid #ffd8a8; border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+.fiche .sources li { font-size: 13px; }
+@media (prefers-color-scheme: dark) {
+  .fiche .draft { background: #3d3200; color: #ffe8a3; border-color: #665200; }
+  .fiche .safety-note { background: #3a2a12; color: #ffe8cc; border-color: #5c3b0b; }
+}
+.pop .read-more { margin: 8px 0 0; font-weight: 600; }
+
 /* Mobile : le panneau devient un tiroir */
 @media (max-width: 760px) {
   body { flex-direction: column-reverse; }

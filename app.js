@@ -184,8 +184,10 @@
 
   // ---------- Chargement ----------
   const get = (f) => fetch(`data/${f}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  Promise.all([get('boundary.geojson'), get('pois.geojson'), get('trails.geojson'), get('paths.geojson'), get('meta.json')])
-    .then(([boundary, pois, trails, paths, meta]) => {
+  // featured.json : fiches phares publiées (généré par le build ; absent en développement)
+  Promise.all([get('boundary.geojson'), get('pois.geojson'), get('trails.geojson'), get('paths.geojson'), get('meta.json'), get('featured.json')])
+    .then(([boundary, pois, trails, paths, meta, featured]) => {
+      state.featured = featured || {};
       if (meta?.updated) { state.updated = meta.updated; applyStaticText(); }
       if (boundary) drawBoundary(boundary);
       if (paths) drawPaths(paths);
@@ -480,8 +482,12 @@
     if (!x) return;
     if (state.selTrail) selectTrail(null);
     if (!layers.pois.hasLayer(x.marker)) layers.pois.addLayer(x.marker);
+    // S'abonner AVANT de bouger : sans animation (onglet en arrière-plan…), flyTo termine tout de suite
+    // et l'événement passerait avant l'abonnement. Filet de sécurité si la carte ne bouge pas du tout.
+    const open = () => { if (!x.marker.isPopupOpen()) x.marker.openPopup(); };
+    map.once('moveend', open);
     map.flyTo([x.lat, x.lon], Math.max(map.getZoom(), 15), { duration: .6 });
-    map.once('moveend', () => x.marker.openPopup());
+    setTimeout(open, 1000);
     if (window.innerWidth <= 760) $('#panel').classList.add('collapsed');
   }
 
@@ -523,6 +529,7 @@
       </dl>
       ${p.description ? `<p>${esc(p.description)}</p>` : ''}
       ${p.cat === 'water' || p.cat === 'drinking' ? `<p class="water-note">⚠ ${esc(t('waterNote'))}</p>` : ''}
+      ${state.featured?.[p.osm] ? `<p class="read-more"><a href="${lang}/${state.featured[p.osm].slug}/">📖 ${esc(t('readMore'))}</a></p>` : ''}
       <div class="links">
         <a href="https://www.openstreetmap.org/directions?to=${x.lat},${x.lon}" target="_blank" rel="noopener">${esc(t('directions'))} ↗</a>
         ${safeUrl(web) ? `<a href="${safeUrl(web)}" target="_blank" rel="noopener noreferrer">${esc(t('website'))} ↗</a>` : ''}

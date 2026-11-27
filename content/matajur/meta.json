@@ -1,0 +1,22 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "node/474844098",
+  "facts": { "altitude": 1641 },
+  "trails": ["relation/12625336", "relation/1867679", "relation/2063063", "relation/1867680", "relation/7919890"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Parin (sl.wikipedia.org)",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Matajur,_Nadi%C5%BEa_in_Mija.jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – Matajur", "url": "https://it.wikipedia.org/wiki/Matajur", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Rifugio Pelizzo", "url": "https://it.wikipedia.org/wiki/Rifugio_Pelizzo", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (sl) – Matajur", "url": "https://sl.wikipedia.org/wiki/Matajur", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (en) – Matajur", "url": "https://en.wikipedia.org/wiki/Matajur", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL) · Ododino, Copernicus DEM GLO-30", "url": "https://www.openstreetmap.org/node/474844098" }
+  ],
+  "_notes": "Altitudine : 1641 m (Wikipedia it) / 1642 m (sl, en) / 1645 m (tag OSM). Date Rommel : attacco dal 24 ottobre 1917, vetta presa dopo 52 ore (it) = 26 ottobre (en). Orari e posti letto del rifugio non riportati : fonti del 2024 o precedenti. Giglio : Wikipedia it scrive « giglio della Carnia o lilium carnicum », specie inesistente ; si tratta quasi certamente di Lilium carniolicum (giglio di Carniola), endemico delle Alpi Giulie."
+}

@@ -1,0 +1,232 @@
+"""Fiches phares : du dossier content/ aux pages publiées /<langue>/<fiche>/ (voir GLOSSARY.md).
+
+Une fiche = un dossier content/<slug>/ avec :
+  - meta.json  : statut (« brouillon » ou « relu »), lieu OSM, sentiers, photo et sa licence, sources ;
+  - <langue>.md (it, sl, en, de, fr) : en-tête (title, description, alt) puis le texte.
+Seules les fiches « relu » sont publiées. `py tools/build.py --drafts` publie aussi les brouillons,
+marqués comme tels et exclus des moteurs de recherche, pour les relire en local.
+
+Le texte suit un Markdown réduit : titres « ## », paragraphes, listes « - », **gras**, *italique*, [liens](https://…).
+Tout le reste est affiché tel quel (échappé) : aucune balise HTML n'est acceptée dans le texte.
+"""
+import html
+import json
+import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+CONTENT = ROOT / "content"
+LANGS = ["it", "sl", "en", "de", "fr"]
+SITE_URL = "https://ododino.it"      # domaine prévu (PLAN.md) : sert aux liens absolus (hreflang, sitemap)
+STATUSES = ("brouillon", "relu")
+
+
+class ContentError(Exception):
+    pass
+
+
+# ---------- Lecture ----------
+def _front_matter(text, where):
+    m = re.match(r"^---\n(.*?)\n---\n(.*)$", text.replace("\r\n", "\n"), re.S)
+    if not m:
+        raise ContentError(f"{where} : en-tête « --- … --- » manquant")
+    head = {}
+    for line in m.group(1).splitlines():
+        if line.strip():
+            k, _, v = line.partition(":")
+            head[k.strip()] = v.strip()
+    for k in ("title", "description", "alt"):
+        if not head.get(k):
+            raise ContentError(f"{where} : « {k} » manquant dans l'en-tête")
+    return head, m.group(2).strip()
+
+
+def load(include_drafts=False):
+    """Fiches à publier, triées par slug : [{slug, meta, texts: {langue: (en-tête, corps)}}]."""
+    fiches = []
+    for d in sorted(p for p in CONTENT.iterdir() if (p / "meta.json").exists()) if CONTENT.exists() else []:
+        meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+        if meta.get("status") not in STATUSES:
+            raise ContentError(f"{d.name}/meta.json : statut « {meta.get('status')} » inconnu ({' ou '.join(STATUSES)})")
+        if meta["status"] != "relu" and not include_drafts:
+            continue
+        texts = {}
+        for lang in LANGS:
+            f = d / f"{lang}.md"
+            if not f.exists():
+                raise ContentError(f"{d.name} : traduction « {lang}.md » manquante")
+            texts[lang] = _front_matter(f.read_text(encoding="utf-8"), f"{d.name}/{lang}.md")
+        if not (d / meta["photo"]["file"]).exists():
+            raise ContentError(f"{d.name} : photo « {meta['photo']['file']} » introuvable")
+        fiches.append({"slug": d.name, "dir": d, "meta": meta, "texts": texts})
+    return fiches
+
+
+# ---------- Markdown réduit ----------
+def _inline(s):
+    s = html.escape(s, quote=True)
+    s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
+    s = re.sub(r"(?<![*\w])\*(?!\s)(.+?)(?<!\s)\*(?![*\w])", r"<em>\1</em>", s)
+    return re.sub(r"\[([^\]]+)\]\((https://[^)\s]+)\)", r'<a href="\2" rel="noopener">\1</a>', s)
+
+
+def markdown(text):
+    out, para, items = [], [], []
+
+    def flush():
+        if para:
+            out.append(f"<p>{_inline(' '.join(para))}</p>")
+            para.clear()
+        if items:
+            out.append("<ul>" + "".join(f"<li>{_inline(i)}</li>" for i in items) + "</ul>")
+            items.clear()
+    for line in text.splitlines():
+        s = line.strip()
+        if not s:
+            flush()
+        elif s.startswith("## "):
+            flush()
+            out.append(f"<h2>{_inline(s[3:])}</h2>")
+        elif s.startswith("- "):
+            if para:
+                flush()
+            items.append(s[2:])
+        else:
+            if items:
+                flush()
+            para.append(s)
+    flush()
+    return "\n".join(out)
+
+
+# ---------- Pages ----------
+def _fmt_minutes(m):
+    return f"{m // 60} h {m % 60:02d}"
+
+
+def _fmt_km(v, lang):
+    s = f"{v:.1f}"
+    return s if lang == "en" else s.replace(".", ",")
+
+
+DATE_FORMATS = {"it": "{d}/{m}/{y}", "fr": "{d}/{m}/{y}", "en": "{d}/{m}/{y}", "de": "{d}.{m}.{y}", "sl": "{d}. {m}. {y}"}
+
+
+def _fmt_date(iso, lang):
+    y, m, d = iso.split("-")
+    return DATE_FORMATS[lang].format(d=d, m=m, y=y)
+
+
+def render(fiche, lang, labels, places, trails, draft):
+    L, meta, slug = labels[lang], fiche["meta"], fiche["slug"]
+    head, body = fiche["texts"][lang]
+    e = lambda s: html.escape(str(s), quote=True)  # noqa: E731
+    place = places.get(meta["osm"])
+    if not place:
+        raise ContentError(f"{slug} : lieu OSM « {meta['osm']} » absent de data/pois.geojson")
+    lon, lat = place
+    map_url = f"../../index.html?lang={lang}#poi={meta['osm']}"
+    alternates = "\n".join(
+        f'  <link rel="alternate" hreflang="{l}" href="{SITE_URL}/{l}/{slug}/">' for l in LANGS)
+    langs_nav = "".join(
+        f'<a href="../../{l}/{slug}/" lang="{l}" class="{"on" if l == lang else ""}"'
+        f'{" aria-current=\"page\"" if l == lang else ""}>{l.upper()}</a>' for l in LANGS)
+
+    rows = [f"<dt>{e(L['altitude'])}</dt><dd>{e(meta['facts']['altitude'])} m</dd>",
+            f"<dt>{e(L['coords'])}</dt><dd>{lat:.5f}, {lon:.5f}</dd>"]
+    trail_items = []
+    for rid in meta.get("trails", []):
+        t = trails.get(rid)
+        if not t:
+            raise ContentError(f"{slug} : sentier « {rid} » absent de data/trails.geojson")
+        name = (f"{t['ref']} · " if t.get("ref") else "") + (t.get("name") or f"CAI {t.get('ref', '')}")
+        st = t.get("stats")
+        facts = f" — {_fmt_km(st['km'], lang)} km, +{st['gain']} m, {e(L['timeEst'])} {_fmt_minutes(st['minutes'])}" if st else ""
+        hard = " ⚠ " + e(L["experts"]) if t.get("cai_scale") in ("EE", "EEA") else ""
+        trail_items.append(f'<li><a href="../../index.html?lang={lang}#trail={rid}">{e(name)}</a>{facts}{hard}</li>')
+    photo = meta["photo"]
+    sources = "".join(
+        f'<li><a href="{e(s["url"])}" rel="noopener">{e(s["title"])}</a>'
+        + (f" ({e(L['consulted'])} {_fmt_date(s['consulted'], lang)})" if s.get("consulted") else "") + "</li>"
+        for s in meta["sources"])
+
+    return f"""<!doctype html>
+<html lang="{lang}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://ododino.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>{e(head['title'])} · Ododino</title>
+  <meta name="description" content="{e(head['description'])}">
+  {'<meta name="robots" content="noindex">' if draft else ''}
+  <link rel="canonical" href="{SITE_URL}/{lang}/{slug}/">
+{alternates}
+  <link rel="alternate" hreflang="x-default" href="{SITE_URL}/it/{slug}/">
+  <meta property="og:title" content="{e(head['title'])} · Ododino">
+  <meta property="og:description" content="{e(head['description'])}">
+  <meta property="og:image" content="{SITE_URL}/{lang}/{slug}/{e(photo['file'])}">
+  <link rel="icon" href="../../icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../fonts/fonts.css">
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body class="page">
+  <article class="about fiche">
+    <header class="brand">
+      <div>
+        <p class="h1like"><a href="../../index.html?lang={lang}"><img src="../../icons/logo.svg" alt="" class="logo" width="28" height="28"> Ododino</a></p>
+        <p class="sub">{e(L['subtitle'])}</p>
+      </div>
+      <nav class="langs" aria-label="{e(L['language'])}">{langs_nav}</nav>
+    </header>
+    {f'<p class="draft">{e(L["draft"])}</p>' if draft else ''}
+    <p><a href="{map_url}">{e(L['viewOnMap'])}</a></p>
+    <h1 class="title">{e(head['title'])}</h1>
+    <figure class="hero">
+      <img src="{e(photo['file'])}" alt="{e(head['alt'])}" width="1280" height="960">
+      <figcaption>{e(L['photo'])} : <a href="{e(photo['source_url'])}" rel="noopener">{e(photo['author'])}</a>,
+        <a href="{e(photo['license_url'])}" rel="noopener">{e(photo['license'])}</a></figcaption>
+    </figure>
+    <aside class="facts">
+      <h2>{e(L['practical'])}</h2>
+      <dl>{''.join(rows)}</dl>
+      {f"<h3>{e(L['trails'])}</h3><ul>{''.join(trail_items)}</ul>" if trail_items else ''}
+      <p><a href="{map_url}">{e(L['viewOnMap'])}</a></p>
+    </aside>
+    {markdown(body)}
+    <p class="safety-note">{e(L['safety'])} <strong>112</strong></p>
+    <h2>{e(L['sources'])}</h2>
+    <ul class="sources">{sources}</ul>
+    <p class="muted">{e(L['updated'])} {_fmt_date(meta['updated'], lang)}</p>
+  </article>
+  <script data-goatcounter="https://ododino.goatcounter.com/count" async src="../../vendor/goatcounter/count.js"></script>
+</body>
+</html>
+"""
+
+
+def _places_and_trails():
+    pois = json.loads((ROOT / "data" / "pois.geojson").read_text(encoding="utf-8"))["features"]
+    places = {f["properties"]["osm"]: tuple(f["geometry"]["coordinates"]) for f in pois}
+    trails = {f["properties"]["osm"]: f["properties"]
+              for f in json.loads((ROOT / "data" / "trails.geojson").read_text(encoding="utf-8"))["features"]}
+    return places, trails
+
+
+def build(out, include_drafts=False):
+    """Écrit les pages dans `out`. Renvoie (fichiers écrits, index pour la carte, adresses du sitemap)."""
+    labels = json.loads((CONTENT / "labels.json").read_text(encoding="utf-8"))
+    places, trails = _places_and_trails()
+    written, index, urls = [], {}, []
+    for f in load(include_drafts):
+        draft = f["meta"]["status"] != "relu"
+        for lang in LANGS:
+            d = out / lang / f["slug"]
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "index.html").write_text(render(f, lang, labels, places, trails, draft), encoding="utf-8")
+            (d / f["meta"]["photo"]["file"]).write_bytes((f["dir"] / f["meta"]["photo"]["file"]).read_bytes())
+            written += [f"{lang}/{f['slug']}/index.html", f"{lang}/{f['slug']}/{f['meta']['photo']['file']}"]
+            if not draft:
+                urls.append(f"{SITE_URL}/{lang}/{f['slug']}/")
+        index[f["meta"]["osm"]] = {"slug": f["slug"], "titles": {l: f["texts"][l][0]["title"] for l in LANGS}}
+    return written, index, urls

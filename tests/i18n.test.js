@@ -58,3 +58,13 @@ test('toute clé utilisée par les pages et les scripts existe', () => {
   const missing = [...used].filter((k) => get(I.it, k) === undefined);
   assert.deepEqual(missing, [], 'clés utilisées mais absentes de i18n.js');
 });
+
+test('étiquettes des fiches (content/labels.json) : 5 langues complètes et non vides', () => {
+  const labels = JSON.parse(read('content/labels.json'));
+  assert.deepEqual(Object.keys(labels).sort(), [...LANGS].sort());
+  const ref = Object.keys(labels.it).sort();
+  for (const l of LANGS) {
+    assert.deepEqual(Object.keys(labels[l]).sort(), ref, `labels « ${l} »`);
+    for (const k of ref) assert.ok(String(labels[l][k]).trim(), `labels.${l}.${k} est vide`);
+  }
+});

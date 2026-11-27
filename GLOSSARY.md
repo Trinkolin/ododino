@@ -19,3 +19,9 @@ _À éviter_ : « manifest » (réservé à `manifest.webmanifest`), « liste de
 
 **Publié seulement** : fichiers mis en ligne mais jamais mis en cache par le site (`sw.js`,
 `offline-files.json`, `.nojekyll`).
+
+**Fiche phare** : page éditoriale sur un lieu ou un sentier (une des 20 de PLAN.md), rédigée à partir de
+sources citées, en 5 langues : `content/<fiche>/` (meta.json + it.md, sl.md, en.md, de.md, fr.md), publiée
+à l'adresse `/<langue>/<fiche>/`. Statut **brouillon** (non publiée) ou **relu** (publiée, après relecture
+de la version française par l'auteur).
+_À éviter_ : « article », « page lieu ».

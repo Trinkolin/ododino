@@ -35,6 +35,7 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 | `tools/enrich_trails.py` | ordre des tronçons, altitudes, dénivelés, temps, profils et GPX |
 | `tools/prepare_dem.py` | prépare une fois les altitudes Copernicus et le relief ombré |
 | `tools/dem/` | altitudes de la zone (2 Mo), lues par `enrich_trails.py` |
+| `content/`, `tools/content.py` | fiches phares et leur mise en page (pages `/<langue>/<fiche>/`) |
 | `tools/build.py` | seul module qui connaît les fichiers du site (coquille, pack hors ligne, publié seulement — voir `GLOSSARY.md`) ; assemble `_site/`, écrit l'inventaire et **échoue** si un fichier est oublié |
 | `.github/workflows/site.yml` | mise à jour hebdomadaire et publication |
 
@@ -49,6 +50,17 @@ traceur calculent dénivelés et temps de la même façon. La GitHub Action refu
 Les autres tests couvrent les règles de sécurité du traceur (`router.test.js`), le garde-fou des données
 (`test_osm.py`) et les traductions (`i18n.test.js` : 5 langues complètes, aucune clé utilisée qui
 n'existe pas).
+
+## Fiches phares (contenu éditorial)
+Chaque fiche est un dossier `content/<fiche>/` : `meta.json` (statut, lieu OSM, sentiers, photo et licence,
+sources) et un fichier par langue (`it.md`, `sl.md`, `en.md`, `de.md`, `fr.md`) avec un petit en-tête
+(`title`, `description`, `alt`) puis le texte (Markdown réduit : `##` titres, listes `-`, **gras**, *italique*,
+liens https). Les étiquettes communes des pages sont dans `content/labels.json`.
+
+- Seules les fiches au statut `"relu"` sont publiées (pages, sitemap, lien « Lire la fiche » sur la carte).
+- Pour relire un brouillon en local : `py tools/build.py --drafts` puis `py tools/serve.py 8766 _site` et
+  ouvrir http://localhost:8766/fr/<fiche>/ (bandeau « Brouillon », page non indexée).
+- Pour publier : relire la version française, puis passer `"status"` à `"relu"` dans `meta.json`.
 
 ## Mettre à jour les données à la main
 ```

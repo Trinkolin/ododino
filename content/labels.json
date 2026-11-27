@@ -1,0 +1,47 @@
+{
+  "it": {
+    "subtitle": "Valli del Natisone · Benecia", "language": "Lingua",
+    "draft": "Bozza non ancora riletta: non pubblicata.",
+    "viewOnMap": "← Vedi sulla mappa", "photo": "Foto", "practical": "In breve",
+    "altitude": "Altitudine", "coords": "Coordinate", "trails": "Sentieri", "timeEst": "tempo indicativo",
+    "experts": "per escursionisti esperti",
+    "safety": "Informazioni indicative, da verificare sul posto (meteo, stato dei sentieri, aperture). Emergenza:",
+    "sources": "Fonti", "consulted": "consultato il", "updated": "Scheda aggiornata il"
+  },
+  "sl": {
+    "subtitle": "Nediške doline · Benečija", "language": "Jezik",
+    "draft": "Osnutek, še ni pregledan: ni objavljen.",
+    "viewOnMap": "← Ogled na zemljevidu", "photo": "Fotografija", "practical": "Na kratko",
+    "altitude": "Nadmorska višina", "coords": "Koordinate", "trails": "Poti", "timeEst": "okvirni čas",
+    "experts": "za izkušene pohodnike",
+    "safety": "Okvirni podatki, ki jih preverite na kraju samem (vreme, stanje poti, odpiralni časi). Klic v sili:",
+    "sources": "Viri", "consulted": "dostopano", "updated": "Stran posodobljena"
+  },
+  "en": {
+    "subtitle": "Natisone Valleys · Benečija", "language": "Language",
+    "draft": "Draft, not yet reviewed: not published.",
+    "viewOnMap": "← View on the map", "photo": "Photo", "practical": "At a glance",
+    "altitude": "Elevation", "coords": "Coordinates", "trails": "Trails", "timeEst": "indicative time",
+    "experts": "for experienced hikers",
+    "safety": "Indicative information, to be checked on site (weather, trail conditions, opening times). Emergency:",
+    "sources": "Sources", "consulted": "accessed", "updated": "Page updated"
+  },
+  "de": {
+    "subtitle": "Natisonetäler · Benečija", "language": "Sprache",
+    "draft": "Entwurf, noch nicht geprüft: nicht veröffentlicht.",
+    "viewOnMap": "← Auf der Karte ansehen", "photo": "Foto", "practical": "Auf einen Blick",
+    "altitude": "Höhe", "coords": "Koordinaten", "trails": "Wanderwege", "timeEst": "Gehzeit (Richtwert)",
+    "experts": "für geübte Wanderer",
+    "safety": "Richtwerte, vor Ort zu prüfen (Wetter, Wegzustand, Öffnungszeiten). Notruf:",
+    "sources": "Quellen", "consulted": "abgerufen am", "updated": "Seite aktualisiert am"
+  },
+  "fr": {
+    "subtitle": "Vallées du Natisone · Benečija", "language": "Langue",
+    "draft": "Brouillon pas encore relu : non publié.",
+    "viewOnMap": "← Voir sur la carte", "photo": "Photo", "practical": "En bref",
+    "altitude": "Altitude", "coords": "Coordonnées", "trails": "Sentiers", "timeEst": "temps indicatif",
+    "experts": "pour randonneurs expérimentés",
+    "safety": "Informations indicatives, à vérifier sur place (météo, état des sentiers, ouvertures). Urgences :",
+    "sources": "Sources", "consulted": "consulté le", "updated": "Fiche mise à jour le"
+  }
+}
