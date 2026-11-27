@@ -15,6 +15,11 @@ class RangeHandler(SimpleHTTPRequestHandler):
                       ".webmanifest": "application/manifest+json", ".pmtiles": "application/octet-stream",
                       ".geojson": "application/geo+json", ".gpx": "application/gpx+xml", ".js": "text/javascript"}
 
+    def end_headers(self):
+        # En local, le navigateur revalide chaque fichier : on voit toujours la dernière version modifiée
+        self.send_header("Cache-Control", "no-cache")
+        super().end_headers()
+
     def send_head(self):
         m = re.fullmatch(r"bytes=(\d+)-(\d*)", self.headers.get("Range", ""))
         path = self.translate_path(self.path)

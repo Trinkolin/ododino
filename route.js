@@ -17,7 +17,7 @@
   function loadGraph() {
     if (!loading) {
       loading = fetch('data/graph.json').then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-        .then((raw) => (R = window.OdoRouter.create(raw)))
+        .then((raw) => { R = window.OdoRouter.create(raw); $('#routeLoading').hidden = true; return R; })
         .catch((err) => { loading = null; throw err; }); // nouvel essai au prochain clic
     }
     return loading;
@@ -179,7 +179,7 @@
   O.route = {
     onTab(active) {
       map.getContainer().classList.toggle('routing', active);
-      if (active) loadGraph().then(() => { $('#routeLoading').hidden = true; }).catch(() => { $('#routeLoading').textContent = t('routeLoadError'); });
+      if (active) loadGraph().catch(() => { $('#routeLoading').textContent = t('routeLoadError'); });
     },
     onMapClick: addPoint,
     fromHash,

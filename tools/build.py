@@ -97,10 +97,10 @@ def check(shell):
         raise BuildError("\n  ".join(["fichiers oubliés :"] + missing))
 
 
-def digest(files):
+def digest(files, base=ROOT):
     h = hashlib.sha1()
     for f in sorted(files):
-        h.update(f.encode() + b"\0" + (ROOT / f).read_bytes())
+        h.update(f.encode() + b"\0" + (base / f).read_bytes())
     return h.hexdigest()[:10]
 
 
@@ -115,9 +115,24 @@ def main():
         shutil.copy2(ROOT / f, OUT / f)
     (OUT / ".nojekyll").write_text("")  # GitHub Pages : servir les fichiers tels quels
 
+    # Empreinte dans l'adresse des scripts et styles des pages (app.js?v=…) : un navigateur sans service
+    # worker ne peut jamais mélanger un nouveau app.js avec un ancien i18n.js gardé en cache.
+    for name in PAGES:
+        page = OUT / name
+        html = page.read_text(encoding="utf-8")
+
+        def stamp(m):
+            ref = m.group(2)
+            if ref in shell and ref.endswith((".js", ".css")):
+                return f'{m.group(1)}="{ref}?v={digest([ref])[:8]}"'
+            return m.group(0)
+        page.write_text(re.sub(r'\b(src|href)="([^"?#:]+)"', stamp, html), encoding="utf-8")
+
     # Inventaire → service worker : la liste de la coquille et sa version sont écrites dans sw.js lui-même,
-    # pour que tout changement du site change sw.js (c'est ce que le navigateur surveille).
-    version = digest(shell)
+    # pour que tout changement du site change sw.js (c'est ce que le navigateur surveille). La version est
+    # l'empreinte des fichiers PUBLIÉS (après empreintes d'adresses), pas des sources : un changement du
+    # build seul doit lui aussi déclencher la mise à jour chez les visiteurs.
+    version = digest(shell, OUT)
     sw = (OUT / "sw.js").read_text(encoding="utf-8")
     site = json.dumps({"version": version, "shell": ["./"] + shell}, ensure_ascii=False)
     sw, n = SW_INVENTORY.subn(lambda _: f"const SITE = {site};", sw)

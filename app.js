@@ -191,7 +191,11 @@
       if (paths) drawPaths(paths);
       if (trails) initTrails(trails);
       if (pois) initPois(pois);
-      applyHash();
+      // Le lien (#route=, #trail=…) n'est appliqué qu'une fois TOUS les scripts de la page exécutés :
+      // hors connexion, les données sortent du cache avant que route.js soit chargé, et le lien
+      // « route= » était alors ignoré sans erreur.
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyHash, { once: true });
+      else applyHash();
     });
 
   function drawBoundary(fc) {
