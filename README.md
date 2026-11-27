@@ -28,11 +28,21 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 | `route.js` | traceur d'itinéraire (calcul dans le navigateur, export/import GPX) |
 | `data/graph.json` | graphe de routage du traceur (généré) |
 | `tools/build_graph.py` | construit le graphe : chemins, pistes et petites routes + altitudes |
+| `geo.js`, `tools/geo.py` | calculs partagés (distance, profil, dénivelés, temps de marche), jumeaux testés ensemble |
 | `tools/enrich_trails.py` | ordre des tronçons, altitudes, dénivelés, temps, profils et GPX |
 | `tools/prepare_dem.py` | prépare une fois les altitudes Copernicus et le relief ombré |
 | `tools/dem/` | altitudes de la zone (2 Mo), lues par `enrich_trails.py` |
 | `tools/build.py` | seul module qui connaît les fichiers du site (coquille, pack hors ligne, publié seulement — voir `GLOSSARY.md`) ; assemble `_site/`, écrit l'inventaire et **échoue** si un fichier est oublié |
 | `.github/workflows/site.yml` | mise à jour hebdomadaire et publication |
+
+## Tests
+```
+py -m unittest discover -s tests
+node --test
+```
+`tests/geo-cases.json` contient des cas calculés à la main que `tools/geo.py` (scripts) et `geo.js`
+(navigateur) doivent tous deux retrouver : c'est ce qui garantit que les fiches des sentiers et le
+traceur calculent dénivelés et temps de la même façon. La GitHub Action refuse de publier si un test échoue.
 
 ## Mettre à jour les données à la main
 ```

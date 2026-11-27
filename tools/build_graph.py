@@ -2,24 +2,24 @@
 
 Chemins, pistes et petites routes OSM de la zone (communes + ~2 km de marge, Slovénie comprise),
 découpés aux carrefours, avec l'altitude de chaque point (Copernicus GLO-30).
-Lancé chaque semaine après fetch_osm.py et enrich_trails.py — pur Python, sans dépendance.
+Lancé chaque semaine (voir tools/update_data.py) — pur Python, sans dépendance.
 
-Format compact (entiers), lu par app.js :
+Format compact (entiers), lu par route.js :
   {"v": 1, "nodes": [lon5, lat5, ...],                       # carrefours, ×1e5
    "edges": [[a, b, cls, sac, marked, len_m, gain_ab, loss_ab, dlon, dlat, ele, dlon, dlat, ele, ...], ...]}
   - le tracé d'une arête part du nœud a : écarts successifs (×1e5) et altitude (m) de chaque point ;
   - cls : 0 sentier, 1 piste, 2 petite route, 3 route tertiaire, 4 route secondaire ;
-  - sac : 0 inconnu, 1 à 6 = T1 à T6 ; marked : 1 si le tronçon fait partie d'un sentier balisé.
+  - sac : 0 inconnu, 1 à 6 = T1 à T6 ; marked : 1 si le tronçon fait partie d'un sentier balisé ;
+  - gain_ab / loss_ab : somme brute entre sommets, sans lissage : sert seulement au COÛT du calcul
+    d'itinéraire ; les chiffres affichés viennent de geo.js (même méthode que les fiches).
 
 Usage :  py tools/build_graph.py
 """
 import json
-import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from enrich_trails import Dem, dist  # noqa: E402
-from fetch_osm import overpass  # noqa: E402
+from fetch_osm import overpass
+from geo import Dem, dist
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 BBOX = "46.03,13.35,46.30,13.73"  # = zone couverte par le modèle d'altitude

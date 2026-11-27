@@ -74,6 +74,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Tests (mêmes cas pour Python et JavaScript)
+        run: |
+          python -m unittest discover -s tests
+          node --test
+
       - name: Assembler le site
         run: python tools/build.py
 

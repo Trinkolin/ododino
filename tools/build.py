@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "_site"
 
 SHELL = [
-    "index.html", "about.html", "style.css", "app.js", "route.js", "offline.js", "about.js", "i18n.js",
+    "index.html", "about.html", "style.css", "geo.js", "app.js", "route.js", "offline.js", "about.js", "i18n.js",
     "manifest.webmanifest",
     "vendor/leaflet/leaflet.js", "vendor/leaflet/leaflet.css", "vendor/leaflet/images/*.png",
     "vendor/protomaps-leaflet/protomaps-leaflet.js", "vendor/goatcounter/count.js",

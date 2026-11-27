@@ -8,58 +8,22 @@ Lit   : data/trails.geojson, data/pois.geojson, tools/dem/natisone_dem.*
 
 Usage :  py tools/enrich_trails.py
 """
-import array
-import gzip
 import json
-import math
 from pathlib import Path
 from xml.sax.saxutils import escape
 
+import geo
+from geo import Dem, dist, resample
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
-DEM = ROOT / "tools" / "dem"
 
-STEP_M = 20          # pas de rééchantillonnage le long du tracé
-SMOOTH = 5           # moyenne glissante (≈ 100 m) : le modèle à 30 m est bruité
-PROFILE_POINTS = 300 # points gardés pour le graphique
 NEAR_M = 250         # rayon des points utiles ajoutés au GPX
 SITE = "https://ododino.it"
 WPT_CATS = {"drinking", "hut", "peak"}
 
 
-# ---------- Altitudes --------------------------------------------------------
-class Dem:
-    def __init__(self):
-        m = json.loads((DEM / "natisone_dem.json").read_text(encoding="utf-8"))
-        self.__dict__.update(m)
-        raw = gzip.decompress((DEM / "natisone_dem.bin.gz").read_bytes())
-        self.a = array.array("h")
-        self.a.frombytes(raw)
-        if array.array("h", [1]).tobytes() != b"\x01\x00":  # machine gros-boutiste
-            self.a.byteswap()
-
-    def ele(self, lon, lat):
-        """Altitude (m) par interpolation bilinéaire, None hors de la zone."""
-        fr = (self.north - lat) / self.dlat
-        fc = (lon - self.west) / self.dlon
-        if not (0 <= fr <= self.rows - 1 and 0 <= fc <= self.cols - 1):
-            return None
-        r0, c0 = min(int(fr), self.rows - 2), min(int(fc), self.cols - 2)
-        tr, tc = fr - r0, fc - c0
-        a, w = self.a, self.cols
-        v = (a[r0 * w + c0] * (1 - tr) * (1 - tc) + a[(r0 + 1) * w + c0] * tr * (1 - tc)
-             + a[r0 * w + c0 + 1] * (1 - tr) * tc + a[(r0 + 1) * w + c0 + 1] * tr * tc)
-        return v * self.scale
-
-
 # ---------- Géométrie --------------------------------------------------------
-def dist(a, b):
-    p1, p2 = math.radians(a[1]), math.radians(b[1])
-    dp, dl = p2 - p1, math.radians(b[0] - a[0])
-    h = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
-    return 2 * 6371e3 * math.asin(math.sqrt(h))
-
-
 def key(pt):
     return (round(pt[0], 5), round(pt[1], 5))
 
@@ -110,34 +74,6 @@ def order_parts(parts):
         else:
             segs.append(list(p))
     return segs, False
-
-
-def resample(line, step):
-    """Points tous les `step` mètres le long de la ligne : [(d, lon, lat)]."""
-    out, d_tot = [(0.0, line[0][0], line[0][1])], 0.0
-    next_d = step
-    for a, b in zip(line, line[1:]):
-        seg = dist(a, b)
-        while seg > 0 and d_tot + seg >= next_d:
-            t = (next_d - d_tot) / seg
-            out.append((next_d, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
-            next_d += step
-        d_tot += seg
-    if out[-1][0] < d_tot:
-        out.append((d_tot, line[-1][0], line[-1][1]))
-    return out, d_tot
-
-
-def smooth(v, w):
-    h = w // 2
-    return [sum(v[max(0, i - h):i + h + 1]) / len(v[max(0, i - h):i + h + 1]) for i in range(len(v))]
-
-
-def walking_minutes(km, gain, loss):
-    """Méthode des clubs alpins (DIN 33466) : 4 km/h, 300 m/h en montée, 500 m/h en descente."""
-    h = km / 4
-    v = gain / 300 + loss / 500
-    return max(5, round((max(h, v) + min(h, v) / 2) * 60 / 5) * 5)
 
 
 # ---------- GPX --------------------------------------------------------------
@@ -203,7 +139,7 @@ def main():
         p.pop("stats", None)
 
         # points utiles proches du tracé
-        samples = [s for seg in segments for s in resample(seg, STEP_M)[0]]
+        samples = [s for seg in segments for s in resample(seg)[0]]
         wpts = []
         for poi in pois:
             lon, lat = poi["geometry"]["coordinates"]
@@ -221,26 +157,14 @@ def main():
 
         if not ordered:
             continue
-        # profil, dénivelés, temps (uniquement pour une ligne continue)
-        pts, total = resample(line, STEP_M)
-        eles = [dem.ele(lon, lat) for _, lon, lat in pts]
-        if any(e is None for e in eles):  # sentier qui sort de la zone couverte par le modèle
+        # profil, dénivelés, temps (uniquement pour une ligne continue) : tools/geo.py
+        prof = geo.profile(line, dem.ele)
+        if prof is None:  # sentier qui sort de la zone couverte par le modèle
             p["ordered"] = False
             continue
-        eles = smooth(eles, SMOOTH)
-        gain = sum(max(0, b - a) for a, b in zip(eles, eles[1:]))
-        loss = sum(max(0, a - b) for a, b in zip(eles, eles[1:]))
-        km = total / 1000
-        p["stats"] = {"km": round(km, 2), "gain": round(gain), "loss": round(loss),
-                      "min": round(min(eles)), "max": round(max(eles)),
-                      "minutes": walking_minutes(km, gain, loss)}
-        k = max(1, math.ceil(len(pts) / PROFILE_POINTS))
-        idx = list(range(0, len(pts), k))
-        if idx[-1] != len(pts) - 1:
-            idx.append(len(pts) - 1)
-        prof = {"d": [round(pts[i][0]) for i in idx], "e": [round(eles[i]) for i in idx],
-                "lon": [round(pts[i][1], 5) for i in idx], "lat": [round(pts[i][2], 5) for i in idx]}
-        (DATA / "profiles" / f"{rid}.json").write_text(json.dumps(prof, separators=(",", ":")), encoding="utf-8")
+        p["stats"] = {"km": round(prof["km"], 2), "gain": round(prof["gain"]), "loss": round(prof["loss"]),
+                      "min": round(prof["min"]), "max": round(prof["max"]), "minutes": prof["minutes"]}
+        (DATA / "profiles" / f"{rid}.json").write_text(json.dumps(prof["pr"], separators=(",", ":")), encoding="utf-8")
         n_ok += 1
 
     (DATA / "trails.geojson").write_text(json.dumps(trails, ensure_ascii=False, separators=(",", ":")),

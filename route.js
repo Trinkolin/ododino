@@ -15,16 +15,8 @@
   const COLOR = '#0b7285', WARN = '#e03131';
   const opts = { marked: false, alpine: false };
 
-  // ---------- Géo ----------
-  const R = 6371e3;
-  function dist(a, b) {
-    const p1 = a[1] * Math.PI / 180, p2 = b[1] * Math.PI / 180;
-    const dp = p2 - p1, dl = (b[0] - a[0]) * Math.PI / 180;
-    const h = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(h));
-  }
-  // Méthode des clubs alpins (DIN 33466), en minutes — la même que pour les fiches des sentiers
-  const din = (kmv, gain, loss) => { const h = kmv / 4, v = gain / 300 + loss / 500; return (Math.max(h, v) + Math.min(h, v) / 2) * 60; };
+  // ---------- Géo : geo.js (mêmes calculs que tools/geo.py, vérifiés par tests/geo-cases.json) ----------
+  const { dist, rawMinutes } = window.OdoGeo;
 
   // ---------- Graphe ----------
   let G = null, loading = null;
@@ -69,7 +61,7 @@
 
   // Coût d'une arête dans un sens : temps de marche (min) × type de voie
   function cost(e, fwd) {
-    const c = din(e.len / 1000, fwd ? e.gain : e.loss, fwd ? e.loss : e.gain) * CLASS_FACTOR[e.cls];
+    const c = rawMinutes(e.len / 1000, fwd ? e.gain : e.loss, fwd ? e.loss : e.gain) * CLASS_FACTOR[e.cls];
     return e.mk ? c * MARKED_BONUS : c;
   }
 
@@ -127,34 +119,6 @@
     return out;
   }
 
-  // Même méthode que tools/enrich_trails.py : points tous les 20 m, moyenne glissante sur 5
-  function profileOf(coords) {
-    const res = [[0, coords[0][0], coords[0][1], coords[0][2]]];
-    let tot = 0, next = 20;
-    for (let i = 1; i < coords.length; i++) {
-      const a = coords[i - 1], b = coords[i], s = dist(a, b);
-      while (s > 0 && tot + s >= next) {
-        const f = (next - tot) / s;
-        res.push([next, a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] == null ? null : a[2] + (b[2] - a[2]) * f]);
-        next += 20;
-      }
-      tot += s;
-    }
-    const last = coords[coords.length - 1];
-    if (res[res.length - 1][0] < tot) res.push([tot, last[0], last[1], last[2]]);
-    const hasEle = res.every((r) => r[3] != null);
-    if (!hasEle) return { total: tot, hasEle };
-    const e0 = res.map((r) => r[3]);
-    const e = e0.map((_, i) => { const w = e0.slice(Math.max(0, i - 2), i + 3); return w.reduce((x, y) => x + y, 0) / w.length; });
-    let gain = 0, loss = 0;
-    for (let i = 1; i < e.length; i++) { const d = e[i] - e[i - 1]; if (d > 0) gain += d; else loss -= d; }
-    const k = Math.max(1, Math.ceil(res.length / 300)), idx = [];
-    for (let i = 0; i < res.length; i += k) idx.push(i);
-    if (idx[idx.length - 1] !== res.length - 1) idx.push(res.length - 1);
-    return { total: tot, hasEle, gain, loss, min: Math.min(...e), max: Math.max(...e),
-      pr: { d: idx.map((i) => res[i][0]), e: idx.map((i) => e[i]), lon: idx.map((i) => res[i][1]), lat: idx.map((i) => res[i][2]) } };
-  }
-
   function render() {
     layer.clearLayers();
     const coords = st.imported ? st.imported.coords : routeCoords();
@@ -205,10 +169,10 @@
     warn.hidden = !msgs.length;
     warn.innerHTML = msgs.map((m) => `<p>⚠ ${esc(m)}</p>`).join('');
     if (coords.length < 2) { box.innerHTML = ''; prof.hidden = true; return; }
-    const p = profileOf(coords);
+    const p = window.OdoGeo.profile(coords);
     const m = (v) => `${Math.round(v).toLocaleString(O.locale())} m`;
     const row = (k, v) => `<span>${esc(t(k))} <b>${esc(v)}</b></span>`;
-    box.innerHTML = `<div class="row">${row('length', km(p.total / 1000) + ' km')}${p.hasEle ? row('timeEst', O.hm(Math.max(5, Math.round(din(p.total / 1000, p.gain, p.loss) / 5) * 5))) : ''}</div>`
+    box.innerHTML = `<div class="row">${row('length', km(p.total / 1000) + ' km')}${p.hasEle ? row('timeEst', O.hm(p.minutes)) : ''}</div>`
       + (p.hasEle ? `<div class="row">${row('ascent', m(p.gain))}${row('descent', m(p.loss))}${row('altRange', `${m(p.min)} – ${m(p.max)}`)}</div>`
         : `<p class="muted">${esc(t('importNoEle'))}</p>`);
     prof.hidden = !p.hasEle;

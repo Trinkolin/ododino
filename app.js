@@ -134,13 +134,7 @@
   map.on('zoomend', zoomClass); zoomClass();
 
   // ---------- Utilitaires géo ----------
-  const R = 6371e3;
-  function dist(a, b) { // [lon,lat]
-    const p1 = a[1] * Math.PI / 180, p2 = b[1] * Math.PI / 180;
-    const dp = p2 - p1, dl = (b[0] - a[0]) * Math.PI / 180;
-    const h = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(h));
-  }
+  const { dist } = window.OdoGeo; // geo.js
   const lengthOf = (parts) => parts.reduce((s, p) => s + p.slice(1).reduce((u, c, i) => u + dist(p[i], c), 0), 0);
   const ll = (parts) => parts.map((p) => p.map(([x, y]) => [y, x]));
   const km = (v) => v.toLocaleString(locale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 });
