@@ -276,8 +276,8 @@
     $('#nTrails').textContent = state.trails.length;
     $('#nets').addEventListener('click', (e) => {
       const b = e.target.closest('.chip'); if (!b) return;
-      const k = b.dataset.net;
-      state.nets.has(k) ? state.nets.delete(k) : state.nets.add(k);
+      if (b.dataset.all) toggleAll(state.nets, presentKeys(state.trails, (x) => x.net));
+      else { const k = b.dataset.net; state.nets.has(k) ? state.nets.delete(k) : state.nets.add(k); }
       renderNetChips(); renderTrails();
     });
     $('#qt').addEventListener('input', renderTrails);
@@ -289,7 +289,7 @@
   function renderNetChips() {
     const counts = {};
     state.trails.forEach((x) => { counts[x.net] = (counts[x.net] || 0) + 1; });
-    $('#nets').innerHTML = Object.entries(NETS).filter(([k]) => counts[k]).map(([k, n]) =>
+    $('#nets').innerHTML = allChip(state.nets, Object.keys(counts)) + Object.entries(NETS).filter(([k]) => counts[k]).map(([k, n]) =>
       `<button class="chip ${state.nets.has(k) ? '' : 'off'}" data-net="${k}"><span class="dot" style="background:${n.color}"></span>${esc(T().nets[k])} <small>${counts[k]}</small></button>`).join('');
   }
 
@@ -444,7 +444,8 @@
     $('#cats').addEventListener('click', (e) => {
       const b = e.target.closest('.chip'); if (!b) return;
       const k = b.dataset.cat;
-      if (e.detail === 2) state.cats = new Set([k]); // double-clic : seulement cette catégorie
+      if (b.dataset.all) toggleAll(state.cats, presentKeys(state.pois, (x) => x.p.cat));
+      else if (e.detail === 2) state.cats = new Set([k]); // double-clic : seulement cette catégorie
       else state.cats.has(k) ? state.cats.delete(k) : state.cats.add(k);
       renderCatChips(); renderPois();
     });
@@ -452,10 +453,22 @@
     renderCatChips(); renderPois();
   }
 
+  // Bouton « Tout masquer / Tout afficher » en tête d'une liste de filtres : s'il reste au moins un
+  // filtre actif, il les désactive tous ; sinon il les réactive tous (seulement ceux présents dans les données).
+  const presentKeys = (items, key) => [...new Set(items.map(key))];
+  function toggleAll(selected, present) {
+    const any = present.some((k) => selected.has(k));
+    present.forEach((k) => (any ? selected.delete(k) : selected.add(k)));
+  }
+  function allChip(selected, present) {
+    const any = present.some((k) => selected.has(k));
+    return `<button class="chip chip-all" data-all="1">${esc(t(any ? 'hideAll' : 'showAll'))}</button>`;
+  }
+
   function renderCatChips() {
     const counts = {};
     state.pois.forEach((x) => { counts[x.p.cat] = (counts[x.p.cat] || 0) + 1; });
-    $('#cats').innerHTML = Object.entries(CATS).filter(([k]) => counts[k]).map(([k, c]) =>
+    $('#cats').innerHTML = allChip(state.cats, Object.keys(counts)) + Object.entries(CATS).filter(([k]) => counts[k]).map(([k, c]) =>
       `<button class="chip ${state.cats.has(k) ? '' : 'off'}" data-cat="${k}"><span class="dot" style="background:${c.color}"></span>${esc(catLabel(k))} <small>${counts[k]}</small></button>`).join('');
   }
 
