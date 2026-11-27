@@ -83,8 +83,11 @@ fois dans `tools/content.py`.
 
 ## État en cours
 
-Le site est publié sur https://trinkolin.github.io/ododino/ (dépôt `Trinkolin/ododino`). Un commit local
-« Domaine ododino.com » (SITE_URL et contact passent à ododino.com) est volontairement gardé **au-dessus**
-de `main` publié, sans être poussé, tant que les DNS Namecheap ne pointent pas vers GitHub Pages
-(étape 4 du README). Pour publier autre chose avant lui : placer le nouveau commit avant ce commit, puis
-pousser seulement le nouveau commit (`git push origin <sha>:refs/heads/main`).
+Le site est publié sur https://trinkolin.github.io/ododino/ (dépôt `Trinkolin/ododino`). Le commit
+« Domaine ododino.com » (SITE_URL et contact passent à ododino.com) attend sur la branche locale
+`domaine-ododino-com`, sans être poussé, tant que les DNS Namecheap ne pointent pas vers GitHub Pages
+(étape 4 du README) ; il suffira alors de le reprendre sur `main` (`git cherry-pick`).
+
+Décidé par l'auteur : réécriture du front en **Angular + Angular Material**, application installable, directement
+sur `main`, fiches comprises (pré-rendues), avec le service worker d'Angular. Chaque push sur `main` publie le
+site : ne pousser la version Angular qu'une fois au niveau de la version actuelle.
