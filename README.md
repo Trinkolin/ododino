@@ -24,6 +24,8 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 | `tiles/basemap.pmtiles` | fond vectoriel hors ligne de la zone (Protomaps, extrait de temps en temps) |
 | `offline.js`, `sw.js`, `manifest.webmanifest` | site installable et mode hors connexion |
 | `icons/` | logo et icônes (générés par `tools/make_icons.py`) |
+| `tools/update_data.py` | **mise à jour de toutes les données** (seule commande à lancer) |
+| `tools/osm.py` | accès Overpass et garde-fou d'écriture, partagés |
 | `tools/fetch_osm.py` | télécharge les données OSM via Overpass |
 | `router.js` | calcul du traceur (A*, règles de sécurité T3/T4, lien partageable), sans carte ni page : testé par `tests/router.test.js` |
 | `route.js` | affichage du traceur : carte, panneau, export/import GPX |
@@ -47,14 +49,12 @@ traceur calculent dénivelés et temps de la même façon. La GitHub Action refu
 
 ## Mettre à jour les données à la main
 ```
-py tools/fetch_osm.py
-py tools/enrich_trails.py
-py tools/build_graph.py
+py tools/update_data.py
 ```
-Le premier script régénère `data/*.geojson` : limites des communes, POI, sentiers balisés et chemins.
-Si Overpass renvoie nettement moins d'éléments qu'avant (moins de 70 %), la mise à jour de ce fichier
-est refusée, pour ne pas publier des données tronquées. Le second **doit toujours suivre** : il ajoute
-profils, dénivelés, temps et GPX aux sentiers (sans lui, les fiches affichent « profil indisponible »).
+Une seule commande, qui enchaîne dans le bon ordre : données OpenStreetMap (`fetch_osm.py`), profils,
+temps et GPX des sentiers (`enrich_trails.py`), graphe du traceur (`build_graph.py`). Un jeu de données
+qui échoue (Overpass surchargé) ou qui revient nettement plus petit qu'avant (moins de 70 %) garde sa
+version précédente. `--skip-osm` recalcule seulement profils et GPX, sans réseau.
 
 Le fond hors ligne se rafraîchit à la main, de temps en temps (même environnement) :
 `.venv-dem/Scripts/python tools/extract_basemap.py`. Avant une publication, `py tools/build.py` dresse

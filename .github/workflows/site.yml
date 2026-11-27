@@ -32,18 +32,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Mettre à jour les données OpenStreetMap
-        # Overpass est parfois surchargé : dans ce cas on publie les données précédentes
-        continue-on-error: true
-        run: python tools/fetch_osm.py
-
-      - name: Altitudes, profils et GPX des sentiers
-        run: python tools/enrich_trails.py
-
-      - name: Graphe du traceur d'itinéraire
-        # comme pour les données OSM : en cas d'échec, on garde le graphe précédent
-        continue-on-error: true
-        run: python tools/build_graph.py
+      - name: Mettre à jour les données (OSM, sentiers, graphe du traceur)
+        # Une seule commande, dans le bon ordre. Un jeu OSM ou le graphe en échec garde sa version
+        # précédente ; si les sentiers échouent, le job échoue et rien n'est publié.
+        run: python tools/update_data.py
 
       - name: Enregistrer les nouvelles données
         run: |

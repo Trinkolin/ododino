@@ -15,11 +15,10 @@ Format compact (entiers), lu par route.js :
 
 Usage :  py tools/build_graph.py
 """
-import json
 from pathlib import Path
 
-from fetch_osm import overpass
 from geo import Dem, dist
+from osm import overpass, save_guarded
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 BBOX = "46.03,13.35,46.30,13.73"  # = zone couverte par le modèle d'altitude
@@ -109,12 +108,7 @@ def main():
             edges.append(e)
 
     out = DATA / "graph.json"
-    # garde-fou, comme pour les autres données : pas d'écrasement par une réponse tronquée
-    if out.exists():
-        before = len(json.loads(out.read_text(encoding="utf-8"))["edges"])
-        if before and len(edges) < before * 0.7:
-            raise RuntimeError(f"graphe : {len(edges)} arêtes contre {before} avant, mise à jour refusée")
-    out.write_text(json.dumps({"v": 1, "nodes": nodes, "edges": edges}, separators=(",", ":")), encoding="utf-8")
+    save_guarded(out, {"v": 1, "nodes": nodes, "edges": edges}, lambda d: len(d["edges"]))
     km = sum(e[5] for e in edges) / 1000
     print(f"Graphe : {len(nodes) // 2} carrefours, {len(edges)} tronçons, {km:.0f} km, "
           f"{out.stat().st_size / 1e6:.1f} Mo ({dropped} hors zone ignorés)")

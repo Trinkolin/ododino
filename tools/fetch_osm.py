@@ -1,20 +1,16 @@
 """Télécharge les données OpenStreetMap des Valli del Natisone via l'API Overpass
 et les convertit en GeoJSON compacts dans ../data/.
 
-Usage :  python tools/fetch_osm.py
+Usage :  py tools/fetch_osm.py   (d'habitude via tools/update_data.py, qui enchaîne la suite)
 Données © contributeurs OpenStreetMap, licence ODbL.
 """
 import json
+import sys
 import time
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
-ENDPOINTS = [
-    "https://overpass-api.de/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter",
-]
-UA = "ododino/0.2 (static site generator; github.com ododino)"
+from osm import overpass, save_guarded
+
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 # Les 7 communes des Valli del Natisone (Benečija)
@@ -72,22 +68,6 @@ Q_PATHS = f"""[out:json][timeout:180];{AREA}
 way["highway"~"^(path|footway|track|bridleway|steps)$"](area.a);
 out geom;
 """
-
-
-def overpass(query: str) -> dict:
-    body = urllib.parse.urlencode({"data": query}).encode()
-    last = None
-    for attempt in range(3):
-        for url in ENDPOINTS:
-            try:
-                req = urllib.request.Request(url, data=body, headers={"User-Agent": UA, "Accept": "application/json"})
-                with urllib.request.urlopen(req, timeout=240) as r:
-                    return json.load(r)
-            except Exception as e:  # noqa: BLE001
-                last = e
-                print(f"  ! {url}: {e}")
-        time.sleep(10 * (attempt + 1))
-    raise RuntimeError(f"Overpass injoignable : {last}")
 
 
 def r5(x):
@@ -255,32 +235,31 @@ def build_boundary(data):
 
 
 def save(name, feats):
-    DATA.mkdir(exist_ok=True)
     p = DATA / f"{name}.geojson"
-    # Garde-fou : une réponse Overpass vide ou tronquée ne doit pas écraser de bonnes données
-    if p.exists():
-        try:
-            before = len(json.loads(p.read_text(encoding="utf-8"))["features"])
-        except (ValueError, KeyError):
-            before = 0
-        if before and len(feats) < before * 0.7:
-            raise RuntimeError(f"{name} : {len(feats)} éléments contre {before} avant, mise à jour refusée")
-    p.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, ensure_ascii=False,
-                            separators=(",", ":")), encoding="utf-8")
+    save_guarded(p, {"type": "FeatureCollection", "features": feats}, lambda d: len(d["features"]))
     print(f"  -> {p.name}: {len(feats)} éléments, {p.stat().st_size // 1024} Ko")
 
 
+DATASETS = [("boundary", Q_BOUNDARY, build_boundary), ("pois", Q_POIS, build_pois),
+            ("trails", Q_ROUTES, build_routes), ("paths", Q_PATHS, build_paths)]
+
+
 def main():
-    steps = [("boundary", Q_BOUNDARY, build_boundary), ("pois", Q_POIS, build_pois),
-             ("trails", Q_ROUTES, build_routes), ("paths", Q_PATHS, build_paths)]
-    for name, q, fn in steps:
+    """Met à jour chaque jeu de données indépendamment ; renvoie la liste des jeux en échec
+    (leur version précédente est conservée). La date de mise à jour n'avance que si tout a réussi."""
+    failed = []
+    for name, q, fn in DATASETS:
         print(f"Téléchargement : {name}…")
-        save(name, fn(overpass(q)))
+        try:
+            save(name, fn(overpass(q)))
+        except Exception as e:  # noqa: BLE001 — un jeu en échec ne bloque pas les autres
+            print(f"  ! {name} inchangé : {e}")
+            failed.append(name)
         time.sleep(2)
-    meta = {"updated": time.strftime("%Y-%m-%d")}
-    (DATA / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
-    print("Terminé.")
+    if not failed:
+        (DATA / "meta.json").write_text(json.dumps({"updated": time.strftime("%Y-%m-%d")}), encoding="utf-8")
+    return failed
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(1 if main() else 0)
