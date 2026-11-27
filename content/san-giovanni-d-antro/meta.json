@@ -1,0 +1,20 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "node/2586593281",
+  "facts": { "altitude": 348 },
+  "trails": ["relation/2982053"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Giorgio Galeotti",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Chiesa_di_San_Giovanni_d%27Antro_-_Pulfero,_Udine,_Italia_-_31_Ottobre_2022.jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – San Giovanni d'Antro", "url": "https://it.wikipedia.org/wiki/San_Giovanni_d%27Antro", "consulted": "2026-11-27" },
+    { "title": "Grotta di San Giovanni d'Antro – sito ufficiale", "url": "https://www.grottadantro.it/" },
+    { "title": "OpenStreetMap (ODbL) · CAI FVG, sentiero 752", "url": "https://www.openstreetmap.org/node/2586593281" }
+  ],
+  "_notes": "Altitudine 348 m = ingresso della grotta (Wikipedia it). Wikipedia scrive « Andrea da Skofja Loka » : nelle altre lingue Andrej (forma slovena). « Ursus Speleus » = Ursus spelaeus, orso delle caverne. Gestione dal 2021 dell'Associazione Tarcetta : non citata, preferito il rinvio al sito ufficiale per orari e visite. Altezza dell'ingresso (30 m sulla valle) omessa : frase ambigua nella fonte."
+}

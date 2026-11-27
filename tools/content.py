@@ -26,6 +26,20 @@ class ContentError(Exception):
 
 
 # ---------- Lecture ----------
+def _jpeg_size(path):
+    """(largeur, hauteur) d'un JPEG, lue dans son en-tête, pour réserver la place de l'image dans la page."""
+    b = path.read_bytes()
+    if b[:2] != b"\xff\xd8":
+        raise ContentError(f"{path} : la photo doit être un JPEG")
+    i = 2
+    while i + 9 < len(b):
+        marker, length = b[i + 1], int.from_bytes(b[i + 2:i + 4], "big")
+        if marker in (0xC0, 0xC1, 0xC2):
+            return int.from_bytes(b[i + 7:i + 9], "big"), int.from_bytes(b[i + 5:i + 7], "big")
+        i += 2 + length
+    raise ContentError(f"{path} : dimensions introuvables")
+
+
 def _front_matter(text, where):
     m = re.match(r"^---\n(.*?)\n---\n(.*)$", text.replace("\r\n", "\n"), re.S)
     if not m:
@@ -35,7 +49,7 @@ def _front_matter(text, where):
         if line.strip():
             k, _, v = line.partition(":")
             head[k.strip()] = v.strip()
-    for k in ("title", "description", "alt"):
+    for k in ("title", "description"):
         if not head.get(k):
             raise ContentError(f"{where} : « {k} » manquant dans l'en-tête")
     return head, m.group(2).strip()
@@ -56,8 +70,14 @@ def load(include_drafts=False):
             if not f.exists():
                 raise ContentError(f"{d.name} : traduction « {lang}.md » manquante")
             texts[lang] = _front_matter(f.read_text(encoding="utf-8"), f"{d.name}/{lang}.md")
-        if not (d / meta["photo"]["file"]).exists():
-            raise ContentError(f"{d.name} : photo « {meta['photo']['file']} » introuvable")
+        photo = meta.get("photo")  # facultative : une fiche sans photo libre de droits reste publiable
+        if photo:
+            if not (d / photo["file"]).exists():
+                raise ContentError(f"{d.name} : photo « {photo['file']} » introuvable")
+            photo["size"] = _jpeg_size(d / photo["file"])
+            for lang, (head, _) in texts.items():
+                if not head.get("alt"):
+                    raise ContentError(f"{d.name}/{lang}.md : « alt » (description de la photo) manquant")
         fiches.append({"slug": d.name, "dir": d, "meta": meta, "texts": texts})
     return fiches
 
@@ -139,12 +159,24 @@ def render(fiche, lang, labels, places, trails, draft):
         t = trails.get(rid)
         if not t:
             raise ContentError(f"{slug} : sentier « {rid} » absent de data/trails.geojson")
-        name = (f"{t['ref']} · " if t.get("ref") else "") + (t.get("name") or f"CAI {t.get('ref', '')}")
+        if t.get("name"):
+            name = (f"{t['ref']} · " if t.get("ref") else "") + t["name"]
+        else:
+            name = f"CAI {t['ref']}" if t.get("ref") else rid
         st = t.get("stats")
         facts = f" — {_fmt_km(st['km'], lang)} km, +{st['gain']} m, {e(L['timeEst'])} {_fmt_minutes(st['minutes'])}" if st else ""
         hard = " ⚠ " + e(L["experts"]) if t.get("cai_scale") in ("EE", "EEA") else ""
         trail_items.append(f'<li><a href="../../index.html?lang={lang}#trail={rid}">{e(name)}</a>{facts}{hard}</li>')
-    photo = meta["photo"]
+    photo = meta.get("photo")
+    hero = og_image = ""
+    if photo:
+        w, h = photo["size"]
+        og_image = f'\n  <meta property="og:image" content="{SITE_URL}/{lang}/{slug}/{e(photo["file"])}">'
+        hero = f"""<figure class="hero">
+      <img src="{e(photo['file'])}" alt="{e(head['alt'])}" width="{w}" height="{h}">
+      <figcaption>{e(L['photo'])} : <a href="{e(photo['source_url'])}" rel="noopener">{e(photo['author'])}</a>,
+        <a href="{e(photo['license_url'])}" rel="noopener">{e(photo['license'])}</a></figcaption>
+    </figure>"""
     sources = "".join(
         f'<li><a href="{e(s["url"])}" rel="noopener">{e(s["title"])}</a>'
         + (f" ({e(L['consulted'])} {_fmt_date(s['consulted'], lang)})" if s.get("consulted") else "") + "</li>"
@@ -164,8 +196,7 @@ def render(fiche, lang, labels, places, trails, draft):
 {alternates}
   <link rel="alternate" hreflang="x-default" href="{SITE_URL}/it/{slug}/">
   <meta property="og:title" content="{e(head['title'])} · Ododino">
-  <meta property="og:description" content="{e(head['description'])}">
-  <meta property="og:image" content="{SITE_URL}/{lang}/{slug}/{e(photo['file'])}">
+  <meta property="og:description" content="{e(head['description'])}">{og_image}
   <link rel="icon" href="../../icons/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../fonts/fonts.css">
   <link rel="stylesheet" href="../../style.css">
@@ -182,11 +213,7 @@ def render(fiche, lang, labels, places, trails, draft):
     {f'<p class="draft">{e(L["draft"])}</p>' if draft else ''}
     <p><a href="{map_url}">{e(L['viewOnMap'])}</a></p>
     <h1 class="title">{e(head['title'])}</h1>
-    <figure class="hero">
-      <img src="{e(photo['file'])}" alt="{e(head['alt'])}" width="1280" height="960">
-      <figcaption>{e(L['photo'])} : <a href="{e(photo['source_url'])}" rel="noopener">{e(photo['author'])}</a>,
-        <a href="{e(photo['license_url'])}" rel="noopener">{e(photo['license'])}</a></figcaption>
-    </figure>
+    {hero}
     <aside class="facts">
       <h2>{e(L['practical'])}</h2>
       <dl>{''.join(rows)}</dl>
@@ -224,8 +251,11 @@ def build(out, include_drafts=False):
             d = out / lang / f["slug"]
             d.mkdir(parents=True, exist_ok=True)
             (d / "index.html").write_text(render(f, lang, labels, places, trails, draft), encoding="utf-8")
-            (d / f["meta"]["photo"]["file"]).write_bytes((f["dir"] / f["meta"]["photo"]["file"]).read_bytes())
-            written += [f"{lang}/{f['slug']}/index.html", f"{lang}/{f['slug']}/{f['meta']['photo']['file']}"]
+            written.append(f"{lang}/{f['slug']}/index.html")
+            if f["meta"].get("photo"):
+                name = f["meta"]["photo"]["file"]
+                (d / name).write_bytes((f["dir"] / name).read_bytes())
+                written.append(f"{lang}/{f['slug']}/{name}")
             if not draft:
                 urls.append(f"{SITE_URL}/{lang}/{f['slug']}/")
         index[f["meta"]["osm"]] = {"slug": f["slug"], "titles": {l: f["texts"][l][0]["title"] for l in LANGS}}

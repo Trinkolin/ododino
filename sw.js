@@ -41,6 +41,12 @@ async function rangeFromCache(req, cached) {
 }
 
 const isData = (p) => p.includes('/data/');
+
+// Hors connexion, page absente du cache (une fiche jamais ouverte, par exemple) : on renvoie vers la carte,
+// qui marche hors ligne. Servir index.html à cette adresse casserait ses chemins relatifs.
+function offlineFallback(req) {
+  return req.mode === 'navigate' ? Response.redirect(self.registration.scope, 302) : Response.error();
+}
 const ignoreSearch = { ignoreSearch: true };
 
 self.addEventListener('fetch', (e) => {
@@ -75,7 +81,7 @@ self.addEventListener('fetch', (e) => {
         caches.open(SHELL).then((c) => c.put(req, copy));
       }
       return res;
-    }).catch(() => hit || caches.match('index.html'));
+    }).catch(() => hit || offlineFallback(req));
     return hit || net;
   }));
 });

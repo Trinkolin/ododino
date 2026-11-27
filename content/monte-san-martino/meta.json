@@ -1,0 +1,13 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "node/875586970",
+  "facts": { "altitude": 987 },
+  "trails": ["relation/3011545"],
+  "sources": [
+    { "title": "Wikipedia (it) – Monte San Martino (Prealpi Giulie)", "url": "https://it.wikipedia.org/wiki/Monte_San_Martino_(Prealpi_Giulie)", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (en) – Monte San Martino (Julian Prealps)", "url": "https://en.wikipedia.org/wiki/Monte_San_Martino_(Julian_Prealps)", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL) · CAI FVG, sentiero 761", "url": "https://www.openstreetmap.org/node/875586970" }
+  ],
+  "_notes": "Nessuna foto libera adatta su Wikimedia Commons (solo una foto d'epoca della sagra con persone riconoscibili) : fiche senza foto, da aggiungere quella dell'autore. Data della sagra : terza domenica di settembre (it e en concordano). Durata del 761 « circa 5 ore » (Wikipedia it) ; calcolo Ododino 5 h 10. Il nome sloveno del passo (Prievalo ?) non è verificato : lasciato Priavelo in tutte le lingue."
+}
