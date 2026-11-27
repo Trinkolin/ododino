@@ -19,7 +19,11 @@ class Fiches(unittest.TestCase):
         fiches = content.load(include_drafts=True)
         self.assertTrue(fiches)
         with tempfile.TemporaryDirectory() as tmp:
-            written, index, _ = content.build(Path(tmp), include_drafts=True)
+            written, index, _, cards = content.build(Path(tmp), include_drafts=True)
+            self.assertEqual({c["slug"] for c in cards}, {f["slug"] for f in fiches})
+            for c in cards:
+                if c["thumb"]:
+                    self.assertTrue((Path(tmp) / c["thumb"]).exists(), c["thumb"])
             for f in fiches:
                 for lang in content.LANGS:
                     page = (Path(tmp) / lang / f["slug"] / "index.html").read_text(encoding="utf-8")

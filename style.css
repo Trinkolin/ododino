@@ -35,14 +35,14 @@ body { display: flex; }
   padding: 6px 7px; cursor: pointer; }
 .langs button + button { border-left: 1px solid var(--line); }
 .langs button.on { background: var(--accent); color: #fff; }
-.icon-btn { display: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
-  border-radius: 8px; width: 36px; height: 36px; font-size: 18px; cursor: pointer; }
 
 .tabs { display: flex; gap: 4px; padding: 0 12px; border-bottom: 1px solid var(--line); }
-.tab { flex: 1; border: 0; background: none; color: var(--muted); padding: 10px 6px; font: inherit;
-  font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; }
+.tab { flex: 1; border: 0; background: none; color: var(--muted); padding: 10px 4px; font: inherit; font-size: 13px;
+  font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.tab:hover { color: var(--ink); }
 .tab.active { color: var(--ink); border-bottom-color: var(--accent); }
-.count { font-weight: 500; color: var(--muted); font-size: 12px; }
+.count { font-weight: 600; color: var(--muted); font-size: 11px; background: var(--bg); border-radius: 999px; padding: 1px 6px; }
+.tab.active .count { background: var(--accent-soft); color: var(--accent); }
 
 .tabpane { display: none; flex: 1; min-height: 0; flex-direction: column; padding: 12px 12px 0; gap: 10px; }
 .tabpane.active { display: flex; }
@@ -53,11 +53,16 @@ input[type=search] { width: 100%; padding: 9px 12px; border-radius: 10px; border
   background: var(--bg); color: var(--ink); font: inherit; }
 input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips { display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; margin: 0 -12px; padding: 2px 12px 4px;
+  scrollbar-width: none; scroll-snap-type: x proximity; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+  mask-image: linear-gradient(90deg, #000 85%, transparent); }
+.chips::-webkit-scrollbar { display: none; }
+.chips .chip { flex: none; scroll-snap-align: start; white-space: nowrap; }
 .chip { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); background: var(--panel);
   color: var(--ink); border-radius: 999px; padding: 4px 10px 4px 7px; font: inherit; font-size: 12.5px; cursor: pointer; }
 .chip .dot { width: 10px; height: 10px; border-radius: 50%; }
 .chip.off { opacity: .45; }
+.chip:not(.off):not(.chip-all) { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
 .chip-all { border-style: dashed; font-weight: 600; }
 .chip small { color: var(--muted); }
 
@@ -74,6 +79,7 @@ input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .list .ref { flex: none; min-width: 44px; text-align: center; font-weight: 600; font-size: 12px; color: #fff;
   border-radius: 6px; padding: 3px 6px; }
 .list .empty { color: var(--muted); cursor: default; }
+.star { color: #f59f00; font-size: 12px; }
 
 .detail { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--bg); }
 .detail h3 { margin: 0 0 4px; font-size: 15px; }
@@ -84,6 +90,27 @@ input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .detail .close { float: right; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 16px; }
 
 a { color: var(--accent); }
+
+/* Onglet « Découvrir » : les fiches */
+.lead { margin: 0; color: var(--muted); font-size: 13px; }
+.cards { list-style: none; margin: 0; padding: 0 0 12px; display: flex; flex-direction: column; gap: 10px; }
+.card { position: relative; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); overflow: hidden;
+  transition: box-shadow .15s, transform .15s; }
+.card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.card-link { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; padding: 8px; color: inherit; text-decoration: none; }
+.card-link img, .card-link .ph { width: 96px; height: 72px; border-radius: 8px; object-fit: cover; display: block; }
+.card-link .ph { display: grid; place-items: center; color: #fff; font-size: 26px; }
+.card-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding-right: 4px; }
+.card-txt strong { font: 600 15px/1.25 Fraunces, Georgia, serif; }
+.card-txt span { color: var(--muted); font-size: 12.5px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden; }
+.on-map { position: absolute; right: 8px; bottom: 6px; border: 0; background: none; color: var(--accent); font: 600 12px Inter, sans-serif;
+  cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+.on-map:hover { background: var(--accent-soft); }
+.card:has(.on-map) .card-link { padding-bottom: 26px; }
+.card.intro { background: var(--accent-soft); border-color: transparent; }
+.card.intro .card-link .ph { background: var(--accent) !important; }
+.empty { color: var(--muted); }
 .foot { padding: 10px 14px; font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--line); }
 
 /* Carte */
@@ -92,6 +119,9 @@ a { color: var(--accent); }
 .poi-marker { transition: transform .15s; }
 .z-low .poi-marker { transform: scale(.45); font-size: 0; border-width: 3px; }
 .z-low .leaflet-marker-icon:hover .poi-marker { transform: scale(1); font-size: 13px; }
+.is-featured .poi-marker { box-shadow: 0 0 0 3px #f59f00, 0 2px 6px rgba(0,0,0,.4); }
+.z-low .is-featured .poi-marker { transform: scale(.8); font-size: 12px; border-width: 2px; }
+.z-far .is-minor { display: none; }
 .leaflet-popup-content { margin: 12px 14px; font: 13px/1.45 Inter, system-ui, sans-serif; min-width: 200px; }
 .pop h4 { margin: 0; font-size: 15px; }
 .pop .alt { color: #666; font-style: italic; }
@@ -205,14 +235,28 @@ body.page { display: block; height: auto; }
 }
 .pop .read-more { margin: 8px 0 0; font-weight: 600; }
 
-/* Mobile : le panneau devient un tiroir */
+/* Poignée du tiroir (mobile seulement) */
+.sheet-handle { display: none; }
+
+/* Mobile : carte en plein écran, panneau en tiroir par-dessus (aperçu, moitié, plein écran) */
 @media (max-width: 760px) {
-  body { flex-direction: column-reverse; }
-  #panel { width: 100%; height: 48%; border-right: 0; border-top: 1px solid var(--line); transition: height .2s; }
-  #panel.collapsed { height: 64px; }
-  #panel.collapsed .tabs, #panel.collapsed .tabpane, #panel.collapsed .foot, #panel.collapsed .safety { display: none; }
-  .brand { padding: 12px 16px; }
-  .brand h1 { font-size: 20px; }
-  .icon-btn { display: block; }
-  #map { height: auto; }
+  body { display: block; }
+  #map { position: fixed; inset: 0; height: auto; }
+  #panel { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; height: 52dvh; border: 0;
+    border-radius: 18px 18px 0 0; box-shadow: 0 -6px 24px rgba(20, 30, 25, .18); transition: height .25s ease; }
+  #panel.dragging { transition: none; }
+  #panel.sheet-peek { height: 132px; }
+  #panel.sheet-half { height: 52dvh; }
+  #panel.sheet-full { height: calc(100dvh - 44px); }
+  #panel.sheet-peek .tabpane, #panel.sheet-peek .foot, #panel.sheet-peek .safety { display: none; }
+  #panel.sheet-half .foot { display: none; }  /* liens du pied de page : tiroir ouvert en entier */
+  .sheet-handle { display: block; flex: none; width: 100%; height: 22px; border: 0; background: none; cursor: grab;
+    touch-action: none; padding: 8px 0 0; }
+  .sheet-handle span { display: block; width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto; }
+  .brand { padding: 2px 14px 6px; }
+  .brand h1 { font-size: 19px; }
+  .brand .sub { display: none; }
+  .tabs { padding: 0 6px; }
+  .leaflet-bottom { margin-bottom: 132px; }
+  .toast { bottom: 150px; }
 }

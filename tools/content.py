@@ -265,10 +265,13 @@ def _places_and_trails():
 
 
 def build(out, include_drafts=False):
-    """Écrit les pages dans `out`. Renvoie (fichiers écrits, index pour la carte, adresses du sitemap)."""
+    """Écrit les pages dans `out`. Renvoie (fichiers écrits, index pour la carte, adresses du sitemap,
+    liste des fiches pour l'onglet « Découvrir »)."""
     labels = json.loads((CONTENT / "labels.json").read_text(encoding="utf-8"))
     places, trails = _places_and_trails()
-    written, index, urls = [], {}, []
+    written, index, urls, cards = [], {}, [], []
+    poi_cats = {f["properties"]["osm"]: f["properties"].get("cat") for f in
+                json.loads((ROOT / "data" / "pois.geojson").read_text(encoding="utf-8"))["features"]}
     fiches = load(include_drafts)
     # la fiche d'introduction (sans lieu sur la carte) est proposée en bas de toutes les autres
     intro = next((f["slug"] for f in fiches if not f["meta"].get("osm")), None)
@@ -286,10 +289,26 @@ def build(out, include_drafts=False):
             if not draft:
                 urls.append(f"{SITE_URL}/{lang}/{f['slug']}/")
         # « Lire la fiche » sur la carte : le lieu principal, et les lieux voisins décrits par la même fiche
-        # (« also » : la lastra de Biacis pour la fiche du château d'Ahrensperg, par exemple)
+        # (« also » : un second point de la carte qui renvoie à la même fiche)
         entry = {"slug": f["slug"], "titles": {l: f["texts"][l][0]["title"] for l in LANGS}}
         for osm in ([f["meta"]["osm"]] if f["meta"].get("osm") else []) + f["meta"].get("also", []):
             if osm not in places and osm not in trails:
                 raise ContentError(f"{f['slug']} : « {osm} » absent de data/pois.geojson et de data/trails.geojson")
             index[osm] = entry
-    return written, index, urls
+        # Onglet « Découvrir » de la carte : une vignette par fiche (content/<fiche>/thumb.jpg, 480 × 320),
+        # publiée une seule fois pour les 5 langues
+        thumb = None
+        if (f["dir"] / "thumb.jpg").exists():
+            thumb = f"cards/{f['slug']}.jpg"
+            (out / "cards").mkdir(exist_ok=True)
+            (out / thumb).write_bytes((f["dir"] / "thumb.jpg").read_bytes())
+            written.append(thumb)
+        osm = f["meta"].get("osm")
+        cards.append({
+            "slug": f["slug"], "osm": osm,
+            "kind": "intro" if not osm else "trail" if osm in trails else "place",
+            "cat": poi_cats.get(osm), "thumb": thumb,
+            "titles": {l: f["texts"][l][0]["title"] for l in LANGS},
+            "descriptions": {l: f["texts"][l][0]["description"] for l in LANGS},
+        })
+    return written, index, urls, cards

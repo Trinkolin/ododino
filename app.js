@@ -25,6 +25,8 @@
   };
   // Catégories masquées au départ (nombreuses, utiles seulement pour préparer l'accès)
   const HIDDEN_BY_DEFAULT = ['parking', 'bus'];
+  // Catégories secondaires, masquées sur la carte quand on regarde toute la zone (zoom < 13)
+  const MINOR = ['info', 'food', 'sleep', 'outdoor', 'drinking', 'shrine', 'saddle', 'bus', 'parking'];
   const catLabel = (k, one) => T().cats[k][one ? 1 : 0];
   const NETS = {
     iwn: { color: '#e8590c', order: 0 }, nwn: { color: '#7048e8', order: 1 },
@@ -129,8 +131,12 @@
     b.classList.remove('on'); b.setAttribute('aria-pressed', 'false');
   }
   new LocateControl().addTo(map);
-  // À petite échelle, les POI deviennent des pastilles pour laisser voir les sentiers
-  const zoomClass = () => map.getContainer().classList.toggle('z-low', map.getZoom() < 14);
+  // À petite échelle, les POI deviennent des pastilles pour laisser voir les sentiers ; plus loin encore,
+  // seuls restent les repères (sommets, églises, refuges…) et les lieux qui ont une fiche
+  const zoomClass = () => {
+    map.getContainer().classList.toggle('z-low', map.getZoom() < 14);
+    map.getContainer().classList.toggle('z-far', map.getZoom() < 13);
+  };
   map.on('zoomend', zoomClass); zoomClass();
 
   // ---------- Utilitaires géo ----------
@@ -141,7 +147,7 @@
 
   // ---------- État ----------
   const state = { pois: [], trails: [], cats: new Set(Object.keys(CATS).filter((k) => !HIDDEN_BY_DEFAULT.includes(k))), nets: new Set(Object.keys(NETS)),
-    selTrail: null, updated: null };
+    selTrail: null, updated: null, tab: 'discover', cards: [] };
 
   // ---------- Textes statiques ----------
   function applyStaticText() {
@@ -169,7 +175,7 @@
     if (gps.btn) { gps.btn.title = t('locate'); gps.btn.setAttribute('aria-label', t('locate')); }
     state.pois.forEach((x) => { x.title = poiTitle(x.p); x.marker.options.title = x.title; });
     state.trails.forEach((x) => { x.title = trailTitle(x.p); x.line.setTooltipContent(trailTip(x)); });
-    renderCatChips(); renderNetChips(); renderPois(); renderTrails();
+    renderCatChips(); renderNetChips(); renderPois(); renderTrails(); renderCards();
     O.route?.refresh();
     if (state.selTrail) selectTrail(state.selTrail, false);
   }
@@ -185,14 +191,17 @@
   // ---------- Chargement ----------
   const get = (f) => fetch(`data/${f}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   // featured.json : fiches phares publiées (généré par le build ; absent en développement)
-  Promise.all([get('boundary.geojson'), get('pois.geojson'), get('trails.geojson'), get('paths.geojson'), get('meta.json'), get('featured.json')])
-    .then(([boundary, pois, trails, paths, meta, featured]) => {
+  Promise.all([get('boundary.geojson'), get('pois.geojson'), get('trails.geojson'), get('paths.geojson'), get('meta.json'),
+    get('featured.json'), get('cards.json')])
+    .then(([boundary, pois, trails, paths, meta, featured, cards]) => {
       state.featured = featured || {};
+      state.cards = cards || [];
       if (meta?.updated) { state.updated = meta.updated; applyStaticText(); }
       if (boundary) drawBoundary(boundary);
       if (paths) drawPaths(paths);
       if (trails) initTrails(trails);
       if (pois) initPois(pois);
+      renderCards();
       // Le lien (#route=, #trail=…) n'est appliqué qu'une fois TOUS les scripts de la page exécutés :
       // hors connexion, les données sortent du cache avant que route.js soit chargé, et le lien
       // « route= » était alors ignoré sans erreur.
@@ -217,7 +226,9 @@
     map.invalidateSize();
     const s = map.getSize();
     if (s.x < 100 || s.y < 100) { setTimeout(() => fitWhenSized(bounds), 200); return; }
-    map.fitBounds(bounds, { padding: [10, 10] });
+    // sur mobile, le tiroir couvre le bas de la carte : on cadre la zone dans la partie visible
+    const covered = isMobile() ? $('#panel').getBoundingClientRect().height : 0;
+    map.fitBounds(bounds, { paddingTopLeft: [10, 10], paddingBottomRight: [10, 10 + covered] });
   }
 
   // ---------- Chemins (fond) ----------
@@ -431,10 +442,12 @@
     state.pois = fc.features.filter((f) => CATS[f.properties.cat]).map((f) => {
       const p = f.properties, c = CATS[p.cat];
       const [lon, lat] = f.geometry.coordinates;
-      const icon = L.divIcon({ className: '', iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -12],
+      const star = !!state.featured[p.osm];
+      const icon = L.divIcon({ className: star ? 'is-featured' : MINOR.includes(p.cat) ? 'is-minor' : '',
+        iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -12],
         html: `<div class="poi-marker" style="background:${c.color};color:#fff">${c.icon}</div>` });
-      const x = { id: p.osm, p, lat, lon, title: poiTitle(p) };
-      x.marker = L.marker([lat, lon], { icon, title: x.title, riseOnHover: true });
+      const x = { id: p.osm, p, lat, lon, title: poiTitle(p), star };
+      x.marker = L.marker([lat, lon], { icon, title: x.title, riseOnHover: true, zIndexOffset: star ? 500 : 0 });
       x.marker.bindPopup(() => popupHtml(x), { maxWidth: 300 });
       x.marker.on('popupopen', () => setHash('poi=' + x.id));
       return x;
@@ -476,7 +489,7 @@
     const q = norm($('#q').value);
     const vis = state.pois.filter((x) => state.cats.has(x.p.cat)
       && (!q || norm([x.title, x.p.name, x.p['name:sl'], x.p['name:it'], x.p.description, catLabel(x.p.cat)].join(' ')).includes(q)))
-      .sort((a, b) => (a.p.name ? 0 : 1) - (b.p.name ? 0 : 1) || a.title.localeCompare(b.title, lang));
+      .sort((a, b) => (b.star - a.star) || (a.p.name ? 0 : 1) - (b.p.name ? 0 : 1) || a.title.localeCompare(b.title, lang));
     layers.pois.clearLayers();
     vis.forEach((x) => layers.pois.addLayer(x.marker));
     $('#poiList').innerHTML = vis.length ? vis.map((x) => {
@@ -484,7 +497,7 @@
       const other = [x.p.name, x.p['name:sl'], x.p['name:it']].find((n) => n && n !== x.title);
       const sub = [catLabel(x.p.cat, true), x.p.ele && `${Math.round(x.p.ele)} m`, other].filter(Boolean).join(' · ');
       return `<li data-id="${x.id}"><span class="ico" style="background:${c.color}">${c.icon}</span>
-        <div><div class="t">${esc(x.title)}</div><div class="m">${esc(sub)}</div></div></li>`;
+        <div><div class="t">${esc(x.title)}${x.star ? ' <span class="star" aria-hidden="true">★</span>' : ''}</div><div class="m">${esc(sub)}</div></div></li>`;
     }).join('') : `<li class="empty">${esc(t('noResult'))}</li>`;
   }
   $('#poiList').addEventListener('click', (e) => {
@@ -502,7 +515,7 @@
     map.once('moveend', open);
     map.flyTo([x.lat, x.lon], Math.max(map.getZoom(), 15), { duration: .6 });
     setTimeout(open, 1000);
-    if (window.innerWidth <= 760) $('#panel').classList.add('collapsed');
+    setSheet('peek');
   }
 
   // Dates OSM « 2024-06-15 » ou « 2024-06 » → format local
@@ -562,8 +575,74 @@
     document.querySelectorAll('.tabpane').forEach((s) => s.classList.toggle('active', s.id === 'tab-' + name));
     if (was !== name) O.route?.onTab(name === 'route');
   }
-  document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
-  $('#togglePanel').addEventListener('click', () => { $('#panel').classList.toggle('collapsed'); setTimeout(() => map.invalidateSize(), 250); });
+  document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => {
+    showTab(b.dataset.tab);
+    if (sheetState() === 'peek') setSheet('half');
+  }));
+
+  // ---------- Onglet « Découvrir » : les fiches ----------
+  // La description d'une fiche (faite pour les moteurs de recherche) répète le titre avant « : » :
+  // dans la liste, sous le titre, on n'en garde que la suite.
+  const summary = (d = '') => {
+    const rest = d.split(/\s?:\s/).slice(1).join(': ').trim();
+    return rest ? rest[0].toLocaleUpperCase(lang) + rest.slice(1) : d;
+  };
+  function renderCards() {
+    const rank = { intro: 0, place: 1, trail: 2 };
+    const cards = [...state.cards].sort((a, b) => rank[a.kind] - rank[b.kind]
+      || (a.titles[lang] || '').localeCompare(b.titles[lang] || '', lang));
+    $('#cardList').innerHTML = cards.length ? cards.map((c) => {
+      const color = c.kind === 'trail' ? NETS.lwn.color : CATS[c.cat]?.color || 'var(--accent)';
+      const icon = c.kind === 'trail' ? '🥾' : c.kind === 'intro' ? '✦' : CATS[c.cat]?.icon || '★';
+      const pic = c.thumb ? `<img src="${esc(c.thumb)}" alt="" loading="lazy" width="480" height="320">`
+        : `<span class="ph" style="background:${color}">${icon}</span>`;
+      return `<li class="card${c.kind === 'intro' ? ' intro' : ''}">
+        <a href="${lang}/${esc(c.slug)}/" class="card-link">${pic}
+          <span class="card-txt"><strong>${esc(c.titles[lang])}</strong><span>${esc(summary(c.descriptions[lang]))}</span></span></a>
+        ${c.osm ? `<button type="button" class="on-map" data-osm="${esc(c.osm)}">📍 ${esc(t('onMap'))}</button>` : ''}
+      </li>`;
+    }).join('') : `<li class="empty">${esc(t('noResult'))}</li>`;
+  }
+  $('#cardList').addEventListener('click', (e) => {
+    const b = e.target.closest('.on-map'); if (!b) return;
+    const osm = b.dataset.osm;
+    const trail = state.trails.find((x) => x.id === osm);
+    if (trail) { selectTrail(trail, true); setSheet('peek'); } else openPoi(state.pois.find((x) => x.id === osm));
+  });
+
+  // ---------- Mobile : panneau en tiroir (aperçu, moitié, plein écran) ----------
+  // Un tap sur la poignée passe à l'état suivant ; on peut aussi la faire glisser.
+  const SHEETS = ['peek', 'half', 'full'];
+  const isMobile = () => window.matchMedia('(max-width: 760px)').matches;
+  const sheetState = () => SHEETS.find((k) => $('#panel').classList.contains('sheet-' + k)) || 'half';
+  function setSheet(k) {
+    if (!isMobile()) return;
+    SHEETS.forEach((s) => $('#panel').classList.toggle('sheet-' + s, s === k));
+    $('#panel').style.height = '';
+  }
+  (() => {
+    const h = $('#sheetHandle'), panel = $('#panel');
+    let y0 = null, h0 = 0, moved = false;
+    h.addEventListener('pointerdown', (e) => {
+      if (!isMobile()) return;
+      y0 = e.clientY; h0 = panel.getBoundingClientRect().height; moved = false;
+      h.setPointerCapture(e.pointerId); panel.classList.add('dragging');
+    });
+    h.addEventListener('pointermove', (e) => {
+      if (y0 === null) return;
+      const dy = y0 - e.clientY;
+      if (Math.abs(dy) > 6) moved = true;
+      panel.style.height = `${Math.max(96, Math.min(window.innerHeight - 48, h0 + dy))}px`;
+    });
+    h.addEventListener('pointerup', () => {
+      if (y0 === null) return;
+      panel.classList.remove('dragging'); y0 = null;
+      if (!moved) { setSheet(SHEETS[(SHEETS.indexOf(sheetState()) + 1) % SHEETS.length]); return; }
+      // on se cale sur l'état le plus proche de la hauteur atteinte
+      const r = panel.getBoundingClientRect().height / window.innerHeight;
+      setSheet(r < 0.3 ? 'peek' : r < 0.7 ? 'half' : 'full');
+    });
+  })();
 
   let hashLock = false;
   function setHash(h) {

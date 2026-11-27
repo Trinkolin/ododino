@@ -122,11 +122,13 @@ def main(include_drafts=False):
 
     # Fiches phares (content/) : pages /<langue>/<fiche>/, index lu par la carte, plan du site
     try:
-        pages, featured, urls = content.build(OUT, include_drafts)
+        pages, featured, urls, cards = content.build(OUT, include_drafts)
     except content.ContentError as e:
         raise BuildError(f"fiches : {e}") from e
     (OUT / "data" / "featured.json").write_text(json.dumps(featured, ensure_ascii=False), encoding="utf-8")
-    shell.append("data/featured.json")   # généré : ajouté à la coquille (la carte en a besoin hors ligne)
+    (OUT / "data" / "cards.json").write_text(json.dumps(cards, ensure_ascii=False), encoding="utf-8")
+    # générés : ajoutés à la coquille (la carte et l'onglet « Découvrir » en ont besoin hors ligne)
+    shell += ["data/featured.json", "data/cards.json"] + [p for p in pages if p.startswith("cards/")]
     home = [f"{content.SITE_URL}/?lang={l}" for l in content.LANGS]
     (OUT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

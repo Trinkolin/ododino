@@ -23,7 +23,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <aside id="panel">
+  <aside id="panel" class="sheet-half">
+    <button id="sheetHandle" class="sheet-handle" type="button" data-i18n-aria="togglePanel"><span></span></button>
     <header class="brand">
       <div>
         <h1><img src="icons/logo.svg" alt="" class="logo" width="28" height="28"> Ododino</h1>
@@ -31,7 +32,6 @@
       </div>
       <div class="brand-tools">
         <div id="langs" class="langs" role="group"></div>
-        <button id="togglePanel" class="icon-btn" data-i18n-aria="togglePanel">☰</button>
       </div>
     </header>
 
@@ -41,12 +41,18 @@
     </div>
 
     <nav class="tabs" role="tablist">
-      <button role="tab" class="tab active" data-tab="pois"><span data-i18n="tabPois"></span> <span id="nPois" class="count"></span></button>
+      <button role="tab" class="tab active" data-tab="discover"><span data-i18n="tabDiscover"></span></button>
+      <button role="tab" class="tab" data-tab="pois"><span data-i18n="tabPois"></span> <span id="nPois" class="count"></span></button>
       <button role="tab" class="tab" data-tab="trails"><span data-i18n="tabTrails"></span> <span id="nTrails" class="count"></span></button>
       <button role="tab" class="tab" data-tab="route"><span data-i18n="tabRoute"></span></button>
     </nav>
 
-    <section id="tab-pois" class="tabpane active">
+    <section id="tab-discover" class="tabpane active">
+      <p class="lead" data-i18n="discoverLead"></p>
+      <ul id="cardList" class="cards"></ul>
+    </section>
+
+    <section id="tab-pois" class="tabpane">
       <input id="q" type="search" data-i18n-ph="searchPoi" autocomplete="off">
       <div id="cats" class="chips"></div>
       <ul id="poiList" class="list"></ul>
