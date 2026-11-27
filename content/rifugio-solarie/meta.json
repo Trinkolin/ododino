@@ -1,0 +1,20 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "way/36160252",
+  "facts": { "altitude": 956 },
+  "trails": ["relation/7276582", "relation/6934010", "relation/9880567", "relation/13863823"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Naturpuur",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Schutz_H%C3%BCtte_in_Drenchia_(960_m)_Provinz_Udine,_Italien,_EU.jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – Rifugio Solarie", "url": "https://it.wikipedia.org/wiki/Rifugio_Solarie", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Bivacco Giuseppe Zanuso", "url": "https://it.wikipedia.org/wiki/Bivacco_Giuseppe_Zanuso", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL) · lapide di Giuseppe Zanuso, sentieri CAI", "url": "https://www.openstreetmap.org/node/4772262250" }
+  ],
+  "_notes": "Fiche commune rifugio + bivacco (voce 15 della lista). Data della morte di Zanuso (25-1-1929) e nascita (Valdagno, 1908) dall'iscrizione della lapide su OSM. Posti letto (18) e « aperto tutto l'anno » (Wikipedia, fonte del 2015) non riportati : OSM indica orari stagionali. Nome sloveno di Volzana = Volče (solo nella versione slovena)."
+}

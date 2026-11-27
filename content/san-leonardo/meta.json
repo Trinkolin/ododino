@@ -1,0 +1,19 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "way/36686153",
+  "trails": ["relation/16359002"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Marchetto da Trieste",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Chiesa_di_San_Leonardo_(San_Leonardo).jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – Chiesa di San Leonardo (San Leonardo, Italia)", "url": "https://it.wikipedia.org/wiki/Chiesa_di_San_Leonardo_(San_Leonardo,_Italia)", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – San Leonardo (Italia)", "url": "https://it.wikipedia.org/wiki/San_Leonardo_(Italia)", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL) · CAI FVG, sentiero 766", "url": "https://www.openstreetmap.org/way/36686153" }
+  ],
+  "_notes": "Due chiese « San Leonardo abate » su OSM : scelta la parrocchiale con voce Wikipedia (way/36686153). Altezza della cascata « oltre 12 metri » (voce del comune). Nome sloveno di Merso di Sopra non verificato : lasciato in italiano."
+}

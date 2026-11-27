@@ -1,0 +1,20 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "way/147554567",
+  "trails": ["relation/14766529", "relation/13854295"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Aconcagua",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Cividale_0904_Duomo_and_Ponte_del_Diavolo.jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – Ponte del Diavolo (Cividale del Friuli)", "url": "https://it.wikipedia.org/wiki/Ponte_del_Diavolo_(Cividale_del_Friuli)", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Tempietto longobardo", "url": "https://it.wikipedia.org/wiki/Tempietto_longobardo", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Cividale del Friuli", "url": "https://it.wikipedia.org/wiki/Cividale_del_Friuli", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org/way/147554567" }
+  ],
+  "_notes": "Fiche legata al Ponte del Diavolo (punto sulla mappa) ; Cividale solo come porta d'accesso, secondo il piano. Origine del nome « Friuli » da Forum Iulii : voce Cividale. Le gole del Natisone sono qui l'unico aggancio della fiche « Il Natisone » (voce 6, in attesa)."
+}

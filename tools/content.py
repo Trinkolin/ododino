@@ -172,6 +172,9 @@ def render(fiche, lang, labels, places, trails, draft):
             name = (f"{t['ref']} · " if t.get("ref") else "") + t["name"]
         else:
             name = f"CAI {t['ref']}" if t.get("ref") else rid
+            if t.get("from") and t.get("to"):  # deux tronçons « CAI SI » ne se distinguent que par leurs extrémités
+                end = lambda s: re.sub(r"\s*\(quota [^)]*\)", "", s)  # noqa: E731 — « Topolò (quota 531 m) »
+                name += f" ({end(t['from'])} → {end(t['to'])})"
         st = t.get("stats")
         # montée et descente : un sentier linéaire n'a pas le même dénivelé dans les deux sens
         facts = (f" — {_fmt_km(st['km'], lang)} km, +{st['gain']} m / −{st['loss']} m, "

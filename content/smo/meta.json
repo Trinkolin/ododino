@@ -1,0 +1,12 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "node/2722896773",
+  "trails": ["relation/1867680", "relation/14766262"],
+  "sources": [
+    { "title": "SMO – sito ufficiale (chi siamo, installazioni, contatti)", "url": "https://smo-center.eu/muzej-smo/", "consulted": "2026-11-27" },
+    { "title": "SMO – contatti e orari", "url": "https://smo-center.eu/kontakti/", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org/node/2722896773" }
+  ],
+  "_notes": "Nessuna voce Wikipedia. Orari : sito ufficiale 10-13 e 14.30-17.30 ; il tag OSM dice 14:00-18:00 (da correggere su OSM). Biglietto : non indicato sul sito, non citato. Nessuna foto libera su Commons. Il sito scrive « multimedialno » (non « multimedijsko »)."
+}
