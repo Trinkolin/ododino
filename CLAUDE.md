@@ -22,6 +22,20 @@ py tools/update_data.py [--skip-osm]  # données OSM → profils/GPX → graphe 
 powershell -ExecutionPolicy Bypass -File tools/make_thumbs.ps1   # vignettes des fiches (après une photo)
 ```
 
+Migration Angular en cours dans `web/` (Angular 22 + Material, pré-rendu statique, service worker d'Angular) :
+
+```
+cd web && npm start                   # dev Angular (prestart : scripts/prepare.mjs)
+cd web && npm run build               # dist/ododino/browser, base « / » → servir avec la config de preview « ododino-angular » (8767)
+cd web && npm run build:pages         # idem avec la base /ododino/ de GitHub Pages
+cd web && npx ng test --watch=false   # tests Angular (Vitest)
+```
+
+`web/scripts/prepare.mjs` (lancé avant chaque build) génère les traductions depuis `../i18n.js` (seule source),
+copie les icônes Material Symbols choisies (liste dans le script) et les dossiers `data/ fonts/ tiles/ icons/`
+dans `web/.site/` (Angular refuse les fichiers hors de `web/`). Pas de Google Fonts ni de police d'icônes :
+polices du site et SVG via `<odo-icon>`.
+
 Le serveur de dev n'a ni `data/featured.json` ni `data/cards.json` (générés par le build) : l'onglet
 « Découvrir » y reste vide. Pour tester fiches, hors ligne ou mise en cache, construire et servir `_site/`.
 Après un nouveau build, le service worker du navigateur sert d'abord l'ancienne version : recharger deux

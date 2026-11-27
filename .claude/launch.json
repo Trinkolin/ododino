@@ -4,14 +4,31 @@
     {
       "name": "ododino",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["tools/serve.py", "8765"],
+      "runtimeArgs": [
+        "tools/serve.py",
+        "8765"
+      ],
       "port": 8765
     },
     {
       "name": "ododino-site",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["tools/serve.py", "8766", "_site"],
+      "runtimeArgs": [
+        "tools/serve.py",
+        "8766",
+        "_site"
+      ],
       "port": 8766
+    },
+    {
+      "name": "ododino-angular",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "tools/serve.py",
+        "8767",
+        "web/dist/ododino/browser"
+      ],
+      "port": 8767
     }
   ]
 }
