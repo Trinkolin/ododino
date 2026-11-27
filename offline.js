@@ -99,11 +99,8 @@
     render();
   }
 
-  $('#offlineToggle')?.addEventListener('click', () => {
-    const box = $('#offlineBox');
-    box.hidden = !box.hidden;
-    if (!box.hidden) render();
-  });
+  // onglet « Hors ligne » : état du pack affiché à l'ouverture de l'onglet
+  document.querySelector('.tab[data-tab="offline"]')?.addEventListener('click', render);
   $('#offlineBox')?.addEventListener('click', (e) => {
     const act = e.target.closest('button[data-act]')?.dataset.act;
     if (act === 'get') download();

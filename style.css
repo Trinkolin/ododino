@@ -1,20 +1,26 @@
+/* Palette « forêt et terracotta » : vert forêt pour l'identité et les actions, terracotta « alpin »
+   pour ce qui attire l'attention (lieux à fiche, alertes), papier chaud pour les fonds. */
 :root {
-  --bg: #f7f5f0;
+  --bg: #f7f4ec;
   --panel: #fffdf8;
-  --ink: #1f2a24;
-  --muted: #6b746e;
-  --line: #e4e0d6;
-  --accent: #2f6f4f;
-  --accent-soft: #e3efe8;
+  --warm: #efeae0;
+  --ink: #243137;
+  --muted: #55656c;
+  --line: #d6ded8;
+  --accent: #1f4434;
+  --accent-soft: #e6efe9;
+  --alpine: #c25934;
+  --alpine-soft: #fbeae3;
   --trail: #d6336c;
-  --shadow: 0 2px 14px rgba(30, 40, 35, .12);
+  --shadow: 0 8px 24px -6px rgba(21, 49, 37, .12), 0 2px 6px -1px rgba(21, 49, 37, .06);
+  --shadow-float: 0 14px 34px -8px rgba(21, 49, 37, .22);
   --panel-w: 380px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #141816; --panel: #1b201d; --ink: #e8ece9; --muted: #9aa59f;
-    --line: #2c3430; --accent: #6fc39a; --accent-soft: #233229;
-    --shadow: 0 2px 14px rgba(0,0,0,.5);
+    --bg: #141816; --panel: #1b201d; --warm: #232a26; --ink: #e8ece9; --muted: #9aa59f;
+    --line: #2c3430; --accent: #8fd0ad; --accent-soft: #1f3329; --alpine: #e8875f; --alpine-soft: #3a2219;
+    --shadow: 0 8px 24px -6px rgba(0,0,0,.5); --shadow-float: 0 14px 34px -8px rgba(0,0,0,.6);
   }
 }
 * { box-sizing: border-box; }
@@ -34,7 +40,7 @@ body { display: flex; }
 .langs button { border: 0; background: none; color: var(--muted); font: 600 11.5px Inter, sans-serif;
   padding: 6px 7px; cursor: pointer; }
 .langs button + button { border-left: 1px solid var(--line); }
-.langs button.on { background: var(--accent); color: #fff; }
+.langs button.on { background: var(--accent); color: var(--panel); }
 
 .tabs { display: flex; gap: 4px; padding: 0 12px; border-bottom: 1px solid var(--line); }
 .tab { flex: 1; border: 0; background: none; color: var(--muted); padding: 10px 4px; font: inherit; font-size: 13px;
@@ -88,7 +94,7 @@ input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .list .ref { flex: none; min-width: 44px; text-align: center; font-weight: 600; font-size: 12px; color: #fff;
   border-radius: 6px; padding: 3px 6px; }
 .list .empty { color: var(--muted); cursor: default; }
-.star { color: #f59f00; font-size: 12px; }
+.star { color: var(--alpine); font-size: 12px; }
 
 .detail { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--bg); }
 .detail h3 { margin: 0 0 4px; font-size: 15px; }
@@ -142,7 +148,7 @@ a { color: var(--accent); }
 .poi-marker { transition: transform .15s; }
 .z-low .poi-marker { transform: scale(.45); font-size: 0; border-width: 3px; }
 .z-low .leaflet-marker-icon:hover .poi-marker { transform: scale(1); font-size: 13px; }
-.is-featured .poi-marker { box-shadow: 0 0 0 3px #f59f00, 0 2px 6px rgba(0,0,0,.4); }
+.is-featured .poi-marker { box-shadow: 0 0 0 3px var(--alpine), 0 2px 6px rgba(0,0,0,.4); }
 .z-low .is-featured .poi-marker { transform: scale(.8); font-size: 12px; border-width: 2px; }
 .z-far .is-minor { display: none; }
 .leaflet-popup-content { margin: 12px 14px; font: 13px/1.45 Inter, system-ui, sans-serif; min-width: 200px; }
@@ -179,6 +185,7 @@ a.report { color: #c92a2a; }
 .offline-box[hidden] { display: none; }
 .offline-box p { margin: 0 0 8px; }
 .offline-box progress { width: 100%; }
+.recenter-btn { margin-top: 10px !important; }
 .locate-btn { width: 34px; height: 34px; background: #fff; color: #333; font-size: 20px; line-height: 1; cursor: pointer; border: 2px solid rgba(0,0,0,.2); }
 .locate-btn.on { color: #1c7ed6; }
 
@@ -188,7 +195,7 @@ a.report { color: #c92a2a; }
 .route-btns { display: flex; flex-wrap: wrap; gap: 6px; }
 .route-btns button { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px;
   font: 500 13px Inter, sans-serif; padding: 8px 10px; min-height: 38px; cursor: pointer; }
-.route-btns button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.route-btns button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
 .route-btns button:disabled { opacity: .45; cursor: default; }
 .route-warn { border-radius: 10px; background: #fff5f5; border: 1px solid #ffc9c9; color: #7a1d1d; padding: 8px 10px; font-size: 12.5px; }
 .route-warn[hidden] { display: none; }
@@ -236,7 +243,7 @@ body.page { display: block; height: auto; }
 .h1like .logo { border-radius: 7px; }
 .langs a { color: var(--muted); font: 600 11.5px Inter, sans-serif; padding: 6px 7px; text-decoration: none; }
 .langs a + a { border-left: 1px solid var(--line); }
-.langs a.on { background: var(--accent); color: #fff; }
+.langs a.on { background: var(--accent); color: var(--panel); }
 .fiche .title { font-size: 34px; margin-top: 10px; }
 .fiche .draft { background: #fff3bf; color: #5c4a00; border: 1px solid #ffe066; border-radius: 8px; padding: 8px 12px; font-weight: 600; }
 .fiche .hero { margin: 12px 0 20px; }
@@ -257,6 +264,49 @@ body.page { display: block; height: auto; }
   .fiche .safety-note { background: #3a2a12; color: #ffe8cc; border-color: #5c3b0b; }
 }
 .pop .read-more { margin: 8px 0 0; font-weight: 600; }
+
+/* Carte de sélection posée sur la carte (lieu ou sentier) */
+.sel-card { position: fixed; z-index: 900; left: calc(var(--panel-w) + 14px); bottom: 32px;
+  width: min(390px, calc(100vw - var(--panel-w) - 28px)); max-height: 58vh; overflow-y: auto;
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: var(--shadow-float); padding: 12px 14px 12px; font-size: 13px; }
+.sel-card[hidden] { display: none; }
+.sc-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.sel-card h3 { margin: 6px 0 2px; font: 600 18px/1.25 Fraunces, Georgia, serif; }
+.sel-card .alt { color: var(--muted); }
+.sel-card .tag { margin: 0; }
+.sel-card .ref { color: #fff; border-radius: 6px; padding: 3px 8px; font-weight: 600; font-size: 12px; }
+.sc-close { border: 0; background: var(--warm); color: var(--muted); width: 28px; height: 28px; border-radius: 8px;
+  cursor: pointer; flex: none; }
+.sc-close:hover { color: var(--ink); }
+.sc-metrics { margin: 4px 0 0; color: var(--accent); font-weight: 600; }
+.sc-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.btn { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); background: var(--warm);
+  color: var(--ink); border-radius: 10px; padding: 6px 11px; font: 600 12.5px Inter, sans-serif; cursor: pointer;
+  text-decoration: none; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+.sel-card .fav-btn { border-radius: 10px; padding: 6px 11px; font-size: 12.5px; }
+.sel-card .links { margin-top: 8px; }
+.sel-card dt { color: var(--muted); }
+.is-selected .poi-marker { transform: scale(1.3) !important; font-size: 13px !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--alpine) 45%, transparent), 0 3px 10px rgba(0,0,0,.4); }
+.is-selected { z-index: 2000 !important; }
+
+/* Légende des sentiers (carte, en haut à droite) */
+.legend { background: var(--panel); color: var(--ink); padding: 6px 10px; border-radius: 12px !important;
+  box-shadow: var(--shadow); font-size: 12px; min-width: 150px; }
+.legend summary { cursor: pointer; font-weight: 600; }
+.legend .seg { display: flex; gap: 4px; margin: 6px 0; }
+.legend .seg button { flex: 1; border: 1px solid var(--line); background: var(--bg); color: var(--muted); border-radius: 8px;
+  padding: 3px 6px; font: 600 11.5px Inter, sans-serif; cursor: pointer; }
+.legend .seg button.on { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+.legend ul { list-style: none; margin: 0; padding: 0; }
+.legend li { display: flex; align-items: center; gap: 7px; margin: 3px 0; }
+.legend .sw { width: 18px; height: 4px; border-radius: 2px; flex: none; }
+
+/* Onglet « Hors ligne » (icône) */
+.tab-icon { flex: 0 0 40px; font-size: 15px; }
 
 /* Poignée du tiroir (mobile seulement) */
 .sheet-handle { display: none; }
@@ -281,5 +331,9 @@ body.page { display: block; height: auto; }
   .brand .sub { display: none; }
   .tabs { padding: 0 6px; }
   .leaflet-bottom { margin-bottom: 132px; }
+  .sel-card { left: 8px; right: 8px; width: auto; bottom: 140px; max-height: 46dvh; }
+  #panel.sheet-half ~ .sel-card, #panel.sheet-full ~ .sel-card { display: none; }
+  .legend { min-width: 0; }
+  .tab .count { display: none; }
   .toast { bottom: 150px; }
 }

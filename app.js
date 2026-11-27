@@ -32,6 +32,15 @@
     iwn: { color: '#e8590c', order: 0 }, nwn: { color: '#7048e8', order: 1 },
     rwn: { color: '#f59f00', order: 2 }, lwn: { color: '#d6336c', order: 3 },
   };
+  // Couleur des sentiers selon la difficulté : cotation CAI si OSM la donne, sinon le tronçon le plus dur
+  // (échelle SAC calculée par enrich_trails.py)
+  const DIFF = { easy: '#2f9e44', hard: '#e8590c', alpine: '#c92a2a', unknown: '#868e96' };
+  function diffLevel(p) {
+    const c = p.cai_scale;
+    if (c) return /^EEA/.test(c) ? 'alpine' : c === 'EE' ? 'hard' : 'easy';
+    const s = Number(String(p.sac_max || '').replace('T', ''));
+    return !s ? 'unknown' : s <= 2 ? 'easy' : s === 3 ? 'hard' : 'alpine';
+  }
   const SAC = { hiking: 'T1', mountain_hiking: 'T2', demanding_mountain_hiking: 'T3',
     alpine_hiking: 'T4', demanding_alpine_hiking: 'T5', difficult_alpine_hiking: 'T6' };
 
@@ -131,6 +140,19 @@
     b.classList.remove('on'); b.setAttribute('aria-pressed', 'false');
   }
   new LocateControl().addTo(map);
+  // Recentrer sur les vallées (cadre calculé au chargement des données, voir drawBoundary)
+  const RecenterControl = L.Control.extend({
+    options: { position: 'topleft' },
+    onAdd() {
+      const b = L.DomUtil.create('button', 'locate-btn recenter-btn leaflet-bar');
+      b.type = 'button'; b.innerHTML = '⤢';
+      b.dataset.i18nAria = 'recenter'; b.title = t('recenter'); b.setAttribute('aria-label', t('recenter'));
+      L.DomEvent.disableClickPropagation(b);
+      L.DomEvent.on(b, 'click', () => { if (state.home) fitWhenSized(state.home, true); });
+      return b;
+    },
+  });
+  new RecenterControl().addTo(map);
   // À petite échelle, les POI deviennent des pastilles pour laisser voir les sentiers ; plus loin encore,
   // seuls restent les repères (sommets, églises, refuges…) et les lieux qui ont une fiche
   const zoomClass = () => {
@@ -147,7 +169,7 @@
 
   // ---------- État ----------
   const state = { pois: [], trails: [], cats: new Set(Object.keys(CATS).filter((k) => !HIDDEN_BY_DEFAULT.includes(k))), nets: new Set(Object.keys(NETS)),
-    selTrail: null, updated: null, tab: 'discover', cards: [] };
+    selTrail: null, updated: null, tab: 'discover', cards: [], colorBy: 'diff', home: null, card: null, selPoi: null };
 
   // ---------- Favoris : lieux et sentiers marqués d'un cœur ----------
   // Gardés seulement dans ce navigateur (localStorage), jamais envoyés ; disponibles hors connexion.
@@ -190,7 +212,8 @@
     lang = l; I.remember(l);
     const u = new URL(location.href); u.searchParams.set('lang', l);
     history.replaceState(null, '', u);
-    map.closePopup();
+    if (state.card === 'poi' && state.selPoi) showCard('poi', poiCardHtml(state.selPoi));
+    renderLegend();
     applyStaticText(); buildLayerControl();
     if (gps.btn) { gps.btn.title = t('locate'); gps.btn.setAttribute('aria-label', t('locate')); }
     state.pois.forEach((x) => { x.title = poiTitle(x.p); x.marker.options.title = x.title; });
@@ -237,18 +260,21 @@
         weight: gw ? 1.5 : 2, dashArray: gw ? '2 6' : '6 6', opacity: gw ? .6 : .7, interactive: false });
       layers.boundary.addLayer(l); if (!gw) all.push(l);
     });
-    if (all.length && !location.hash) fitWhenSized(L.featureGroup(all).getBounds());
+    if (all.length) {
+      state.home = L.featureGroup(all).getBounds();
+      if (!location.hash) fitWhenSized(state.home);
+    }
   }
 
   // Cadrage initial : si la carte n'a pas encore de taille (onglet en arrière-plan, panneau
   // qui s'ouvre…), fitBounds zoomerait au maximum ; on attend donc qu'elle soit dimensionnée.
-  function fitWhenSized(bounds) {
+  function fitWhenSized(bounds, animate = false) {
     map.invalidateSize();
     const s = map.getSize();
     if (s.x < 100 || s.y < 100) { setTimeout(() => fitWhenSized(bounds), 200); return; }
     // sur mobile, le tiroir couvre le bas de la carte : on cadre la zone dans la partie visible
     const covered = isMobile() ? $('#panel').getBoundingClientRect().height : 0;
-    map.fitBounds(bounds, { paddingTopLeft: [10, 10], paddingBottomRight: [10, 10 + covered] });
+    map.fitBounds(bounds, { paddingTopLeft: [10, 10], paddingBottomRight: [10, 10 + covered], animate });
   }
 
   // ---------- Chemins (fond) ----------
@@ -290,11 +316,12 @@
     state.trails = fc.features.map((f) => {
       const p = f.properties;
       const net = NETS[p.network] ? p.network : 'lwn';
-      const color = NETS[net].color;
+      const level = diffLevel(p);
+      const color = state.colorBy === 'diff' ? DIFF[level] : NETS[net].color;
       const latlngs = ll(f.geometry.coordinates);
       const casing = L.polyline(latlngs, { pane: 'trails', color: '#fff', weight: 8, opacity: .9, interactive: false });
       const line = L.polyline(latlngs, { pane: 'trails', color, weight: 4, opacity: .95, lineCap: 'round' });
-      const x = { id: p.osm, p, net, color, title: trailTitle(p), km: lengthOf(f.geometry.coordinates) / 1000,
+      const x = { id: p.osm, p, net, level, color, title: trailTitle(p), km: lengthOf(f.geometry.coordinates) / 1000,
         casing, line, group: L.layerGroup([casing, line]), coords: f.geometry.coordinates };
       line.bindTooltip(trailTip(x), { sticky: true });
       line.on('mouseover', () => { if (state.selTrail !== x) line.setStyle({ weight: 7 }); });
@@ -313,8 +340,50 @@
     });
     $('#qt').addEventListener('input', renderTrails);
     // onglet Itinéraire : un clic ajoute une étape ; sinon il désélectionne le sentier
-    map.on('click', (e) => { if (state.tab === 'route' && O.route) O.route.onMapClick(e.latlng); else selectTrail(null); });
+    map.on('click', (e) => {
+      if (state.tab === 'route' && O.route) { O.route.onMapClick(e.latlng); return; }
+      if (state.card === 'poi') hideCard(); else selectTrail(null);
+    });
     renderNetChips(); renderTrails();
+    new LegendControl().addTo(map);
+  }
+
+  // Légende des sentiers, avec le choix de la couleur : difficulté (par défaut) ou réseau
+  let legendEl = null;
+  const LegendControl = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd() {
+      legendEl = L.DomUtil.create('div', 'legend leaflet-bar');
+      L.DomEvent.disableClickPropagation(legendEl); L.DomEvent.disableScrollPropagation(legendEl);
+      legendEl.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-color-by]'); if (!b || b.dataset.colorBy === state.colorBy) return;
+        state.colorBy = b.dataset.colorBy;
+        // après le clic : redessiner la légende PENDANT le clic détache le bouton cliqué, et Leaflet,
+        // ne le retrouvant plus dans la légende, prendrait le clic pour un clic sur la carte
+        setTimeout(applyTrailColors);
+      });
+      renderLegend(!isMobile());
+      return legendEl;
+    },
+  });
+  function renderLegend(open = legendEl?.querySelector('details')?.open) {
+    if (!legendEl) return;
+    const row = (color, label) => `<li><span class="sw" style="background:${color}"></span>${esc(label)}</li>`;
+    const rows = state.colorBy === 'diff'
+      ? Object.keys(DIFF).map((k) => row(DIFF[k], t('diff_' + k)))
+      : Object.keys(NETS).map((k) => row(NETS[k].color, T().nets[k]));
+    const seg = (k, label) => `<button type="button" data-color-by="${k}" class="${state.colorBy === k ? 'on' : ''}"
+      aria-pressed="${state.colorBy === k}">${esc(t(label))}</button>`;
+    legendEl.innerHTML = `<details${open ? ' open' : ''}><summary>${esc(t('legend'))}</summary>
+      <div class="seg">${seg('diff', 'byDiff')}${seg('net', 'byNet')}</div><ul>${rows.join('')}</ul></details>`;
+  }
+  function applyTrailColors() {
+    state.trails.forEach((x) => {
+      x.color = state.colorBy === 'diff' ? DIFF[x.level] : NETS[x.net].color;
+      x.line.setStyle({ color: x.color });
+    });
+    renderTrails(); renderFavs(); renderLegend();
+    if (state.selTrail) selectTrail(state.selTrail, false);
   }
 
   function renderNetChips() {
@@ -344,6 +413,10 @@
     selectTrail(state.trails.find((x) => x.id === li.dataset.id), true);
   });
 
+  // Difficulté : cotation CAI d'OSM, sinon le tronçon le plus dur (clairement présentée comme une estimation)
+  const diffText = (p) => T().cai[p.cai_scale] || p.cai_scale
+    || (p.sac_max ? t('sacEst').replace('{x}', p.sac_max) : t('notRated'));
+
   function selectTrail(sel, fit) {
     const prev = state.selTrail;
     state.selTrail = sel || null;
@@ -354,6 +427,7 @@
     });
     hideProfileMarker();
     if (!sel) {
+      if (state.card === 'trail') hideCard();
       $('#trailDetail').hidden = true;
       if (prev) { document.querySelectorAll('#trailList li.sel').forEach((li) => li.classList.remove('sel')); setHash(''); }
       return;
@@ -365,9 +439,7 @@
     const rid = p.osm.split('/')[1];
     const row = (k, v) => (v ? `<span>${esc(t(k))} <b>${esc(v)}</b></span>` : '');
     const m = (v) => `${Math.round(v).toLocaleString(locale())} m`;
-    // Difficulté : cotation CAI d'OSM, sinon le tronçon le plus dur (clairement présentée comme une estimation)
-    const diff = T().cai[p.cai_scale] || p.cai_scale
-      || (p.sac_max ? t('sacEst').replace('{x}', p.sac_max) : t('notRated'));
+    const diff = diffText(p);
     // Durée : celle du CAI si OSM la donne, sinon le temps calculé, marqué « indicatif »
     const dur = p.duration ? row('durationCai', p.duration.replace(/^0?(\d+):(\d\d).*/, '$1 h $2'))
       : st ? row('timeEst', hm(st.minutes)) : '';
@@ -390,6 +462,8 @@
     $('#trailDetail').hidden = false;
     $('#trailDetail .close').onclick = () => selectTrail(null);
     if (p.ordered) loadProfile(rid).then((prof) => { if (state.selTrail === sel && prof) drawProfile(prof, sel.color); });
+    if (state.card === 'poi') hideCard();
+    showCard('trail', trailCardHtml(sel));
     document.querySelectorAll('#trailList li').forEach((li) => li.classList.toggle('sel', li.dataset.id === sel.id));
     document.querySelector(`#trailList li[data-id="${sel.id}"]`)?.scrollIntoView({ block: 'nearest' });
     setHash('trail=' + sel.id);
@@ -469,8 +543,7 @@
         html: `<div class="poi-marker" style="background:${c.color};color:#fff">${c.icon}</div>` });
       const x = { id: p.osm, p, lat, lon, title: poiTitle(p), star };
       x.marker = L.marker([lat, lon], { icon, title: x.title, riseOnHover: true, zIndexOffset: star ? 500 : 0 });
-      x.marker.bindPopup(() => popupHtml(x), { maxWidth: 300 });
-      x.marker.on('popupopen', () => setHash('poi=' + x.id));
+      x.marker.on('click', () => showPoiCard(x));
       return x;
     });
 
@@ -528,15 +601,70 @@
 
   function openPoi(x) {
     if (!x) return;
-    if (state.selTrail) selectTrail(null);
     if (!layers.pois.hasLayer(x.marker)) layers.pois.addLayer(x.marker);
-    // S'abonner AVANT de bouger : sans animation (onglet en arrière-plan…), flyTo termine tout de suite
-    // et l'événement passerait avant l'abonnement. Filet de sécurité si la carte ne bouge pas du tout.
-    const open = () => { if (!x.marker.isPopupOpen()) x.marker.openPopup(); };
-    map.once('moveend', open);
+    showPoiCard(x);
+    // le marqueur n'existe dans la page qu'une fois affiché : on le met en avant après le déplacement
+    map.once('moveend', () => markSelected(x));
     map.flyTo([x.lat, x.lon], Math.max(map.getZoom(), 15), { duration: .6 });
-    setTimeout(open, 1000);
     setSheet('peek');
+  }
+
+  // ---------- Carte de sélection (lieu ou sentier), posée sur la carte ----------
+  function showCard(kind, html) {
+    state.card = kind;
+    const c = $('#selCard');
+    c.innerHTML = html; c.hidden = false; c.scrollTop = 0;
+  }
+  function hideCard() {
+    const wasPoi = state.card === 'poi';
+    state.card = null; state.selPoi = null;
+    $('#selCard').hidden = true; $('#selCard').innerHTML = '';
+    markSelected(null);
+    if (wasPoi) setHash('');
+  }
+  function markSelected(x) {
+    document.querySelectorAll('.leaflet-marker-icon.is-selected').forEach((el) => el.classList.remove('is-selected'));
+    x?.marker.getElement()?.classList.add('is-selected');
+  }
+  function showPoiCard(x) {
+    if (state.selTrail) selectTrail(null);
+    state.selPoi = x;
+    showCard('poi', poiCardHtml(x));
+    markSelected(x);
+    setHash('poi=' + x.id);
+  }
+  function trailCardHtml(x) {
+    const p = x.p, st = p.stats, f = state.featured?.[p.osm];
+    const metrics = [`${km(st ? st.km : x.km)} km`, st && `+${st.gain} m / −${st.loss} m`, st && hm(st.minutes), diffText(p)];
+    return `<div class="sc-head"><span class="ref" style="background:${x.color}">${esc(p.ref || '—')}</span>
+        <button type="button" class="sc-close" data-close aria-label="${esc(t('close'))}">✕</button></div>
+      <h3>${esc(x.title)}</h3>
+      <p class="sc-metrics">${metrics.filter(Boolean).map(esc).join(' · ')}</p>
+      <div class="sc-actions">
+        ${f ? `<a class="btn primary" href="${lang}/${f.slug}/">📖 ${esc(t('readMore'))}</a>` : ''}
+        <button type="button" class="btn" data-details>${esc(t('details'))}</button>
+        ${favBtn(p.osm)}
+      </div>`;
+  }
+  $('#selCard').addEventListener('click', (e) => {
+    if (e.target.closest('[data-close]')) { if (state.card === 'trail') selectTrail(null); else hideCard(); return; }
+    if (e.target.closest('[data-details]')) {
+      showTab('trails'); setSheet('half');
+      $('#trailDetail').scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    const add = e.target.closest('[data-add-route]');
+    if (add) addToRoute(state.pois.find((x) => x.id === add.dataset.addRoute));
+  });
+
+  // « + Itinéraire » : le lieu devient une étape du traceur (recalée sur le chemin le plus proche)
+  function addToRoute(x) {
+    if (!x || !O.route) return;
+    hideCard();
+    showTab('route');
+    setSheet('half');
+    O.route.onMapClick(L.latLng(x.lat, x.lon));
+    toast(t('routeAdded').replace('{name}', x.title));
   }
 
   // Dates OSM « 2024-06-15 » ou « 2024-06 » → format local
@@ -547,7 +675,7 @@
     return esc(new Date(y, m - 1, d || 1).toLocaleDateString(locale(), opts));
   }
 
-  function popupHtml(x) {
+  function poiCardHtml(x) {
     const p = x.p, c = CATS[p.cat];
     const alt = [...new Set([p.name, p['name:sl'], p['name:it']].filter((n) => n && n !== x.title))];
     const dd = (k, v) => (v ? `<dt>${esc(t(k))}</dt><dd>${v}</dd>` : '');
@@ -556,10 +684,11 @@
     // « it:Titre » : la langue finit dans le nom de domaine, elle doit donc être un vrai code de langue
     const wiki = p.wikipedia && /^[a-z]{2,3}(-[a-z]+)?:./.test(p.wikipedia) ? p.wikipedia.split(':') : null;
     const near = trailsNear(x.lon, x.lat);
-    return `<div class="pop">
-      <div class="pop-head"><h4>${esc(x.title)}</h4>${favBtn(x.id)}</div>
+    const f = state.featured?.[p.osm];
+    return `<div class="sc-head"><span class="tag" style="background:${c.color}">${esc(catLabel(p.cat, true))}</span>
+        <button type="button" class="sc-close" data-close aria-label="${esc(t('close'))}">✕</button></div>
+      <h3>${esc(x.title)}</h3>
       ${alt.length ? `<div class="alt">${esc(alt.join(' / '))}</div>` : ''}
-      ${x.title !== catLabel(p.cat, true) ? `<span class="tag" style="background:${c.color}">${esc(catLabel(p.cat, true))}</span>` : ""}
       <dl>
         ${dd('altitude', p.ele && esc(Math.round(p.ele)) + ' m')}
         ${dd('type', esc(p.historic?.replace(/_/g, ' ') || ''))}
@@ -577,15 +706,19 @@
       </dl>
       ${p.description ? `<p>${esc(p.description)}</p>` : ''}
       ${p.cat === 'water' || p.cat === 'drinking' ? `<p class="water-note">⚠ ${esc(t('waterNote'))}</p>` : ''}
-      ${state.featured?.[p.osm] ? `<p class="read-more"><a href="${lang}/${state.featured[p.osm].slug}/">📖 ${esc(t('readMore'))}</a></p>` : ''}
+      <div class="sc-actions">
+        ${f ? `<a class="btn primary" href="${lang}/${f.slug}/">📖 ${esc(t('readMore'))}</a>` : ''}
+        <button type="button" class="btn" data-add-route="${esc(x.id)}">＋ ${esc(t('addToRoute'))}</button>
+        ${favBtn(x.id)}
+      </div>
       <div class="links">
-        <a href="https://www.openstreetmap.org/directions?to=${x.lat},${x.lon}" target="_blank" rel="noopener">${esc(t('directions'))} ↗</a>
+        <a href="https://www.openstreetmap.org/directions?to=${x.lat},${x.lon}" target="_blank" rel="noopener">${esc(t('goThere'))} ↗</a>
         ${safeUrl(web) ? `<a href="${safeUrl(web)}" target="_blank" rel="noopener noreferrer">${esc(t('website'))} ↗</a>` : ''}
         ${wiki ? `<a href="https://${wiki[0]}.wikipedia.org/wiki/${esc(encodeURIComponent(wiki.slice(1).join(':')))}" target="_blank" rel="noopener">Wikipedia ↗</a>` : ''}
         ${p.cat === 'bus' ? `<a href="${I.TIMETABLE_URL}" target="_blank" rel="noopener">${esc(t('timetable'))} ↗</a>` : ''}
         <a href="https://www.openstreetmap.org/${p.osm}" target="_blank" rel="noopener">OSM ↗</a>
         <a class="report" href="${noteUrl(x.lat, x.lon)}" target="_blank" rel="noopener">⚑ ${esc(t('report'))}</a>
-      </div></div>`;
+      </div>`;
   }
 
   // ---------- Onglets, lien profond, mobile ----------

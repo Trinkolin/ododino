@@ -15,7 +15,7 @@
   <link rel="alternate" hreflang="de" href="?lang=de">
   <link rel="alternate" hreflang="fr" href="?lang=fr">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#2f6f4f">
+  <meta name="theme-color" content="#1f4434">
   <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
@@ -45,6 +45,7 @@
       <button role="tab" class="tab" data-tab="pois"><span data-i18n="tabPois"></span> <span id="nPois" class="count"></span></button>
       <button role="tab" class="tab" data-tab="trails"><span data-i18n="tabTrails"></span> <span id="nTrails" class="count"></span></button>
       <button role="tab" class="tab" data-tab="route"><span data-i18n="tabRoute"></span></button>
+      <button role="tab" class="tab tab-icon" data-tab="offline" data-i18n-aria="offline"><span aria-hidden="true">⬇</span></button>
     </nav>
 
     <section id="tab-discover" class="tabpane active">
@@ -90,15 +91,20 @@
       <p class="muted small" data-i18n="routeShare"></p>
     </section>
 
+    <section id="tab-offline" class="tabpane">
+      <h2 class="sec" data-i18n="offline"></h2>
+      <div id="offlineBox" class="offline-box"></div>
+    </section>
+
     <footer class="foot">
       <span data-i18n="dataBy"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" data-i18n="contributors"></a> (ODbL) · <span data-i18n="updated"></span> <span id="updated">—</span><br>
-      <a href="about.html" data-keep-lang data-i18n="about"></a> · <a href="tel:112">SOS 112</a> ·
-      <button type="button" id="offlineToggle" class="linklike">⬇ <span data-i18n="offline"></span></button>
-      <div id="offlineBox" class="offline-box" hidden></div>
+      <a href="about.html" data-keep-lang data-i18n="about"></a> · <a href="tel:112">SOS 112</a>
     </footer>
   </aside>
 
   <main id="map" data-i18n-aria="map"></main>
+  <!-- Carte de sélection : le lieu ou le sentier choisi, posé sur la carte (remplace la bulle Leaflet) -->
+  <section id="selCard" class="sel-card pop" hidden></section>
   <div id="toast" class="toast" role="status" hidden></div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
