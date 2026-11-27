@@ -630,6 +630,14 @@
     renderFavs(); renderPois();
   });
 
+  // Rangées de filtres sur une ligne : la molette (verticale) les fait défiler de côté, sinon une souris
+  // n'atteint jamais les catégories cachées à droite
+  document.querySelectorAll('.chips').forEach((row) => row.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || row.scrollWidth <= row.clientWidth) return;
+    row.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }, { passive: false }));
+
   // ---------- Onglet « Découvrir » : les fiches ----------
   // La description d'une fiche (faite pour les moteurs de recherche) répète le titre avant « : » :
   // dans la liste, sous le titre, on n'en garde que la suite.
