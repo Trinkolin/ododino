@@ -177,7 +177,7 @@ def main(include_drafts=False):
     shell_mb = sum((OUT / f).stat().st_size for f in shell) / 1e6
     print(f"Coquille : {len(shell)} fichiers, {shell_mb:.1f} Mo (version {version})")
     print(f"Pack hors ligne : {len(entries)} fichiers, {total / 1e6:.1f} Mo")
-    print(f"Fiches : {len(featured)} ({sum(p.endswith('index.html') for p in pages)} pages{', brouillons inclus' if include_drafts else ''})")
+    print(f"Fiches : {sum(p.endswith('index.html') for p in pages) // 5} ({sum(p.endswith('index.html') for p in pages)} pages{', brouillons inclus' if include_drafts else ''})")
     print(f"_site/ prêt : {sum(1 for p in OUT.rglob('*') if p.is_file())} fichiers")
 
 

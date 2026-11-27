@@ -2,9 +2,16 @@
   "status": "brouillon",
   "updated": "2026-11-27",
   "sources": [
-    { "title": "Wikipedia (it) – Slavia friulana", "url": "https://it.wikipedia.org/wiki/Slavia_friulana", "consulted": "2026-11-27" },
-    { "title": "Wikipedia (it) – Pulfero, San Leonardo, San Pietro al Natisone (storia)", "url": "https://it.wikipedia.org/wiki/Pulfero", "consulted": "2026-11-27" },
-    { "title": "Wikipedia (sl) – Grad Ahrensperg", "url": "https://sl.wikipedia.org/wiki/Grad_Ahrensperg", "consulted": "2026-11-27" }
+    {
+      "title": "Wikipedia (it) – Slavia friulana",
+      "url": "https://it.wikipedia.org/wiki/Slavia_friulana",
+      "consulted": "2026-11-27"
+    },
+    {
+      "title": "Wikipedia (it) – Pulfero, San Leonardo, San Pietro al Natisone (storia)",
+      "url": "https://it.wikipedia.org/wiki/Pulfero",
+      "consulted": "2026-11-27"
+    }
   ],
   "_notes": "Fiche d'introduction sans lieu sur la carte (pas de « osm ») : elle relie les autres fiches. Sujet sensible (identité, langue) : formulations reprises de la source, avis des slavistes et opposition locale à la loi 38/2001 cités tous deux. Sept communes : huit créées sous Napoléon, Rodda et Tarcetta fusionnées en 1928 (Pulfero). Pas de photo : à ajouter (paysage des vallées)."
 }
