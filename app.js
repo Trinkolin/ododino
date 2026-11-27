@@ -4,6 +4,7 @@
 
   // ---------- Langue ----------
   const I = window.I18N;
+  const O = (window.Ododino = window.Ododino || {});
   let lang = I.detect();
   const T = () => I[lang];
   const t = (k) => I[lang][k] ?? I.it[k] ?? k;
@@ -55,6 +56,9 @@
       maxZoom: 19, attribution: '© OpenStreetMap' }),
     sat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19, attribution: '© Esri' }),
+    // Fond vectoriel de la zone, servi par le site lui-même : utilisable hors connexion
+    offline: window.protomapsL ? protomapsL.leafletLayer({ url: 'tiles/basemap.pmtiles', flavor: 'light', maxDataZoom: 15,
+      attribution: '© OpenStreetMap | Protomaps' }) : null,
   };
   bases.topo.addTo(map);
   const wmt = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
@@ -80,11 +84,51 @@
   function buildLayerControl() {
     if (layerCtl) layerCtl.remove();
     layerCtl = L.control.layers(
-      { [t('baseTopo')]: bases.topo, [t('baseOsm')]: bases.osm, [t('baseSat')]: bases.sat },
+      { [t('baseTopo')]: bases.topo, [t('baseOsm')]: bases.osm, [t('baseSat')]: bases.sat,
+        ...(bases.offline ? { [t('baseOffline')]: bases.offline } : {}) },
       { [t('layerTrails')]: layers.trails, [t('layerPois')]: layers.pois, [t('layerRelief')]: relief, [t('layerWmt')]: wmt },
       { collapsed: true }).addTo(map);
   }
   L.control.scale({ imperial: false }).addTo(map);
+
+  // ---------- Ma position (GPS) : lue et affichée uniquement dans le navigateur ----------
+  const gps = { watch: null, dot: null, ring: null, first: true };
+  const LocateControl = L.Control.extend({
+    options: { position: 'topleft' },
+    onAdd() {
+      const b = L.DomUtil.create('button', 'locate-btn leaflet-bar');
+      b.type = 'button'; b.innerHTML = '◎';
+      b.title = t('locate'); b.setAttribute('aria-label', t('locate')); b.setAttribute('aria-pressed', 'false');
+      L.DomEvent.disableClickPropagation(b);
+      L.DomEvent.on(b, 'click', () => (gps.watch === null ? startGps(b) : stopGps(b)));
+      gps.btn = b;
+      return b;
+    },
+  });
+  function startGps(b) {
+    if (!('geolocation' in navigator)) { toast(t('locateUnavailable')); return; }
+    b.classList.add('on'); b.setAttribute('aria-pressed', 'true'); gps.first = true;
+    gps.watch = navigator.geolocation.watchPosition((pos) => {
+      const ll = [pos.coords.latitude, pos.coords.longitude], acc = Math.round(pos.coords.accuracy);
+      if (!gps.dot) {
+        gps.ring = L.circle(ll, { radius: acc, color: '#1c7ed6', weight: 1, fillOpacity: .12, interactive: false }).addTo(map);
+        gps.dot = L.circleMarker(ll, { radius: 8, color: '#fff', weight: 3, fillColor: '#1c7ed6', fillOpacity: 1, pane: 'markerPane' }).addTo(map);
+      }
+      gps.dot.setLatLng(ll).bindTooltip(t('youAreHere').replace('{m}', acc));
+      gps.ring.setLatLng(ll).setRadius(acc);
+      if (gps.first) { map.flyTo(ll, Math.max(map.getZoom(), 15), { duration: .6 }); gps.first = false; }
+    }, (err) => {
+      toast(err.code === 1 ? t('locateDenied') : t('locateUnavailable'));
+      stopGps(b);
+    }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 30000 });
+  }
+  function stopGps(b) {
+    if (gps.watch !== null) navigator.geolocation.clearWatch(gps.watch);
+    gps.watch = null;
+    gps.dot?.remove(); gps.ring?.remove(); gps.dot = gps.ring = null;
+    b.classList.remove('on'); b.setAttribute('aria-pressed', 'false');
+  }
+  new LocateControl().addTo(map);
   // À petite échelle, les POI deviennent des pastilles pour laisser voir les sentiers
   const zoomClass = () => map.getContainer().classList.toggle('z-low', map.getZoom() < 14);
   map.on('zoomend', zoomClass); zoomClass();
@@ -129,9 +173,11 @@
     history.replaceState(null, '', u);
     map.closePopup();
     applyStaticText(); buildLayerControl();
+    if (gps.btn) { gps.btn.title = t('locate'); gps.btn.setAttribute('aria-label', t('locate')); }
     state.pois.forEach((x) => { x.title = poiTitle(x.p); x.marker.options.title = x.title; });
     state.trails.forEach((x) => { x.title = trailTitle(x.p); x.line.setTooltipContent(trailTip(x)); });
     renderCatChips(); renderNetChips(); renderPois(); renderTrails();
+    O.route?.refresh();
     if (state.selTrail) selectTrail(state.selTrail, false);
   }
   applyStaticText(); buildLayerControl();
@@ -236,7 +282,8 @@
       renderNetChips(); renderTrails();
     });
     $('#qt').addEventListener('input', renderTrails);
-    map.on('click', () => selectTrail(null));
+    // onglet Itinéraire : un clic ajoute une étape ; sinon il désélectionne le sentier
+    map.on('click', (e) => { if (state.tab === 'route' && O.route) O.route.onMapClick(e.latlng); else selectTrail(null); });
     renderNetChips(); renderTrails();
   }
 
@@ -329,8 +376,8 @@
   let profileMarker = null;
   function hideProfileMarker() { if (profileMarker) { profileMarker.remove(); profileMarker = null; } }
 
-  function drawProfile(pr, color) {
-    const box = $('#profile'); if (!box) return;
+  function drawProfile(pr, color, box = $('#profile')) {
+    if (!box) return;
     const W = 340, H = 120, L0 = 34, R0 = 6, T0 = 8, B0 = 18;
     const n = pr.d.length, dmax = pr.d[n - 1];
     const emin = Math.min(...pr.e), emax = Math.max(...pr.e);
@@ -491,8 +538,11 @@
 
   // ---------- Onglets, lien profond, mobile ----------
   function showTab(name) {
+    const was = state.tab;
+    state.tab = name;
     document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
     document.querySelectorAll('.tabpane').forEach((s) => s.classList.toggle('active', s.id === 'tab-' + name));
+    if (was !== name) O.route?.onTab(name === 'route');
   }
   document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
   $('#togglePanel').addEventListener('click', () => { $('#panel').classList.toggle('collapsed'); setTimeout(() => map.invalidateSize(), 250); });
@@ -504,9 +554,21 @@
     setTimeout(() => { hashLock = false; });
   }
   function applyHash() {
-    const m = location.hash.match(/^#(poi|trail)=(.+)$/); if (!m) return;
+    const m = location.hash.match(/^#(poi|trail|route)=(.+)$/); if (!m) return;
     if (m[1] === 'trail') selectTrail(state.trails.find((x) => x.id === m[2]), true);
+    else if (m[1] === 'route') { showTab('route'); O.route?.fromHash(decodeURIComponent(m[2])); }
     else openPoi(state.pois.find((x) => x.id === m[2]));
   }
   window.addEventListener('hashchange', () => { if (!hashLock) applyHash(); });
+
+  // Petit message temporaire (remplace alert(), bloquée par certains navigateurs)
+  let toastTimer = null;
+  function toast(msg) {
+    const el = $('#toast');
+    el.textContent = msg; el.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 4000);
+  }
+
+  // API pour route.js (traceur d'itinéraire)
+  Object.assign(O, { map, bases, t: (k) => t(k), esc, km, locale: () => locale(), hm, drawProfile, setHash, toast });
 })();

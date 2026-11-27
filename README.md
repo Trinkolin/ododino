@@ -7,7 +7,7 @@ d'après OpenStreetMap, en 5 langues (IT, SL, EN, DE, FR). Le site est entièrem
 ## Lancer en local
 Double-cliquer sur `lancer.bat`, ou :
 ```
-py -m http.server 8765
+py tools/serve.py
 ```
 puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne marche pas en `file://`.
 
@@ -21,7 +21,13 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 | `vendor/`, `fonts/` | Leaflet et polices auto-hébergés, sans appel à un CDN ni à Google |
 | `data/profiles/`, `data/gpx/` | profils d'altitude et GPX des sentiers (générés) |
 | `tiles/hillshade/` | relief ombré (généré une fois) |
+| `tiles/basemap.pmtiles` | fond vectoriel hors ligne de la zone (Protomaps, extrait de temps en temps) |
+| `offline.js`, `sw.js`, `manifest.webmanifest` | site installable et mode hors connexion |
+| `icons/` | logo et icônes (générés par `tools/make_icons.py`) |
 | `tools/fetch_osm.py` | télécharge les données OSM via Overpass |
+| `route.js` | traceur d'itinéraire (calcul dans le navigateur, export/import GPX) |
+| `data/graph.json` | graphe de routage du traceur (généré) |
+| `tools/build_graph.py` | construit le graphe : chemins, pistes et petites routes + altitudes |
 | `tools/enrich_trails.py` | ordre des tronçons, altitudes, dénivelés, temps, profils et GPX |
 | `tools/prepare_dem.py` | prépare une fois les altitudes Copernicus et le relief ombré |
 | `tools/dem/` | altitudes de la zone (2 Mo), lues par `enrich_trails.py` |
@@ -32,11 +38,16 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 ```
 py tools/fetch_osm.py
 py tools/enrich_trails.py
+py tools/build_graph.py
 ```
 Le premier script régénère `data/*.geojson` : limites des communes, POI, sentiers balisés et chemins.
 Si Overpass renvoie nettement moins d'éléments qu'avant (moins de 70 %), la mise à jour de ce fichier
 est refusée, pour ne pas publier des données tronquées. Le second **doit toujours suivre** : il ajoute
 profils, dénivelés, temps et GPX aux sentiers (sans lui, les fiches affichent « profil indisponible »).
+
+Le fond hors ligne se rafraîchit à la main, de temps en temps (même environnement) :
+`.venv-dem/Scripts/python tools/extract_basemap.py`. Avant une publication, `py tools/build.py` dresse
+la liste du pack « Disponible hors ligne » (`offline-files.json`).
 
 Les altitudes (Copernicus GLO-30) et le relief ombré ne changent pas : `tools/prepare_dem.py` n'est à
 relancer que pour agrandir la zone. Il demande numpy, Pillow, tifffile et imagecodecs, dans un

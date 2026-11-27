@@ -4,9 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Sécurité : seuls les scripts du site et l'envoi des statistiques sont autorisés -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src https://ododino.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src https://ododino.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Ododino</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2f6f4f">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -14,7 +17,7 @@
   <article class="about">
     <header class="brand">
       <div>
-        <h1><a href="index.html" data-keep-lang>Ododino</a></h1>
+        <h1><a href="index.html" data-keep-lang><img src="icons/logo.svg" alt="" class="logo" width="28" height="28"> Ododino</a></h1>
         <p class="sub" data-i18n="subtitle"></p>
       </div>
       <div id="langs" class="langs" role="group"></div>

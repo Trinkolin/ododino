@@ -52,15 +52,18 @@ Décisions prises le 22/11/2026.
 - Dépôt GitHub public `ododino`, publié sur GitHub Pages. La génération du site est faite par des scripts Python.
 - Domaine `ododino.it` (sinon `ododino.eu`), avec `contact@ododino.it` redirigé vers la boîte de l'auteur.
 - Statistiques GoatCounter (sans cookies) et une page « À propos et confidentialité ».
-- Logo SVG (silhouette du Matajur) décliné en icône d'application, à valider par l'auteur.
+- Logo SVG (silhouette du Matajur au-dessus du Natisone) décliné en icônes d'application : validé le 26/11/2026.
+
+- Modèle : **gratuit, sans publicité** (décidé le 26/11/2026). À réévaluer après une saison de
+  fréquentation (GoatCounter) ; piste privilégiée si besoin : lien de dons, pas de publicité.
 
 **À faire par l'auteur** : créer le compte GitHub, acheter le domaine, créer le compte GoatCounter,
-relire les fiches en français, valider le logo et la liste des lieux phares.
+relire les fiches en français, valider la liste des lieux phares.
 
 ## Étapes
 1. [ ] **Base en ligne** : dépôt, Pages, domaine, mise à jour hebdomadaire, Cividale, catégories
    d'accès, avertissement et signalement, GoatCounter, page « À propos ».
-2. [ ] **Randonnée** : GPX, profil d'altitude, relief ombré.
-   - [ ] **2 bis – Traceur d'itinéraire** : calcul dans le navigateur, export/import GPX, lien partageable.
-3. [ ] **Hors ligne** : PWA, fond vectoriel, position GPS, logo et icône.
+2. [x] **Randonnée** : GPX, profil d'altitude, relief ombré.
+   - [x] **2 bis – Traceur d'itinéraire** : calcul dans le navigateur, export/import GPX, lien partageable.
+3. [x] **Hors ligne** : PWA, fond vectoriel, position GPS, logo et icône.
 4. [ ] **Contenu** : liste des 20 lieux phares, puis rédaction, traduction, relecture et pages par langue.

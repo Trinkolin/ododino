@@ -4,8 +4,14 @@
     {
       "name": "ododino",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8765"],
+      "runtimeArgs": ["tools/serve.py", "8765"],
       "port": 8765
+    },
+    {
+      "name": "ododino-site",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["tools/serve.py", "8766", "_site"],
+      "port": 8766
     }
   ]
 }

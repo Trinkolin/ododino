@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Sécurité : scripts du site uniquement ; images limitées aux 4 fonds de carte ;
        'unsafe-inline' pour les styles seulement (couleurs des marqueurs, positions Leaflet) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.opentopomap.org https://tile.openstreetmap.org https://server.arcgisonline.com https://tile.waymarkedtrails.org; font-src 'self'; connect-src 'self' https://ododino.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.opentopomap.org https://tile.openstreetmap.org https://server.arcgisonline.com https://tile.waymarkedtrails.org; font-src 'self'; connect-src 'self' https://ododino.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'; worker-src 'self'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Ododino · Valli del Natisone</title>
   <meta name="description" content="Punti di interesse e sentieri escursionistici delle Valli del Natisone, dai dati OpenStreetMap.">
@@ -14,6 +14,10 @@
   <link rel="alternate" hreflang="en" href="?lang=en">
   <link rel="alternate" hreflang="de" href="?lang=de">
   <link rel="alternate" hreflang="fr" href="?lang=fr">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2f6f4f">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="style.css">
@@ -22,7 +26,7 @@
   <aside id="panel">
     <header class="brand">
       <div>
-        <h1>Ododino</h1>
+        <h1><img src="icons/logo.svg" alt="" class="logo" width="28" height="28"> Ododino</h1>
         <p class="sub" data-i18n="subtitle"></p>
       </div>
       <div class="brand-tools">
@@ -39,6 +43,7 @@
     <nav class="tabs" role="tablist">
       <button role="tab" class="tab active" data-tab="pois"><span data-i18n="tabPois"></span> <span id="nPois" class="count"></span></button>
       <button role="tab" class="tab" data-tab="trails"><span data-i18n="tabTrails"></span> <span id="nTrails" class="count"></span></button>
+      <button role="tab" class="tab" data-tab="route"><span data-i18n="tabRoute"></span></button>
     </nav>
 
     <section id="tab-pois" class="tabpane active">
@@ -55,17 +60,45 @@
       <ul id="trailList" class="list"></ul>
     </section>
 
+    <section id="tab-route" class="tabpane">
+      <p class="help" data-i18n="routeHelp"></p>
+      <p id="routeLoading" class="muted" data-i18n="routeLoading"></p>
+      <label class="toggle"><input type="checkbox" id="routeMarked"> <span data-i18n="routeMarkedOnly"></span></label>
+      <label class="toggle"><input type="checkbox" id="routeAlpine"> <span data-i18n="routeAllowAlpine"></span></label>
+      <div class="route-btns">
+        <button type="button" id="routeUndo" disabled>↶ <span data-i18n="routeUndo"></span></button>
+        <button type="button" id="routeClear">✕ <span data-i18n="routeClear"></span></button>
+        <button type="button" id="routeImportBtn">⬆ <span data-i18n="routeImport"></span></button>
+        <button type="button" id="routeExport" class="primary" disabled>⬇ <span data-i18n="routeExport"></span></button>
+        <input type="file" id="routeFile" accept=".gpx,application/gpx+xml" hidden>
+      </div>
+      <p id="routeImported" class="muted" hidden></p>
+      <div id="routeWarn" class="route-warn" role="alert" hidden></div>
+      <div id="routeStats" class="detail-lite"></div>
+      <details id="routeProfile" open hidden>
+        <summary data-i18n="profileLabel"></summary>
+        <div id="routeProfileBox" class="profile"></div>
+      </details>
+      <p class="muted small" data-i18n="routeShare"></p>
+    </section>
+
     <footer class="foot">
       <span data-i18n="dataBy"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" data-i18n="contributors"></a> (ODbL) · <span data-i18n="updated"></span> <span id="updated">—</span><br>
-      <a href="about.html" data-keep-lang data-i18n="about"></a> · <a href="tel:112">SOS 112</a>
+      <a href="about.html" data-keep-lang data-i18n="about"></a> · <a href="tel:112">SOS 112</a> ·
+      <button type="button" id="offlineToggle" class="linklike">⬇ <span data-i18n="offline"></span></button>
+      <div id="offlineBox" class="offline-box" hidden></div>
     </footer>
   </aside>
 
   <main id="map" data-i18n-aria="map"></main>
+  <div id="toast" class="toast" role="status" hidden></div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="vendor/protomaps-leaflet/protomaps-leaflet.js"></script>
   <script src="i18n.js"></script>
   <script src="app.js"></script>
+  <script src="route.js"></script>
+  <script src="offline.js"></script>
   <!-- Statistiques sans cookies (GoatCounter, script auto-hébergé) : ignorées en local -->
   <script data-goatcounter="https://ododino.goatcounter.com/count" async src="vendor/goatcounter/count.js"></script>
 </body>
