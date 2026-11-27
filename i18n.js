@@ -28,6 +28,11 @@ window.I18N = {
   },
   remember(l) { try { localStorage.setItem('ododino.lang', l); } catch { /* stockage indisponible */ } },
   locale(l) { return this.LANGS.find((x) => x[0] === l)[3]; },
+  // Boutons IT · SL · EN · DE · FR, partagés par la carte et la page « À propos »
+  switcherHtml(current) {
+    return this.LANGS.map(([c, short, name]) =>
+      `<button data-lang="${c}" class="${c === current ? 'on' : ''}" title="${name}" lang="${c}" aria-pressed="${c === current}">${short}</button>`).join('');
+  },
 
   it: {
     subtitle: 'Valli del Natisone · Benecia',

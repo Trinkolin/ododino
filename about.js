@@ -19,8 +19,7 @@
       .split('{controller}').join(esc(I.CONTROLLER))
       .split('{updated}').join(esc(updated));
     document.getElementById('content').innerHTML = `<h1 class="title">${esc(T.about)}</h1>` + html;
-    document.getElementById('langs').innerHTML = I.LANGS.map(([c, short, name]) =>
-      `<button data-lang="${c}" class="${c === lang ? 'on' : ''}" title="${esc(name)}" lang="${c}" aria-pressed="${c === lang}">${short}</button>`).join('');
+    document.getElementById('langs').innerHTML = I.switcherHtml(lang);
   }
 
   document.getElementById('langs').addEventListener('click', (e) => {

@@ -153,8 +153,7 @@
     document.querySelectorAll('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
     document.querySelectorAll('a[data-keep-lang]').forEach((a) => { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + lang; });
     $('#langs').setAttribute('aria-label', t('language'));
-    $('#langs').innerHTML = I.LANGS.map(([c, short, name]) =>
-      `<button data-lang="${c}" class="${c === lang ? 'on' : ''}" title="${esc(name)}" lang="${c}" aria-pressed="${c === lang}">${short}</button>`).join('');
+    $('#langs').innerHTML = I.switcherHtml(lang);
     if (state.updated) $('#updated').textContent = new Date(state.updated).toLocaleDateString(locale());
   }
   $('#langs').addEventListener('click', (e) => {

@@ -46,6 +46,9 @@ node --test
 `tests/geo-cases.json` contient des cas calculés à la main que `tools/geo.py` (scripts) et `geo.js`
 (navigateur) doivent tous deux retrouver : c'est ce qui garantit que les fiches des sentiers et le
 traceur calculent dénivelés et temps de la même façon. La GitHub Action refuse de publier si un test échoue.
+Les autres tests couvrent les règles de sécurité du traceur (`router.test.js`), le garde-fou des données
+(`test_osm.py`) et les traductions (`i18n.test.js` : 5 langues complètes, aucune clé utilisée qui
+n'existe pas).
 
 ## Mettre à jour les données à la main
 ```
