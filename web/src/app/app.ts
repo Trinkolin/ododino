@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
+import { filter, skip } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -22,6 +25,15 @@ export class App {
   protected readonly install = inject(InstallService);
   private readonly router = inject(Router);
   private readonly snack = inject(MatSnackBar);
+
+  constructor() {
+    // Statistiques (GoatCounter, sans cookies) : la première page est comptée par count.js, les suivantes ici
+    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+      this.router.events.pipe(filter((e) => e instanceof NavigationEnd), skip(1)).subscribe(() => {
+        (window as unknown as { goatcounter?: { count?: (o: { path: string }) => void } }).goatcounter?.count?.({ path: location.pathname });
+      });
+    }
+  }
 
   /** Même page dans une autre langue : /fr/matajur → /it/matajur */
   protected switchTo(l: Lang): void {

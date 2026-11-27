@@ -2,6 +2,7 @@
 
 Écrit dans le dossier du site (web/.site) : data/featured.json (lien « Lire la fiche » par lieu OSM),
 data/cards.json (onglet « Découvrir »), les vignettes cards/<fiche>.jpg et les photos cards/photos/<fiche>.jpg.
+Écrit aussi sitemap.xml et robots.txt à la racine du site.
 Écrit dans le dossier des fiches (web/src/app/cards/generated) : une fiche par fichier <fiche>.json (5 langues,
 texte déjà converti en HTML par le Markdown réduit de tools/content.py), index.json (fiches, fiche d'introduction,
 adresse publique) et labels.json (libellés des pages de fiche, copie de content/labels.json).
@@ -95,6 +96,13 @@ def main(site, fiches_dir, include_drafts=False):
         {"slugs": [f["slug"] for f in fiches], "intro": intro, "siteUrl": content.SITE_URL}, ensure_ascii=False),
         encoding="utf-8")
     shutil.copyfile(content.CONTENT / "labels.json", fiches_dir / "labels.json")
+    # plan du site et robots.txt (racine du site publié) : carte et « À propos » par langue, puis les fiches publiées
+    urls = [f"{content.SITE_URL}/{l}/{page}" for page in ("", "about/") for l in content.LANGS]
+    urls += [f"{content.SITE_URL}/{l}/{f['slug']}/" for f in fiches if f["meta"]["status"] == "relu" for l in content.LANGS]
+    (site / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "".join(f"  <url><loc>{u}</loc></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
+    (site / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {content.SITE_URL}/sitemap.xml\n", encoding="utf-8")
     print(f"Fiches pour l'app : {len(fiches)}")
 
 

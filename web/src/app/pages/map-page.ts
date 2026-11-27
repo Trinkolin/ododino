@@ -1,6 +1,7 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import {
-  ChangeDetectionStrategy, Component, PLATFORM_ID, computed, effect, inject, untracked, viewChild,
+  ChangeDetectionStrategy, Component, PLATFORM_ID, afterNextRender, computed, effect, inject, signal, untracked, viewChild,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -27,7 +28,7 @@ const SHEETS: Sheet[] = ['peek', 'half', 'full'];
  */
 @Component({
   selector: 'odo-map-page',
-  imports: [MatTabsModule, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab, RouteTab, OfflineTab],
+  imports: [MatTabsModule, MatButtonModule, RouterLink, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab, RouteTab, OfflineTab],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
   host: { '[class]': '"sheet-" + state.sheet()' },
@@ -42,8 +43,22 @@ export class MapPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly mapView = viewChild(MapView);
   protected readonly tabIndex = computed(() => TABS.indexOf(this.state.tab()));
+  /** Avertissement de sécurité fermé (localStorage « ododino.safetyOk ») : lu après l'affichage, pour que la
+   *  page pré-rendue et celle du navigateur partent du même état */
+  protected readonly safetyOk = signal(true);
+  /** date des données OSM (data/meta.json) */
+  protected readonly updated = computed(() => {
+    const u = this.data.updated(); return u ? new Date(u).toLocaleDateString(this.i18n.locale()) : '';
+  });
+  protected dismissSafety(): void {
+    this.safetyOk.set(true);
+    try { localStorage.setItem('ododino.safetyOk', '1'); } catch { /* stockage indisponible */ }
+  }
 
   constructor() {
+    afterNextRender(() => {
+      try { this.safetyOk.set(!!localStorage.getItem('ododino.safetyOk')); } catch { this.safetyOk.set(false); }
+    });
     // Liens profonds de la version actuelle : #poi=node/…, #trail=relation/…, #route=lon,lat;…&o=…
     effect(() => {
       if (!this.data.loaded()) return;

@@ -25,6 +25,11 @@ class ExportApp(unittest.TestCase):
             self.assertEqual(index["siteUrl"], content.SITE_URL)
             if index["intro"]:
                 self.assertIn(index["intro"], published)
+            sitemap = (site / "sitemap.xml").read_text(encoding="utf-8")
+            self.assertIn(f"<loc>{content.SITE_URL}/fr/about/</loc>", sitemap)
+            for slug in published:
+                self.assertIn(f"<loc>{content.SITE_URL}/it/{slug}/</loc>", sitemap)
+            self.assertIn("Sitemap:", (site / "robots.txt").read_text(encoding="utf-8"))
             labels = json.loads((fiches_dir / "labels.json").read_text(encoding="utf-8"))
             self.assertEqual(set(labels), set(content.LANGS))
             for slug in published:

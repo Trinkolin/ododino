@@ -110,6 +110,8 @@ Le site est publié sur https://trinkolin.github.io/ododino/ (dépôt `Trinkolin
 `domaine-ododino-com`, sans être poussé, tant que les DNS Namecheap ne pointent pas vers GitHub Pages
 (étape 4 du README) ; il suffira alors de le reprendre sur `main` (`git cherry-pick`).
 
-Décidé par l'auteur : réécriture du front en **Angular + Angular Material**, application installable, directement
-sur `main`, fiches comprises (pré-rendues), avec le service worker d'Angular. Chaque push sur `main` publie le
-site : ne pousser la version Angular qu'une fois au niveau de la version actuelle.
+Le site publié est la version **Angular** (`web/`) : la GitHub Action lance `npm run build:pages` et publie
+`web/dist/ododino/browser`. Les fichiers de l'ancienne version à la racine (`index.html`, `app.js`, `sw.js`,
+`tools/build.py`…) ne sont plus publiés ; `i18n.js`, `geo.js`, `router.js`, `content/`, `data/`, `tools/` restent les
+sources (traductions, calculs jumeaux, fiches, données). `web/public/sw.js` retire l'ancien service worker chez
+les visiteurs déjà venus. Anciennes adresses gérées : `index.html?lang=…#…`, `about.html?lang=…`.

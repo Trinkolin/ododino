@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { I18nService } from '../i18n/i18n.service';
+import { I18nService, Lang, isLang } from '../i18n/i18n.service';
 
 /** Page d'accueil « / » : dans le navigateur, on passe tout de suite à la langue du visiteur ; la version
  *  pré-rendue (moteurs de recherche, JavaScript lent) propose les 5 langues. */
@@ -21,6 +21,11 @@ export class HomeRedirect implements OnInit {
 
   ngOnInit(): void {
     if (this.browser) // garde le #poi= / #trail= / #route= des liens partagés de la version actuelle
-      this.router.navigate(['/', this.i18n.detect()], { replaceUrl: true, fragment: location.hash.slice(1) || undefined });
+      // et la langue des anciennes adresses index.html?lang=fr
+      this.router.navigate(['/', this.lang()], { replaceUrl: true, fragment: location.hash.slice(1) || undefined });
+  }
+  private lang(): Lang {
+    const q = new URLSearchParams(location.search).get('lang');
+    return isLang(q) ? q : this.i18n.detect();
   }
 }

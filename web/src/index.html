@@ -2,6 +2,9 @@
 <html lang="it">
   <head>
     <meta charset="utf-8" />
+    <!-- Sécurité : seuls les scripts du site ; images des fonds de carte choisis ; envoi des statistiques (GoatCounter) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.tile.opentopomap.org https://tile.openstreetmap.org https://server.arcgisonline.com https://tile.waymarkedtrails.org; font-src 'self'; connect-src 'self' https://ododino.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'; worker-src 'self'; manifest-src 'self'" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>Ododino · Valli del Natisone</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,6 +20,8 @@
   </head>
   <body>
     <app-root></app-root>
+    <!-- Statistiques sans cookies (GoatCounter, script auto-hébergé) ; pages suivantes comptées par StatsService -->
+    <script data-goatcounter="https://ododino.goatcounter.com/count" async src="vendor/goatcounter/count.js"></script>
     <noscript>Ododino ha bisogno di JavaScript · Ododino needs JavaScript.</noscript>
   </body>
 </html>

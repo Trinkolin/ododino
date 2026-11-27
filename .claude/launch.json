@@ -29,6 +29,16 @@
         "web/dist/ododino/browser"
       ],
       "port": 8767
+    },
+    {
+      "name": "ododino-pages",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "tools/serve.py",
+        "8768",
+        "web/dist/pages-root"
+      ],
+      "port": 8768
     }
   ]
 }

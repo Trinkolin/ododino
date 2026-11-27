@@ -18,10 +18,16 @@ export const routes: Routes = [
     canActivate: [langGuard],
     children: [
       { path: '', loadComponent: () => import('./pages/map-page').then((m) => m.MapPage) },
+      { path: 'about', loadComponent: () => import('./pages/about-page').then((m) => m.AboutPage) },
       // Fiches phares : contenu chargé avant l'affichage (pré-rendu complet)
       { path: ':slug', loadComponent: () => import('./pages/card-page').then((m) => m.CardPage),
         resolve: { fiche: (r: ActivatedRouteSnapshot, s: RouterStateSnapshot) => import('./cards/fiche').then((m) => m.ficheResolver(r, s)) } },
     ],
   },
+  // Adresses de la version précédente du site : about.html?lang=fr → /fr/about (index.html : voir shell/start-url.ts)
+  { path: 'about.html', redirectTo: ({ queryParams }) => {
+    const l = queryParams['lang'];
+    return `/${isLang(l) ? l : inject(I18nService).detect()}/about`;
+  } },
   { path: '**', redirectTo: '' },
 ];

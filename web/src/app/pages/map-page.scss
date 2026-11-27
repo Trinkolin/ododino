@@ -4,6 +4,19 @@
   border-right: 1px solid var(--mat-sys-outline-variant); background: var(--mat-sys-surface-container-low); }
 .handle { display: none; }
 .tabs { flex: 1; min-height: 0; }
+// avertissement de sécurité (une fois, gardé dans le navigateur) et pied du panneau
+.safety {
+  display: flex; gap: 10px; align-items: flex-start; flex: none; margin: 10px 12px 0; padding: 9px 11px; border-radius: 12px;
+  background: var(--mat-sys-tertiary-container); color: var(--mat-sys-on-tertiary-container); font: var(--mat-sys-body-small);
+}
+.safety p { margin: 0; flex: 1; }
+.safety a { color: inherit; }
+.safety button { flex: none; }
+.foot {
+  flex: none; padding: 6px 12px 8px; border-top: 1px solid var(--mat-sys-outline-variant);
+  color: var(--mat-sys-on-surface-variant); font: var(--mat-sys-body-small); line-height: 1.6;
+}
+.foot a { color: var(--mat-sys-primary); }
 // le contenu des onglets prend toute la hauteur (listes qui défilent)
 .tabs ::ng-deep .mat-mdc-tab-body-wrapper { flex: 1; min-height: 0; }
 .tabs ::ng-deep .mat-mdc-tab-body-content { height: 100%; overflow: auto; }
@@ -28,6 +41,9 @@ odo-icon { width: 20px; height: 20px; margin-right: 5px; }
   }
   .panel.dragging { transition: none; }
   :host(.sheet-peek) .panel { height: 112px; }
+  :host(.sheet-peek) .safety, :host(.sheet-peek) .foot { display: none; }
+  // pied du panneau : seulement panneau ouvert en grand (la place manque à mi-hauteur)
+  :host(.sheet-half) .foot { display: none; }
   :host(.sheet-half) .panel { height: 52%; }
   :host(.sheet-full) .panel { height: calc(100% - 8px); }
   :host(.sheet-peek) .tabs ::ng-deep .mat-mdc-tab-body-wrapper { display: none; }

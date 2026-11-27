@@ -21,6 +21,8 @@ const langs = I.LANGS.map((l) => l[0]);
 const out = {
   langs: I.LANGS.map(([code, label]) => ({ code, label })),
   contact: I.CONTACT,
+  controller: I.CONTROLLER,
+  privacyUpdated: I.PRIVACY_UPDATED,
   timetableUrl: I.TIMETABLE_URL,
   messages: Object.fromEntries(langs.map((l) => [l, I[l]])),
 };
@@ -51,7 +53,7 @@ for (const name of ICONS) {
 // (ignoré par git), déclaré dans angular.json.
 const site = path.join(web, '.site');
 fs.rmSync(site, { recursive: true, force: true });
-for (const dir of ['data', 'fonts', 'tiles', 'icons']) {
+for (const dir of ['data', 'fonts', 'tiles', 'icons', 'vendor/goatcounter']) {
   fs.cpSync(path.join(root, dir), path.join(site, dir), { recursive: true });
 }
 // ---------- 4. Fiches : index pour la carte, liste « Découvrir », vignettes (tools/export_app.py) ----------

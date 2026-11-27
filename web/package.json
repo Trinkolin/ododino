@@ -10,7 +10,10 @@
     "prepare_assets": "node scripts/prepare.mjs",
     "prestart": "node scripts/prepare.mjs",
     "prebuild": "node scripts/prepare.mjs",
-    "build:pages": "ng build --base-href /ododino/"
+    "build:pages": "ng build --base-href /ododino/",
+    "postbuild": "node scripts/finish.mjs",
+    "prebuild:pages": "node scripts/prepare.mjs",
+    "postbuild:pages": "node scripts/finish.mjs"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

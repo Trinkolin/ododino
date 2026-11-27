@@ -1,6 +1,12 @@
 <aside class="panel">
   <button type="button" class="handle" [attr.aria-label]="i18n.t('togglePanel')"
     (pointerdown)="handleDown($event)" (pointermove)="handleMove($event)" (pointerup)="handleUp()"><span></span></button>
+  @if (!safetyOk()) {
+    <div class="safety" role="note">
+      <p>{{ i18n.t('safety') }} <strong>{{ i18n.t('emergency') }} <a href="tel:112">112</a></strong></p>
+      <button mat-stroked-button (click)="dismissSafety()">{{ i18n.t('ok') }}</button>
+    </div>
+  }
   <mat-tab-group [selectedIndex]="tabIndex()" (selectedIndexChange)="setTab($event)" mat-stretch-tabs="false"
     animationDuration="0ms" class="tabs" preserveContent>
     <mat-tab>
@@ -24,6 +30,11 @@
       <odo-offline-tab />
     </mat-tab>
   </mat-tab-group>
+  <footer class="foot">
+    {{ i18n.t('dataBy') }} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">{{ i18n.t('contributors') }}</a> (ODbL)
+    @if (updated()) { · {{ i18n.t('updated') }} {{ updated() }} }<br />
+    <a [routerLink]="['/', i18n.lang(), 'about']">{{ i18n.t('about') }}</a> · <a href="tel:112">SOS 112</a>
+  </footer>
 </aside>
 
 <section class="map">
