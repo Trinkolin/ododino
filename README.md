@@ -25,7 +25,8 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 | `offline.js`, `sw.js`, `manifest.webmanifest` | site installable et mode hors connexion |
 | `icons/` | logo et icônes (générés par `tools/make_icons.py`) |
 | `tools/fetch_osm.py` | télécharge les données OSM via Overpass |
-| `route.js` | traceur d'itinéraire (calcul dans le navigateur, export/import GPX) |
+| `router.js` | calcul du traceur (A*, règles de sécurité T3/T4, lien partageable), sans carte ni page : testé par `tests/router.test.js` |
+| `route.js` | affichage du traceur : carte, panneau, export/import GPX |
 | `data/graph.json` | graphe de routage du traceur (généré) |
 | `tools/build_graph.py` | construit le graphe : chemins, pistes et petites routes + altitudes |
 | `geo.js`, `tools/geo.py` | calculs partagés (distance, profil, dénivelés, temps de marche), jumeaux testés ensemble |

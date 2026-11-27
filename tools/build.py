@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "_site"
 
 SHELL = [
-    "index.html", "about.html", "style.css", "geo.js", "app.js", "route.js", "offline.js", "about.js", "i18n.js",
+    "index.html", "about.html", "style.css", "geo.js", "app.js", "router.js", "route.js", "offline.js", "about.js", "i18n.js",
     "manifest.webmanifest",
     "vendor/leaflet/leaflet.js", "vendor/leaflet/leaflet.css", "vendor/leaflet/images/*.png",
     "vendor/protomaps-leaflet/protomaps-leaflet.js", "vendor/goatcounter/count.js",
@@ -124,6 +124,14 @@ def main():
     if n != 1:
         raise BuildError("sw.js : ligne « const SITE = …; » introuvable (inventaire non écrit)")
     (OUT / "sw.js").write_text(sw, encoding="utf-8")
+
+    # Marque « site construit » : active le service worker (absent en développement, voir offline.js)
+    page = OUT / "index.html"
+    html = page.read_text(encoding="utf-8")
+    if "</head>" not in html:
+        raise BuildError("index.html : </head> introuvable")
+    marker = f'  <meta name="ododino-build" content="{version}">\n</head>'
+    page.write_text(html.replace("</head>", marker, 1), encoding="utf-8")
 
     # Inventaire → pack hors ligne (lu par offline.js)
     entries = [[f, (ROOT / f).stat().st_size] for f in pack]

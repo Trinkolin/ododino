@@ -18,13 +18,14 @@
   const mb = (b) => `${(b / 1e6).toLocaleString(O.locale(), { maximumFractionDigits: 0 })} Mo`;
 
   const swOk = 'serviceWorker' in navigator && 'caches' in window && window.isSecureContext;
-  // offline-files.json n'existe que dans le site construit (tools/build.py) : en développement, pas de
-  // service worker, sinon il servirait d'anciennes versions des fichiers en cours de modification
+  // Le build (tools/build.py) ajoute <meta name="ododino-build"> à la page publiée : en développement il
+  // n'y est pas, et le service worker reste désactivé (sinon il servirait d'anciennes versions des fichiers)
   if (swOk) {
-    fetch('offline-files.json', { method: 'HEAD', cache: 'no-store' }).then((r) => {
-      if (r.ok) return navigator.serviceWorker.register('sw.js');
-      return navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((g) => g.unregister()));
-    }).catch(() => { /* hors ligne : le service worker déjà installé continue de servir le site */ });
+    if (document.querySelector('meta[name="ododino-build"]')) {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* site utilisable sans */ });
+    } else {
+      navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((g) => g.unregister()));
+    }
   }
 
   // ---------- Pack hors ligne ----------
