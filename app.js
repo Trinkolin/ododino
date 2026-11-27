@@ -149,6 +149,26 @@
   const state = { pois: [], trails: [], cats: new Set(Object.keys(CATS).filter((k) => !HIDDEN_BY_DEFAULT.includes(k))), nets: new Set(Object.keys(NETS)),
     selTrail: null, updated: null, tab: 'discover', cards: [] };
 
+  // ---------- Favoris : lieux et sentiers marqués d'un cœur ----------
+  // Gardés seulement dans ce navigateur (localStorage), jamais envoyés ; disponibles hors connexion.
+  const favs = (() => {
+    const KEY = 'ododino.favs';
+    let ids;
+    try { ids = new Set(JSON.parse(localStorage.getItem(KEY) || '[]').filter((x) => typeof x === 'string')); }
+    catch { ids = new Set(); }
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...ids])); } catch { /* stockage indisponible */ } };
+    return {
+      has: (id) => ids.has(id),
+      toggle(id) { if (ids.has(id)) ids.delete(id); else ids.add(id); save(); return ids.has(id); },
+      list: () => [...ids],
+    };
+  })();
+  const favBtn = (id) => {
+    const on = favs.has(id);
+    return `<button type="button" class="fav-btn${on ? ' on' : ''}" data-fav="${esc(id)}" aria-pressed="${on}"
+      title="${esc(t(on ? 'favRemove' : 'favAdd'))}"><span aria-hidden="true">${on ? '♥' : '♡'}</span> ${esc(t('fav'))}</button>`;
+  };
+
   // ---------- Textes statiques ----------
   function applyStaticText() {
     document.documentElement.lang = lang;
@@ -175,7 +195,7 @@
     if (gps.btn) { gps.btn.title = t('locate'); gps.btn.setAttribute('aria-label', t('locate')); }
     state.pois.forEach((x) => { x.title = poiTitle(x.p); x.marker.options.title = x.title; });
     state.trails.forEach((x) => { x.title = trailTitle(x.p); x.line.setTooltipContent(trailTip(x)); });
-    renderCatChips(); renderNetChips(); renderPois(); renderTrails(); renderCards();
+    renderCatChips(); renderNetChips(); renderPois(); renderTrails(); renderCards(); renderFavs();
     O.route?.refresh();
     if (state.selTrail) selectTrail(state.selTrail, false);
   }
@@ -201,7 +221,7 @@
       if (paths) drawPaths(paths);
       if (trails) initTrails(trails);
       if (pois) initPois(pois);
-      renderCards();
+      renderCards(); renderFavs();
       // Le lien (#route=, #trail=…) n'est appliqué qu'une fois TOUS les scripts de la page exécutés :
       // hors connexion, les données sortent du cache avant que route.js soit chargé, et le lien
       // « route= » était alors ignoré sans erreur.
@@ -361,6 +381,7 @@
       ${p.description ? `<p>${esc(p.description)}</p>` : ''}
       ${state.featured?.[p.osm] ? `<p class="read-more"><a href="${lang}/${state.featured[p.osm].slug}/">📖 ${esc(t('readMore'))}</a></p>` : ''}
       <div class="actions">
+        ${favBtn(p.osm)}
         <a href="data/gpx/${rid}.gpx" download="ododino-${esc((p.ref || rid).replace(/[^\w-]+/g, '_'))}.gpx">⬇ ${esc(t('gpx'))}</a>
         <a href="https://www.openstreetmap.org/${p.osm}" target="_blank" rel="noopener">${esc(t('viewOsm'))} ↗</a>
         ${safeUrl(p.website) ? `<a href="${safeUrl(p.website)}" target="_blank" rel="noopener noreferrer">${esc(t('website'))} ↗</a>` : ''}
@@ -497,7 +518,7 @@
       const other = [x.p.name, x.p['name:sl'], x.p['name:it']].find((n) => n && n !== x.title);
       const sub = [catLabel(x.p.cat, true), x.p.ele && `${Math.round(x.p.ele)} m`, other].filter(Boolean).join(' · ');
       return `<li data-id="${x.id}"><span class="ico" style="background:${c.color}">${c.icon}</span>
-        <div><div class="t">${esc(x.title)}${x.star ? ' <span class="star" aria-hidden="true">★</span>' : ''}</div><div class="m">${esc(sub)}</div></div></li>`;
+        <div><div class="t">${esc(x.title)}${x.star ? ' <span class="star" aria-hidden="true">★</span>' : ''}${favs.has(x.id) ? ' <span class="heart" aria-hidden="true">♥</span>' : ''}</div><div class="m">${esc(sub)}</div></div></li>`;
     }).join('') : `<li class="empty">${esc(t('noResult'))}</li>`;
   }
   $('#poiList').addEventListener('click', (e) => {
@@ -536,7 +557,7 @@
     const wiki = p.wikipedia && /^[a-z]{2,3}(-[a-z]+)?:./.test(p.wikipedia) ? p.wikipedia.split(':') : null;
     const near = trailsNear(x.lon, x.lat);
     return `<div class="pop">
-      <h4>${esc(x.title)}</h4>
+      <div class="pop-head"><h4>${esc(x.title)}</h4>${favBtn(x.id)}</div>
       ${alt.length ? `<div class="alt">${esc(alt.join(' / '))}</div>` : ''}
       ${x.title !== catLabel(p.cat, true) ? `<span class="tag" style="background:${c.color}">${esc(catLabel(p.cat, true))}</span>` : ""}
       <dl>
@@ -579,6 +600,35 @@
     showTab(b.dataset.tab);
     if (sheetState() === 'peek') setSheet('half');
   }));
+
+  // Favoris en tête de « Découvrir » : un clic ouvre le lieu ou le sentier sur la carte
+  function renderFavs() {
+    const items = favs.list().map((id) => state.pois.find((x) => x.id === id) || state.trails.find((x) => x.id === id))
+      .filter(Boolean);
+    $('#favBox').innerHTML = `<h2 class="sec">♥ ${esc(t('favTitle'))}</h2>` + (items.length
+      ? `<ul class="list favs">${items.map((x) => {
+        const trail = !x.marker;
+        const color = trail ? x.color : CATS[x.p.cat].color;
+        const icon = trail ? '🥾' : CATS[x.p.cat].icon;
+        const sub = trail ? [x.p.ref, x.p.stats && `${km(x.p.stats.km)} km`].filter(Boolean).join(' · ') : catLabel(x.p.cat, true);
+        return `<li data-id="${esc(x.id)}"><span class="ico" style="background:${color}">${icon}</span>
+          <div><div class="t">${esc(x.title)}</div><div class="m">${esc(sub)}</div></div></li>`;
+      }).join('')}</ul>`
+      : `<p class="muted small">${esc(t('favEmpty'))}</p>`);
+  }
+  $('#favBox').addEventListener('click', (e) => {
+    const li = e.target.closest('li[data-id]'); if (!li) return;
+    const trail = state.trails.find((x) => x.id === li.dataset.id);
+    if (trail) { selectTrail(trail, true); setSheet('peek'); } else openPoi(state.pois.find((x) => x.id === li.dataset.id));
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.fav-btn'); if (!b) return;
+    e.preventDefault();
+    favs.toggle(b.dataset.fav);
+    // tous les boutons du même lieu (fenêtre de la carte, détail du sentier) changent ensemble
+    document.querySelectorAll(`.fav-btn[data-fav="${CSS.escape(b.dataset.fav)}"]`).forEach((el) => { el.outerHTML = favBtn(b.dataset.fav); });
+    renderFavs(); renderPois();
+  });
 
   // ---------- Onglet « Découvrir » : les fiches ----------
   // La description d'une fiche (faite pour les moteurs de recherche) répète le titre avant « : » :

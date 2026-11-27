@@ -91,6 +91,20 @@ input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 
 a { color: var(--accent); }
 
+/* Favoris */
+.sec { margin: 4px 0 0; font: 600 13px Inter, sans-serif; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.fav-box { display: flex; flex-direction: column; gap: 6px; }
+.fav-box .list.favs { margin: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; flex: none; }
+.fav-box .list.favs li:last-child { border-bottom: 0; }
+.fav-box p { margin: 0; }
+.fav-btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; font: 600 12px Inter, sans-serif;
+  padding: 3px 10px; cursor: pointer; white-space: nowrap; }
+.fav-btn span { color: #e03131; }
+.fav-btn.on { background: #fff0f0; border-color: #ffc9c9; }
+.pop-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.heart { color: #e03131; font-size: 12px; }
+@media (prefers-color-scheme: dark) { .fav-btn.on { background: #3b1a1a; border-color: #6b2727; } }
+
 /* Onglet « Découvrir » : les fiches */
 .lead { margin: 0; color: var(--muted); font-size: 13px; }
 .cards { list-style: none; margin: 0; padding: 0 0 12px; display: flex; flex-direction: column; gap: 10px; }

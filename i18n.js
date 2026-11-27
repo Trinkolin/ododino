@@ -41,6 +41,8 @@ window.I18N = {
     tabPois: 'Luoghi', tabTrails: 'Sentieri', tabDiscover: 'Scopri',
     discoverLead: 'Le schede dei luoghi e dei sentieri da non perdere: storia, natura e consigli pratici.',
     onMap: 'Sulla mappa',
+    fav: 'Preferito', favAdd: 'Aggiungi ai preferiti', favRemove: 'Togli dai preferiti', favTitle: 'I miei preferiti',
+    favEmpty: 'Toccate ♡ su un luogo o un sentiero per ritrovarlo qui, anche senza connessione.', cardsTitle: 'Da scoprire',
     searchPoi: 'Cerca un luogo, una cima, una chiesa…',
     searchTrail: 'Cerca un sentiero (n° CAI, nome)…',
     showPaths: 'Mostra tutti i sentieri e le piste (zoom ≥ 14)',
@@ -130,7 +132,7 @@ window.I18N = {
         <li><strong>Hosting:</strong> il sito è ospitato da GitHub Pages (GitHub Inc., Stati Uniti), che registra l’indirizzo IP dei visitatori nei log del server per motivi di sicurezza. Il trasferimento verso gli Stati Uniti è coperto dal Data Privacy Framework UE–USA. Base giuridica: legittimo interesse a far funzionare un sito sicuro (art. 6.1.f GDPR).</li>
         <li><strong>Statistiche:</strong> GoatCounter conta le visite in forma anonima e aggregata, senza cookie e senza conservare dati personali (art. 6.1.f).</li>
         <li><strong>Mappe:</strong> le tessere vengono caricate direttamente dai server della mappa scelta, che vedono il vostro indirizzo IP e la zona visualizzata: OpenTopoMap (sfondo predefinito), OpenStreetMap Foundation (Regno Unito), Waymarked Trails (solo se attivate il livello) ed Esri (Stati Uniti, solo se scegliete il satellite).</li>
-        <li><strong>Memoria del browser:</strong> la lingua scelta e la chiusura dell’avviso di sicurezza sono salvate solo nel vostro browser (localStorage) e non vengono mai inviate. Potete cancellarle dalle impostazioni del browser.</li>
+        <li><strong>Memoria del browser:</strong> la lingua scelta, la chiusura dell’avviso di sicurezza e i vostri preferiti sono salvati solo nel vostro browser (localStorage) e non vengono mai inviate. Potete cancellarle dalle impostazioni del browser.</li>
         <li><strong>E-mail:</strong> se ci scrivete, il vostro indirizzo e il messaggio servono solo a rispondervi e vengono cancellati al più tardi 12 mesi dopo.</li>
         <li><strong>Itinerari e GPX:</strong> il calcolo del percorso e la lettura dei file GPX importati avvengono solo nel vostro browser; nulla viene inviato.</li>
         <li><strong>Posizione GPS:</strong> solo se toccate «La mia posizione», previo consenso del browser; viene usata solo sulla mappa nel vostro dispositivo e mai inviata. <strong>Uso offline:</strong> i file della mappa scaricati restano nel vostro browser e si possono eliminare.</li>
@@ -147,6 +149,8 @@ window.I18N = {
     tabPois: 'Kraji', tabTrails: 'Poti', tabDiscover: 'Odkrij',
     discoverLead: 'Opisi krajev in poti, ki jih ne smete zamuditi: zgodovina, narava in praktični nasveti.',
     onMap: 'Na zemljevidu',
+    fav: 'Priljubljeno', favAdd: 'Dodaj med priljubljene', favRemove: 'Odstrani iz priljubljenih', favTitle: 'Moji priljubljeni',
+    favEmpty: 'Tapnite ♡ pri kraju ali poti, da ga najdete tukaj, tudi brez povezave.', cardsTitle: 'Za odkrivanje',
     searchPoi: 'Iščite kraj, vrh, cerkev …',
     searchTrail: 'Iščite pot (št. CAI, ime) …',
     showPaths: 'Prikaži vse steze in kolovoze (povečava ≥ 14)',
@@ -236,7 +240,7 @@ window.I18N = {
         <li><strong>Gostovanje:</strong> stran gostuje na GitHub Pages (GitHub Inc., ZDA), ki zaradi varnosti v strežniške dnevnike beleži naslov IP obiskovalcev. Prenos v ZDA pokriva okvir EU–ZDA za zasebnost podatkov (Data Privacy Framework). Pravna podlaga: zakoniti interes za varno delovanje strani (člen 6(1)(f) GDPR).</li>
         <li><strong>Statistika:</strong> GoatCounter šteje obiske anonimno in združeno, brez piškotkov in brez shranjevanja osebnih podatkov (člen 6(1)(f)).</li>
         <li><strong>Zemljevidi:</strong> ploščice se nalagajo neposredno s strežnikov izbrane podlage, ki vidijo vaš naslov IP in prikazano območje: OpenTopoMap (privzeta podlaga), OpenStreetMap Foundation (Združeno kraljestvo), Waymarked Trails (le če vklopite sloj) in Esri (ZDA, le če izberete satelitsko podlago).</li>
-        <li><strong>Shramba brskalnika:</strong> izbrani jezik in zaprto varnostno opozorilo se shranita le v vašem brskalniku (localStorage) in se nikoli ne pošljeta. Izbrišete ju lahko v nastavitvah brskalnika.</li>
+        <li><strong>Shramba brskalnika:</strong> izbrani jezik, zaprto varnostno opozorilo in vaši priljubljeni se shranijo le v vašem brskalniku (localStorage) in se nikoli ne pošljejo. Izbrišete jih lahko v nastavitvah brskalnika.</li>
         <li><strong>E-pošta:</strong> če nam pišete, se vaš naslov in sporočilo uporabita le za odgovor in se izbrišeta najpozneje po 12 mesecih.</li>
         <li><strong>Načrtovanje poti in GPX:</strong> izračun poti in branje uvoženih datotek GPX potekata samo v vašem brskalniku; nič se ne pošlje.</li>
         <li><strong>Položaj GPS:</strong> le če tapnete »Moj položaj« in to dovolite v brskalniku; uporablja se samo na zemljevidu v vaši napravi in se nikoli ne pošlje. <strong>Uporaba brez povezave:</strong> preneseni podatki ostanejo v vašem brskalniku in jih lahko izbrišete.</li>
@@ -253,6 +257,8 @@ window.I18N = {
     tabPois: 'Places', tabTrails: 'Trails', tabDiscover: 'Discover',
     discoverLead: 'Guides to the places and trails not to miss: history, nature and practical tips.',
     onMap: 'On the map',
+    fav: 'Favourite', favAdd: 'Add to favourites', favRemove: 'Remove from favourites', favTitle: 'My favourites',
+    favEmpty: 'Tap ♡ on a place or trail to find it here, even offline.', cardsTitle: 'To discover',
     searchPoi: 'Search a place, a peak, a church…',
     searchTrail: 'Search a trail (CAI no., name)…',
     showPaths: 'Show all paths and tracks (zoom ≥ 14)',
@@ -342,7 +348,7 @@ window.I18N = {
         <li><strong>Hosting:</strong> the site is hosted on GitHub Pages (GitHub Inc., United States), which records visitors’ IP addresses in its server logs for security purposes. The transfer to the United States is covered by the EU–US Data Privacy Framework. Legal basis: legitimate interest in running a secure website (Art. 6(1)(f) GDPR).</li>
         <li><strong>Statistics:</strong> GoatCounter counts visits anonymously and in aggregate, without cookies and without storing personal data (Art. 6(1)(f)).</li>
         <li><strong>Maps:</strong> tiles are loaded directly from the servers of the chosen map, which see your IP address and the area displayed: OpenTopoMap (default), the OpenStreetMap Foundation (United Kingdom), Waymarked Trails (only if you enable that layer) and Esri (United States, only if you choose satellite).</li>
-        <li><strong>Browser storage:</strong> your chosen language and the dismissed safety notice are stored only in your browser (localStorage) and are never sent anywhere. You can clear them in your browser settings.</li>
+        <li><strong>Browser storage:</strong> your chosen language, the dismissed safety notice and your favourites are stored only in your browser (localStorage) and are never sent anywhere. You can clear them in your browser settings.</li>
         <li><strong>E-mail:</strong> if you write to us, your address and message are used only to reply and are deleted within 12 months at the latest.</li>
         <li><strong>Route planner and GPX:</strong> routes are calculated and imported GPX files are read only in your browser; nothing is sent anywhere.</li>
         <li><strong>GPS location:</strong> only if you tap “My location” and allow it in your browser; it is used only on the map on your device and never sent. <strong>Offline use:</strong> downloaded map files stay in your browser and can be deleted.</li>
@@ -359,6 +365,8 @@ window.I18N = {
     tabPois: 'Orte', tabTrails: 'Wanderwege', tabDiscover: 'Entdecken',
     discoverLead: 'Beschreibungen der schönsten Orte und Wege: Geschichte, Natur und praktische Tipps.',
     onMap: 'Auf der Karte',
+    fav: 'Favorit', favAdd: 'Zu den Favoriten', favRemove: 'Aus den Favoriten entfernen', favTitle: 'Meine Favoriten',
+    favEmpty: 'Tippen Sie bei einem Ort oder Weg auf ♡, um ihn hier wiederzufinden, auch offline.', cardsTitle: 'Zum Entdecken',
     searchPoi: 'Ort, Gipfel, Kirche suchen …',
     searchTrail: 'Wanderweg suchen (CAI-Nr., Name) …',
     showPaths: 'Alle Pfade und Fahrwege anzeigen (Zoom ≥ 14)',
@@ -448,7 +456,7 @@ window.I18N = {
         <li><strong>Hosting:</strong> Die Website liegt bei GitHub Pages (GitHub Inc., USA), das die IP-Adressen der Besucher aus Sicherheitsgründen in Server-Logs speichert. Die Übermittlung in die USA ist durch das EU-US Data Privacy Framework abgedeckt. Rechtsgrundlage: berechtigtes Interesse am sicheren Betrieb der Website (Art. 6 Abs. 1 lit. f DSGVO).</li>
         <li><strong>Statistik:</strong> GoatCounter zählt Besuche anonym und zusammengefasst, ohne Cookies und ohne Speicherung personenbezogener Daten (Art. 6 Abs. 1 lit. f).</li>
         <li><strong>Karten:</strong> Kartenkacheln werden direkt von den Servern der gewählten Karte geladen, die Ihre IP-Adresse und den angezeigten Ausschnitt sehen: OpenTopoMap (Standard), OpenStreetMap Foundation (Vereinigtes Königreich), Waymarked Trails (nur wenn Sie die Ebene einschalten) und Esri (USA, nur wenn Sie Satellit wählen).</li>
-        <li><strong>Browserspeicher:</strong> Die gewählte Sprache und der geschlossene Sicherheitshinweis werden nur in Ihrem Browser gespeichert (localStorage) und nie übertragen. Sie können sie in den Browsereinstellungen löschen.</li>
+        <li><strong>Browserspeicher:</strong> Die gewählte Sprache, der geschlossene Sicherheitshinweis und Ihre Favoriten werden nur in Ihrem Browser gespeichert (localStorage) und nie übertragen. Sie können sie in den Browsereinstellungen löschen.</li>
         <li><strong>E-Mail:</strong> Wenn Sie uns schreiben, werden Ihre Adresse und Nachricht nur zur Antwort verwendet und spätestens nach 12 Monaten gelöscht.</li>
         <li><strong>Routenplaner und GPX:</strong> Routen werden nur in Ihrem Browser berechnet und importierte GPX-Dateien nur dort gelesen; nichts wird übertragen.</li>
         <li><strong>GPS-Standort:</strong> nur wenn Sie auf „Mein Standort“ tippen und es im Browser erlauben; er wird nur auf der Karte auf Ihrem Gerät verwendet und nie übertragen. <strong>Offline-Nutzung:</strong> heruntergeladene Kartendaten bleiben in Ihrem Browser und können gelöscht werden.</li>
@@ -465,6 +473,8 @@ window.I18N = {
     tabPois: 'Lieux', tabTrails: 'Sentiers', tabDiscover: 'Découvrir',
     discoverLead: 'Les fiches des lieux et sentiers à ne pas manquer : histoire, nature et conseils pratiques.',
     onMap: 'Sur la carte',
+    fav: 'Favori', favAdd: 'Ajouter aux favoris', favRemove: 'Retirer des favoris', favTitle: 'Mes favoris',
+    favEmpty: 'Touchez ♡ sur un lieu ou un sentier pour le retrouver ici, même hors connexion.', cardsTitle: 'À découvrir',
     searchPoi: 'Rechercher un lieu, un sommet, une église…',
     searchTrail: 'Rechercher un sentier (n° CAI, nom)…',
     showPaths: 'Afficher tous les chemins et pistes (zoom ≥ 14)',
@@ -554,7 +564,7 @@ window.I18N = {
         <li><strong>Hébergement :</strong> le site est hébergé par GitHub Pages (GitHub Inc., États-Unis), qui enregistre l'adresse IP des visiteurs dans ses journaux de serveur pour des raisons de sécurité. Le transfert vers les États-Unis est couvert par le cadre de protection des données UE–États-Unis (Data Privacy Framework). Base légale : l'intérêt légitime à faire fonctionner un site sûr (art. 6.1.f du RGPD).</li>
         <li><strong>Statistiques :</strong> GoatCounter compte les visites de façon anonyme et agrégée, sans cookie et sans conserver de données personnelles (art. 6.1.f).</li>
         <li><strong>Cartes :</strong> les tuiles sont chargées directement depuis les serveurs du fond choisi, qui voient votre adresse IP et la zone affichée : OpenTopoMap (fond par défaut), OpenStreetMap Foundation (Royaume-Uni), Waymarked Trails (seulement si vous activez la couche) et Esri (États-Unis, seulement si vous choisissez le satellite).</li>
-        <li><strong>Stockage du navigateur :</strong> la langue choisie et la fermeture de l'avertissement de sécurité sont enregistrées uniquement dans votre navigateur (localStorage) et ne sont jamais envoyées. Vous pouvez les effacer dans les réglages du navigateur.</li>
+        <li><strong>Stockage du navigateur :</strong> la langue choisie, la fermeture de l'avertissement de sécurité et vos favoris sont enregistrés uniquement dans votre navigateur (localStorage) et ne sont jamais envoyées. Vous pouvez les effacer dans les réglages du navigateur.</li>
         <li><strong>E-mails :</strong> si vous nous écrivez, votre adresse et votre message servent uniquement à vous répondre et sont supprimés au plus tard 12 mois après.</li>
         <li><strong>Itinéraires et GPX :</strong> le calcul des tracés et la lecture des GPX importés se font uniquement dans votre navigateur ; rien n'est envoyé.</li>
         <li><strong>Position GPS :</strong> seulement si vous touchez « Ma position » et l'autorisez dans le navigateur ; elle sert uniquement à l'affichage sur votre appareil et n'est jamais envoyée. <strong>Usage hors ligne :</strong> les fichiers de carte téléchargés restent dans votre navigateur et peuvent être supprimés.</li>
