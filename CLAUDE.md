@@ -33,7 +33,9 @@ cd web && npx ng test --watch=false   # tests Angular (Vitest)
 
 `web/scripts/prepare.mjs` (lancé avant chaque build) génère les traductions depuis `../i18n.js` (seule source),
 copie les icônes Material Symbols choisies (liste dans le script) et les dossiers `data/ fonts/ tiles/ icons/`
-dans `web/.site/` (Angular refuse les fichiers hors de `web/`). Pas de Google Fonts ni de police d'icônes :
+dans `web/.site/` (Angular refuse les fichiers hors de `web/`), puis lance `tools/export_app.py` (Python requis)
+pour les fiches (`featured.json`, `cards.json`, vignettes). Carte : `web/src/app/map/` (Leaflet chargé seulement
+dans le navigateur, `MapStateService` = état partagé : onglet, tiroir, filtres, sélection). Pas de Google Fonts ni de police d'icônes :
 polices du site et SVG via `<odo-icon>`.
 
 Le serveur de dev n'a ni `data/featured.json` ni `data/cards.json` (générés par le build) : l'onglet

@@ -1,0 +1,30 @@
+<h2 class="sec"><odo-icon name="favorite" /> {{ i18n.t('favTitle') }}</h2>
+@if (favItems().length) {
+  <ul class="list favs">
+    @for (f of favItems(); track f.id) {
+      <li><button type="button" (click)="state.open(f.id)">
+        <span class="ico" [style.background]="f.color">{{ f.icon }}</span>
+        <span class="txt"><span class="t">{{ f.title }}</span><span class="m">{{ f.sub }}</span></span>
+      </button></li>
+    }
+  </ul>
+} @else {
+  <p class="muted">{{ i18n.t('favEmpty') }}</p>
+}
+
+<h2 class="sec">{{ i18n.t('cardsTitle') }}</h2>
+<p class="muted">{{ i18n.t('discoverLead') }}</p>
+<ul class="cards">
+  @for (c of cards(); track c.slug) {
+    <li class="card" [class.intro]="c.kind === 'intro'">
+      <a class="link" [routerLink]="['/', i18n.lang(), c.slug]">
+        @if (c.thumb) { <img [src]="c.thumb" alt="" loading="lazy" width="480" height="320" /> }
+        @else { <span class="ph" [style.background]="color(c)">{{ icon(c) }}</span> }
+        <span class="txt"><strong>{{ c.titles[i18n.lang()] }}</strong><span>{{ summary(c) }}</span></span>
+      </a>
+      @if (c.osm) {
+        <button mat-button class="on-map" (click)="state.open(c.osm)"><odo-icon name="location_on" /> {{ i18n.t('onMap') }}</button>
+      }
+    </li>
+  }
+</ul>

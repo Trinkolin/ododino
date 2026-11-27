@@ -1,0 +1,33 @@
+<aside class="panel">
+  <button type="button" class="handle" [attr.aria-label]="i18n.t('togglePanel')"
+    (pointerdown)="handleDown($event)" (pointermove)="handleMove($event)" (pointerup)="handleUp()"><span></span></button>
+  <mat-tab-group [selectedIndex]="tabIndex()" (selectedIndexChange)="setTab($event)" mat-stretch-tabs="false"
+    animationDuration="0ms" class="tabs" preserveContent>
+    <mat-tab>
+      <ng-template mat-tab-label><odo-icon name="explore" /><span class="lbl">{{ i18n.t('tabDiscover') }}</span></ng-template>
+      <odo-discover-tab />
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label><odo-icon name="location_on" /><span class="lbl">{{ i18n.t('tabPois') }}</span></ng-template>
+      <odo-pois-tab />
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label><odo-icon name="hiking" /><span class="lbl">{{ i18n.t('tabTrails') }}</span></ng-template>
+      <odo-trails-tab />
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label><odo-icon name="route" /><span class="lbl">{{ i18n.t('tabRoute') }}</span></ng-template>
+      <p class="todo">{{ i18n.t('routeHelp') }}</p>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label><odo-icon name="download" /><span class="lbl">{{ i18n.t('offline') }}</span></ng-template>
+      <p class="todo">{{ i18n.t('offlineNote') }}</p>
+    </mat-tab>
+  </mat-tab-group>
+</aside>
+
+<section class="map">
+  <odo-map-view />
+  <odo-legend class="legend" />
+  <odo-selection-card class="sel-card" />
+</section>

@@ -1,43 +1,88 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, PLATFORM_ID, computed, effect, inject, untracked, viewChild,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { I18nService } from '../i18n/i18n.service';
 import { Icon } from '../shell/icon';
+import { DataService } from '../map/data.service';
+import { Legend } from '../map/legend';
+import { MapStateService, Sheet, Tab } from '../map/map-state.service';
+import { MapView } from '../map/map-view';
+import { SelectionCard } from '../map/selection-card';
+import { DiscoverTab } from '../map/panel/discover-tab';
+import { PoisTab } from '../map/panel/pois-tab';
+import { TrailsTab } from '../map/panel/trails-tab';
+
+const TABS: Tab[] = ['discover', 'pois', 'trails', 'route', 'offline'];
+const SHEETS: Sheet[] = ['peek', 'half', 'full'];
 
 /**
- * Page principale : panneau à onglets + carte. Phase 1 de la migration : la structure seulement ;
- * la carte Leaflet, les listes et le traceur arrivent en phases 2 et 3.
+ * Page principale : panneau à onglets + carte. Sur téléphone, la carte occupe tout l'écran et le panneau
+ * devient un tiroir (aperçu, moitié, plein écran) qu'on tape ou fait glisser par sa poignée.
  */
 @Component({
   selector: 'odo-map-page',
-  imports: [MatTabsModule, Icon],
-  template: `
-    <aside class="panel">
-      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="0ms">
-        <mat-tab><ng-template mat-tab-label><odo-icon name="explore" />{{ i18n.t('tabDiscover') }}</ng-template>
-          <p class="todo">Phase 2</p></mat-tab>
-        <mat-tab><ng-template mat-tab-label><odo-icon name="location_on" />{{ i18n.t('tabPois') }}</ng-template>
-          <p class="todo">Phase 2</p></mat-tab>
-        <mat-tab><ng-template mat-tab-label><odo-icon name="hiking" />{{ i18n.t('tabTrails') }}</ng-template>
-          <p class="todo">Phase 3</p></mat-tab>
-        <mat-tab><ng-template mat-tab-label><odo-icon name="route" />{{ i18n.t('tabRoute') }}</ng-template>
-          <p class="todo">Phase 3</p></mat-tab>
-        <mat-tab><ng-template mat-tab-label><odo-icon name="download" /><span class="sr">{{ i18n.t('offline') }}</span></ng-template>
-          <p class="todo">Phase 5</p></mat-tab>
-      </mat-tab-group>
-    </aside>
-    <section class="map" [attr.aria-label]="i18n.t('map')"><p class="todo">Carte : phase 2</p></section>
-  `,
-  styles: `
-    :host { display: flex; height: 100%; min-height: 0; }
-    .panel { width: 400px; flex: none; border-right: 1px solid var(--mat-sys-outline-variant); background: var(--mat-sys-surface-container-low); overflow: auto; }
-    .map { flex: 1; display: grid; place-items: center; background: var(--mat-sys-surface-container); }
-    .todo { color: var(--mat-sys-on-surface-variant); padding: 16px; }
-    odo-icon { width: 20px; height: 20px; margin-right: 6px; }
-    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-    @media (max-width: 760px) { :host { flex-direction: column-reverse; } .panel { width: auto; height: 50%; border-right: 0; } }
-  `,
+  imports: [MatTabsModule, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab],
+  templateUrl: './map-page.html',
+  styleUrl: './map-page.scss',
+  host: { '[class]': '"sheet-" + state.sheet()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapPage {
   protected readonly i18n = inject(I18nService);
+  protected readonly state = inject(MapStateService);
+  private readonly data = inject(DataService);
+  private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly mapView = viewChild(MapView);
+  protected readonly tabIndex = computed(() => TABS.indexOf(this.state.tab()));
+
+  constructor() {
+    // Liens profonds de la version actuelle : #poi=node/…, #trail=relation/…
+    effect(() => {
+      if (!this.data.loaded()) return;
+      untracked(() => {
+        const m = location.hash.match(/^#(poi|trail)=(.+)$/);
+        if (m) this.state.open(decodeURIComponent(m[2]));
+      });
+    });
+    effect(() => {
+      const s = this.state.selection();
+      if (!this.browser || !this.data.loaded()) return;
+      const h = s ? `#${s.kind}=${s.item.id}` : '';
+      if (location.hash !== h) history.replaceState(history.state, '', location.pathname + location.search + h);
+    });
+    // la carte change de taille quand le tiroir bouge : Leaflet doit le savoir
+    effect(() => { this.state.sheet(); setTimeout(() => this.mapView()?.invalidate(), 260); });
+  }
+
+  protected setTab(i: number): void {
+    this.state.tab.set(TABS[i]);
+    if (this.state.sheet() === 'peek') this.state.setSheet('half');
+  }
+
+  // ---------- Poignée du tiroir : tap = état suivant, glisser = hauteur libre puis état le plus proche ----------
+  private drag: { y0: number; h0: number; moved: boolean; panel: HTMLElement } | null = null;
+  protected handleDown(e: PointerEvent): void {
+    if (!this.state.isMobile()) return;
+    const panel = (e.currentTarget as HTMLElement).closest('.panel') as HTMLElement;
+    this.drag = { y0: e.clientY, h0: panel.getBoundingClientRect().height, moved: false, panel };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    panel.classList.add('dragging');
+  }
+  protected handleMove(e: PointerEvent): void {
+    const d = this.drag; if (!d) return;
+    const dy = d.y0 - e.clientY;
+    if (Math.abs(dy) > 6) d.moved = true;
+    d.panel.style.height = `${Math.max(96, Math.min(innerHeight - 48, d.h0 + dy))}px`;
+  }
+  protected handleUp(): void {
+    const d = this.drag; if (!d) return;
+    this.drag = null;
+    d.panel.classList.remove('dragging');
+    const r = d.panel.getBoundingClientRect().height / innerHeight;
+    d.panel.style.height = '';
+    if (!d.moved) this.state.sheet.set(SHEETS[(SHEETS.indexOf(this.state.sheet()) + 1) % SHEETS.length]);
+    else this.state.sheet.set(r < 0.3 ? 'peek' : r < 0.7 ? 'half' : 'full');
+  }
 }

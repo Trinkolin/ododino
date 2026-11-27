@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -52,4 +53,11 @@ fs.rmSync(site, { recursive: true, force: true });
 for (const dir of ['data', 'fonts', 'tiles', 'icons']) {
   fs.cpSync(path.join(root, dir), path.join(site, dir), { recursive: true });
 }
+// ---------- 4. Fiches : index pour la carte, liste « Découvrir », vignettes (tools/export_app.py) ----------
+// Python s'appelle « py » sous Windows, « python3 » ou « python » ailleurs (GitHub Actions).
+const pythons = process.platform === 'win32' ? ['py', 'python'] : ['python3', 'python'];
+const ok = pythons.some((py) => spawnSync(py, [path.join(root, 'tools', 'export_app.py'), site],
+  { cwd: root, stdio: 'inherit' }).status === 0);
+if (!ok) { console.error('tools/export_app.py a échoué (Python 3 introuvable ?)'); process.exit(1); }
+
 console.log(`i18n : ${langs.length} langues · icônes : ${ICONS.length} · fichiers du site copiés dans web/.site/`);

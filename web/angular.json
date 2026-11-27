@@ -47,13 +47,22 @@
                 "glob": "*.{svg,png}",
                 "input": ".site/icons",
                 "output": "icons"
+              },
+              {
+                "glob": "*.jpg",
+                "input": ".site/cards",
+                "output": "cards"
               }
             ],
             "styles": [
+              "node_modules/leaflet/dist/leaflet.css",
               "src/styles.scss"
             ],
             "server": "src/main.server.ts",
-            "outputMode": "static"
+            "outputMode": "static",
+            "allowedCommonJsDependencies": [
+              "leaflet"
+            ]
           },
           "configurations": {
             "production": {

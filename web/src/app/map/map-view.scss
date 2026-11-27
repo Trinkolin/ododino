@@ -1,0 +1,12 @@
+:host { position: relative; display: block; height: 100%; }
+.leaflet-host { position: absolute; inset: 0; background: var(--mat-sys-surface-container); }
+
+// Outils sous le zoom de Leaflet (en haut à gauche)
+.tools { position: absolute; z-index: 800; top: 84px; left: 10px; display: flex; flex-direction: column; gap: 8px; }
+.tool {
+  --mat-fab-small-container-color: var(--mat-sys-surface-container-lowest);
+  --mat-fab-small-foreground-color: var(--mat-sys-on-surface);
+  width: 34px; height: 34px;
+}
+.tool.on { --mat-fab-small-foreground-color: #1c7ed6; }
+odo-icon { width: 20px; height: 20px; }
