@@ -9,6 +9,8 @@ import { CATS, dist, hm, noteUrl, safeUrl } from './config';
 import { DataService, Poi, Trail } from './data.service';
 import { FavoritesService } from './favorites.service';
 import { MapStateService } from './map-state.service';
+import { RouteService } from './route.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * Carte de sélection posée sur la carte (remplace la bulle Leaflet) : le lieu ou le sentier choisi,
@@ -26,6 +28,8 @@ export class SelectionCard {
   protected readonly state = inject(MapStateService);
   protected readonly favs = inject(FavoritesService);
   private readonly data = inject(DataService);
+  private readonly route = inject(RouteService);
+  private readonly snack = inject(MatSnackBar);
   protected readonly CATS = CATS;
   protected readonly timetableUrl = I18N.timetableUrl;
 
@@ -86,4 +90,14 @@ export class SelectionCard {
       this.state.diffText(x.p)].filter(Boolean).join(' · ');
   }
   protected details(): void { this.state.tab.set('trails'); this.state.setSheet('half'); }
+
+  /** « + Itinéraire » : le lieu devient une étape du traceur (recalée sur le chemin le plus proche). */
+  protected async addToRoute(x: Poi): Promise<void> {
+    this.state.clear();
+    this.state.tab.set('route');
+    this.state.setSheet('half');
+    if (await this.route.add(x.lat, x.lon)) {
+      this.snack.open(this.i18n.t('routeAdded').replace('{name}', this.state.poiTitle(x.p)), undefined, { duration: 3500 });
+    }
+  }
 }

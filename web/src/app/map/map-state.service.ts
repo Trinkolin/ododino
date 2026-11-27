@@ -13,6 +13,9 @@ export interface MapApi {
   flyTo(lat: number, lon: number, zoom?: number): void;
   fitTrail(t: Trail): void;
   fitHome(): void;
+  /** Point d'un profil d'altitude survolé (null : l'enlever) */
+  showPoint(p: { lat: number; lon: number } | null, color?: string): void;
+  fitCoords(lonLats: number[][]): void;
 }
 
 /** État partagé de la page carte : onglet, tiroir mobile, filtres, sélection, couleur des sentiers. */

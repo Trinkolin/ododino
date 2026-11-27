@@ -39,13 +39,9 @@ export function diffLevel(p: { cai_scale?: string; sac_max?: string }): Diff {
   return !s ? 'unknown' : s <= 2 ? 'easy' : s === 3 ? 'hard' : 'alpine';
 }
 
-/** Distance en mètres entre deux points [lon, lat] (haversine) : même formule que geo.js / tools/geo.py. */
-export function dist(a: number[], b: number[]): number {
-  const p1 = a[1] * Math.PI / 180, p2 = b[1] * Math.PI / 180;
-  const dp = p2 - p1, dl = (b[0] - a[0]) * Math.PI / 180;
-  const h = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
-  return 2 * 6371e3 * Math.asin(Math.sqrt(h));
-}
+// Distance et longueur : le module geo (portage de geo.js, testé sur la fixture partagée)
+export { dist } from '../geo/geo';
+import { dist } from '../geo/geo';
 export const lengthOf = (parts: number[][][]): number =>
   parts.reduce((s, p) => s + p.slice(1).reduce((u, c, i) => u + dist(p[i], c), 0), 0);
 export const hm = (min: number): string => `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, '0')}`;

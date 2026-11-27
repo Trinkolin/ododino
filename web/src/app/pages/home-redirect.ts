@@ -20,6 +20,7 @@ export class HomeRedirect implements OnInit {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   ngOnInit(): void {
-    if (this.browser) this.router.navigate(['/', this.i18n.detect()], { replaceUrl: true });
+    if (this.browser) // garde le #poi= / #trail= / #route= des liens partagés de la version actuelle
+      this.router.navigate(['/', this.i18n.detect()], { replaceUrl: true, fragment: location.hash.slice(1) || undefined });
   }
 }

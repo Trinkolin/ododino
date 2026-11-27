@@ -10,12 +10,14 @@ import { DataService, Trail } from '../data.service';
 import { FavoritesService } from '../favorites.service';
 import { MapStateService } from '../map-state.service';
 import { Chip, FilterChips } from './filter-chips';
+import { TrailDetail } from '../trail-detail';
 
 /** Onglet « Sentiers » : recherche, filtres par réseau, chemins et pistes, liste. (Détail et profil : phase 3.) */
 @Component({
   selector: 'odo-trails-tab',
-  imports: [ScrollingModule, MatFormFieldModule, MatInputModule, MatSlideToggleModule, FilterChips, Icon],
+  imports: [ScrollingModule, MatFormFieldModule, MatInputModule, MatSlideToggleModule, FilterChips, Icon, TrailDetail],
   template: `
+    @if (state.selection(); as s) { @if (s.kind === 'trail') { <odo-trail-detail [trail]="s.item" /> } }
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
       <odo-icon matPrefix name="search" />
       <input matInput type="search" [placeholder]="i18n.t('searchTrail')" [value]="q()" (input)="q.set($any($event.target).value)" autocomplete="off" />

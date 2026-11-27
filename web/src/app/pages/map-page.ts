@@ -13,6 +13,8 @@ import { SelectionCard } from '../map/selection-card';
 import { DiscoverTab } from '../map/panel/discover-tab';
 import { PoisTab } from '../map/panel/pois-tab';
 import { TrailsTab } from '../map/panel/trails-tab';
+import { RouteTab } from '../map/panel/route-tab';
+import { RouteService } from '../map/route.service';
 
 const TABS: Tab[] = ['discover', 'pois', 'trails', 'route', 'offline'];
 const SHEETS: Sheet[] = ['peek', 'half', 'full'];
@@ -23,7 +25,7 @@ const SHEETS: Sheet[] = ['peek', 'half', 'full'];
  */
 @Component({
   selector: 'odo-map-page',
-  imports: [MatTabsModule, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab],
+  imports: [MatTabsModule, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab, RouteTab],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
   host: { '[class]': '"sheet-" + state.sheet()' },
@@ -33,23 +35,29 @@ export class MapPage {
   protected readonly i18n = inject(I18nService);
   protected readonly state = inject(MapStateService);
   private readonly data = inject(DataService);
+  private readonly route = inject(RouteService);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly mapView = viewChild(MapView);
   protected readonly tabIndex = computed(() => TABS.indexOf(this.state.tab()));
 
   constructor() {
-    // Liens profonds de la version actuelle : #poi=node/…, #trail=relation/…
+    // Liens profonds de la version actuelle : #poi=node/…, #trail=relation/…, #route=lon,lat;…&o=…
     effect(() => {
       if (!this.data.loaded()) return;
       untracked(() => {
-        const m = location.hash.match(/^#(poi|trail)=(.+)$/);
-        if (m) this.state.open(decodeURIComponent(m[2]));
+        const m = location.hash.match(/^#(poi|trail|route)=(.+)$/);
+        if (!m) return;
+        if (m[1] === 'route') {
+          this.state.tab.set('route');
+          this.route.fromHash(decodeURIComponent(m[2])).then((pts) => this.state.map?.fitCoords(pts)).catch(() => undefined);
+        } else this.state.open(decodeURIComponent(m[2]));
       });
     });
+    // L'adresse suit l'état : l'itinéraire s'il y en a un, sinon le lieu ou le sentier choisi
     effect(() => {
-      const s = this.state.selection();
+      const s = this.state.selection(), r = this.route.hash();
       if (!this.browser || !this.data.loaded()) return;
-      const h = s ? `#${s.kind}=${s.item.id}` : '';
+      const h = r ? `#route=${r}` : s ? `#${s.kind}=${s.item.id}` : '';
       if (location.hash !== h) history.replaceState(history.state, '', location.pathname + location.search + h);
     });
     // la carte change de taille quand le tiroir bouge : Leaflet doit le savoir

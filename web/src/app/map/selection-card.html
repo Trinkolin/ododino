@@ -35,6 +35,8 @@
       }
       @if (s.kind === 'trail') {
         <button mat-stroked-button (click)="details()"><odo-icon name="info" /> {{ i18n.t('details') }}</button>
+      } @else {
+        <button mat-stroked-button (click)="addToRoute(s.item)"><odo-icon name="add_location_alt" /> {{ i18n.t('addToRoute') }}</button>
       }
       <button mat-stroked-button (click)="favs.toggle(s.item.id)" [attr.aria-pressed]="favs.has(s.item.id)"
         [attr.title]="i18n.t(favs.has(s.item.id) ? 'favRemove' : 'favAdd')" class="fav" [class.on]="favs.has(s.item.id)">

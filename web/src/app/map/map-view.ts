@@ -9,6 +9,7 @@ import { Icon } from '../shell/icon';
 import { CATS, MINOR, SAC } from './config';
 import { DataService } from './data.service';
 import { MapStateService } from './map-state.service';
+import { RouteService } from './route.service';
 
 type LeafletNS = typeof Leaflet;
 
@@ -37,6 +38,7 @@ export class MapView {
   protected readonly i18n = inject(I18nService);
   protected readonly state = inject(MapStateService);
   private readonly data = inject(DataService);
+  private readonly route = inject(RouteService);
   private readonly host = viewChild.required<ElementRef<HTMLDivElement>>('host');
   protected readonly gpsOn = signal(false);
 
@@ -46,6 +48,9 @@ export class MapView {
   private layerCtl: Leaflet.Control.Layers | null = null;
   private readonly groups: Record<'boundary' | 'paths' | 'trails' | 'pois', Leaflet.LayerGroup> = {} as never;
   private home: Leaflet.LatLngBounds | null = null;
+  private profilePoint: Leaflet.CircleMarker | null = null;
+  private routeLayer!: Leaflet.LayerGroup;
+  private routePins: Leaflet.Marker[] = [];
   private readonly trailLines = new Map<string, { line: Leaflet.Polyline; casing: Leaflet.Polyline; group: Leaflet.LayerGroup }>();
   private readonly markers = new Map<string, Leaflet.Marker>();
   private gps: { watch: number | null; dot?: Leaflet.CircleMarker; ring?: Leaflet.Circle; first: boolean } = { watch: null, first: true };
@@ -68,9 +73,12 @@ export class MapView {
     effect(() => { this.state.nets(); if (this.ready()) untracked(() => this.syncTrailVisibility()); });
     effect(() => { this.state.cats(); if (this.ready()) untracked(() => this.syncPoiVisibility()); });
     effect(() => { this.state.colorBy(); this.state.selection(); if (this.ready()) untracked(() => this.styleTrails()); });
-    effect(() => { this.state.selection(); if (this.ready()) untracked(() => this.markSelected()); });
+    effect(() => { this.state.selection(); if (this.ready()) untracked(() => { this.markSelected(); this.state.map?.showPoint(null); }); });
     effect(() => { this.state.showPaths(); if (this.ready()) untracked(() => this.syncPaths()); });
     effect(() => { this.i18n.lang(); if (this.ready()) untracked(() => this.buildLayerControl()); });
+    // traceur : tracé, épingles ; curseur en croix quand l'onglet « Itinéraire » est ouvert
+    effect(() => { this.route.coords(); this.route.pins(); this.route.gaps(); this.i18n.lang(); if (this.ready()) untracked(() => this.drawRoute()); });
+    effect(() => { const on = this.state.tab() === 'route'; if (this.ready()) this.map.getContainer().classList.toggle('routing', on); });
   }
 
   // ---------- Création ----------
@@ -91,12 +99,22 @@ export class MapView {
     };
     map.on('zoomend', zoomClass); zoomClass();
     map.on('zoomend', () => this.syncPaths());
-    map.on('click', () => this.state.clear());
+    // clic sur la carte : une étape quand l'onglet « Itinéraire » est ouvert, sinon on désélectionne
+    map.on('click', (e) => { if (this.state.tab() === 'route') this.route.add(e.latlng.lat, e.latlng.lng); else this.state.clear(); });
+    this.routeLayer = L.layerGroup().addTo(map);
     this.buildLayerControl();
     this.state.map = {
       flyTo: (lat, lon, zoom = 15) => map.flyTo([lat, lon], Math.max(map.getZoom(), zoom), { duration: 0.6 }),
       fitTrail: (t) => { const l = this.trailLines.get(t.id); if (l) map.fitBounds(l.line.getBounds(), this.padding(40)); },
       fitHome: () => { if (this.home) map.fitBounds(this.home, this.padding(10)); },
+      showPoint: (pt, color = '#0b7285') => {
+        if (!pt) { this.profilePoint?.remove(); this.profilePoint = null; return; }
+        if (!this.profilePoint) {
+          this.profilePoint = L.circleMarker([pt.lat, pt.lon], { radius: 7, color: '#fff', weight: 3, fillColor: color,
+            fillOpacity: 1, pane: 'markerPane', interactive: false }).addTo(map);
+        } else this.profilePoint.setLatLng([pt.lat, pt.lon]);
+      },
+      fitCoords: (lonLats) => { if (lonLats.length) map.fitBounds(L.latLngBounds(lonLats.map(([x, y]) => [y, x] as [number, number])), this.padding(40)); },
     };
   }
 
@@ -267,6 +285,41 @@ export class MapView {
     this.gps.dot?.remove(); this.gps.ring?.remove();
     this.gps = { watch: null, first: true };
     this.gpsOn.set(false);
+  }
+
+  // ---------- Traceur ----------
+  private drawRoute(): void {
+    const L = this.L, COLOR = '#0b7285', WARN = '#e03131';
+    this.routeLayer.clearLayers();
+    const coords = this.route.coords();
+    const ll = (c: number[][]) => c.map((p) => [p[1], p[0]] as [number, number]);
+    if (coords.length > 1) {
+      L.polyline(ll(coords as number[][]), { pane: 'trails', color: '#fff', weight: 10, opacity: 0.9, interactive: false }).addTo(this.routeLayer);
+      L.polyline(ll(coords as number[][]), { pane: 'trails', color: COLOR, weight: 5, opacity: 1, interactive: false }).addTo(this.routeLayer);
+      // tronçons difficiles (SAC T3 et plus) en rouge
+      let run: number[][] = [];
+      const flush = () => { if (run.length > 1) L.polyline(ll(run), { pane: 'trails', color: WARN, weight: 5, interactive: false }).addTo(this.routeLayer); run = []; };
+      coords.forEach((p, i) => { if (Number(p[3]) >= 3) { if (!run.length && i) run.push(coords[i - 1] as number[]); run.push(p as number[]); } else flush(); });
+      flush();
+    }
+    // étapes introuvables : trait pointillé
+    for (const [a, b] of this.route.gaps()) {
+      L.polyline([[a[1], a[0]], [b[1], b[0]]], { pane: 'trails', color: WARN, weight: 3, dashArray: '6 8', interactive: false }).addTo(this.routeLayer);
+    }
+    this.routePins.forEach((m) => m.remove()); this.routePins = [];
+    const pins = this.route.pins(), n = pins.length;
+    pins.forEach(([x, y], i) => {
+      const label = i === 0 ? 'A' : i === n - 1 && n > 1 ? 'B' : String(i);
+      const icon = L.divIcon({ className: '', iconSize: [28, 28], iconAnchor: [14, 14], html: `<div class="route-pin${i === 0 ? ' start' : ''}">${label}</div>` });
+      const m = L.marker([y, x], { icon, draggable: true, autoPan: true, zIndexOffset: 1000 }).addTo(this.map);
+      m.on('dragend', () => { const p = m.getLatLng(); this.route.move(i, p.lat, p.lng); });
+      // toucher une étape : petite bulle « Retirer » (pas de suppression accidentelle au doigt)
+      const btn = L.DomUtil.create('button', 'route-remove');
+      btn.type = 'button'; btn.textContent = this.i18n.t('routeRemove');
+      L.DomEvent.on(btn, 'click', () => { this.map.closePopup(); this.route.remove(i); });
+      m.bindPopup(btn, { closeButton: false, offset: [0, -10] });
+      this.routePins.push(m);
+    });
   }
 
   /** Appelé par la page quand la taille de la carte change (tiroir mobile). */

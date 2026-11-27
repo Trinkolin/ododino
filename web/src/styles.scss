@@ -55,3 +55,11 @@ body {
 }
 .trail-tip { font-weight: 600; }
 .leaflet-container { font: var(--mat-sys-body-small); }
+
+// Traceur : épingles des étapes, bouton « Retirer », curseur en croix
+.route-pin { width: 28px; height: 28px; border-radius: 50%; background: #0b7285; color: #fff; border: 3px solid #fff;
+  display: grid; place-items: center; font: 700 12px Inter, sans-serif; box-shadow: 0 1px 5px rgba(0, 0, 0, .4); box-sizing: border-box; }
+.route-pin.start { background: #2b8a3e; }
+.route-remove { border: 0; background: #c92a2a; color: #fff; border-radius: 6px; padding: 6px 10px; font: 600 12px Inter, sans-serif; cursor: pointer; }
+.routing { cursor: crosshair; }
+.routing .leaflet-interactive { cursor: pointer; }
