@@ -10,10 +10,10 @@
 const VERSION = 'dev'; // remplacé à chaque publication par tools/build.py (empreinte des fichiers)
 const SHELL = `ododino-shell-${VERSION}`;
 const DATA = 'ododino-data';
-const OFFLINE = 'ododino-offline';   // rempli par app.js (bouton « Disponible hors ligne »)
+const OFFLINE = 'ododino-offline';   // rempli par offline.js (bouton « Disponible hors ligne »)
 
 const SHELL_FILES = [
-  './', 'index.html', 'about.html', 'style.css', 'app.js', 'route.js', 'about.js', 'i18n.js',
+  './', 'index.html', 'about.html', 'style.css', 'app.js', 'route.js', 'offline.js', 'about.js', 'i18n.js',
   'manifest.webmanifest', 'vendor/leaflet/leaflet.js', 'vendor/leaflet/leaflet.css',
   'vendor/leaflet/images/layers.png', 'vendor/leaflet/images/layers-2x.png',
   'vendor/protomaps-leaflet/protomaps-leaflet.js', 'vendor/goatcounter/count.js',
