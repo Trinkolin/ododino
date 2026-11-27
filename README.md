@@ -31,7 +31,7 @@ puis ouvrir http://localhost:8765. Un serveur est nécessaire, car `fetch` ne ma
 | `tools/enrich_trails.py` | ordre des tronçons, altitudes, dénivelés, temps, profils et GPX |
 | `tools/prepare_dem.py` | prépare une fois les altitudes Copernicus et le relief ombré |
 | `tools/dem/` | altitudes de la zone (2 Mo), lues par `enrich_trails.py` |
-| `tools/build.py` | assemble le site publiable dans `_site/` |
+| `tools/build.py` | seul module qui connaît les fichiers du site (coquille, pack hors ligne, publié seulement — voir `GLOSSARY.md`) ; assemble `_site/`, écrit l'inventaire et **échoue** si un fichier est oublié |
 | `.github/workflows/site.yml` | mise à jour hebdomadaire et publication |
 
 ## Mettre à jour les données à la main

@@ -1,27 +1,19 @@
 /* Ododino – service worker : site installable et utilisable hors connexion.
-   - Coquille du site (pages, scripts, styles, polices, icônes) : mise en cache à l'installation.
+   - Coquille (pages, scripts, styles, polices, icônes, données de base) : mise en cache à l'installation.
    - Données (POI, sentiers…) : réseau d'abord, cache en secours — les mises à jour hebdomadaires passent.
    - Pack « hors ligne » (fond vectoriel, relief, graphe, profils, GPX) : téléchargé seulement à la
-     demande du visiteur (bouton dans le panneau), géré par app.js dans le cache OFFLINE.
+     demande du visiteur (bouton dans le panneau), géré par offline.js dans le cache OFFLINE.
    - Les tuiles des fonds en ligne (OpenTopoMap, OSM, Esri…) ne sont jamais mises en cache ici :
      leurs conditions d'utilisation interdisent le stockage en masse. */
 'use strict';
 
-const VERSION = 'dev'; // remplacé à chaque publication par tools/build.py (empreinte des fichiers)
-const SHELL = `ododino-shell-${VERSION}`;
+// Inventaire du site (GLOSSARY.md) : écrit à chaque publication par tools/build.py — ne pas éditer à la main.
+// En développement le service worker n'est pas enregistré (voir offline.js), cette valeur vide ne sert pas.
+const SITE = {"version": "dev", "shell": []};
+const SHELL = `ododino-shell-${SITE.version}`;
 const DATA = 'ododino-data';
-const OFFLINE = 'ododino-offline';   // rempli par offline.js (bouton « Disponible hors ligne »)
-
-const SHELL_FILES = [
-  './', 'index.html', 'about.html', 'style.css', 'app.js', 'route.js', 'offline.js', 'about.js', 'i18n.js',
-  'manifest.webmanifest', 'vendor/leaflet/leaflet.js', 'vendor/leaflet/leaflet.css',
-  'vendor/leaflet/images/layers.png', 'vendor/leaflet/images/layers-2x.png',
-  'vendor/protomaps-leaflet/protomaps-leaflet.js', 'vendor/goatcounter/count.js',
-  'fonts/fonts.css', 'fonts/inter-latin.woff2', 'fonts/inter-latin-ext.woff2',
-  'fonts/fraunces-latin.woff2', 'fonts/fraunces-latin-ext.woff2',
-  'icons/favicon.svg', 'icons/logo.svg', 'icons/icon-192.png', 'icons/icon-512.png',
-  'data/meta.json', 'data/pois.geojson', 'data/trails.geojson', 'data/boundary.geojson',
-];
+const OFFLINE = 'ododino-offline';   // rempli par offline.js (bouton « Hors ligne »)
+const SHELL_FILES = SITE.shell;
 
 self.addEventListener('install', (e) => {
   // cache: 'reload' : on ignore le cache HTTP pour ne jamais mélanger ancienne et nouvelle version
