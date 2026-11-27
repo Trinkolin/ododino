@@ -10,6 +10,9 @@ import { CATS, MINOR, SAC } from './config';
 import { DataService } from './data.service';
 import { MapStateService } from './map-state.service';
 import { RouteService } from './route.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { OfflineService } from '../offline/offline.service';
+import { packBasemap, packTileLayer } from '../offline/pack';
 
 type LeafletNS = typeof Leaflet;
 
@@ -39,6 +42,8 @@ export class MapView {
   protected readonly state = inject(MapStateService);
   private readonly data = inject(DataService);
   private readonly route = inject(RouteService);
+  private readonly offline = inject(OfflineService);
+  private readonly snack = inject(MatSnackBar);
   private readonly host = viewChild.required<ElementRef<HTMLDivElement>>('host');
   protected readonly gpsOn = signal(false);
 
@@ -79,6 +84,9 @@ export class MapView {
     // traceur : tracé, épingles ; curseur en croix quand l'onglet « Itinéraire » est ouvert
     effect(() => { this.route.coords(); this.route.pins(); this.route.gaps(); this.i18n.lang(); if (this.ready()) untracked(() => this.drawRoute()); });
     effect(() => { const on = this.state.tab() === 'route'; if (this.ready()) this.map.getContainer().classList.toggle('routing', on); });
+    // pack hors ligne : fond vectoriel proposé dans le choix des fonds, et utilisé d'office quand le réseau tombe
+    effect(() => { const s = this.offline.saved(); if (this.ready()) untracked(() => this.syncOfflineBase(!!s)); });
+    effect(() => { const on = this.offline.online(); if (this.ready()) untracked(() => this.switchBase(on)); });
   }
 
   // ---------- Création ----------
@@ -142,15 +150,47 @@ export class MapView {
     const L = this.L, t = (k: string) => this.i18n.t(k);
     this._overlays ??= {
       // Relief ombré maison (Copernicus GLO-30), tuiles natives jusqu'au zoom 14 puis agrandies
-      relief: L.tileLayer('tiles/hillshade/{z}/{x}/{y}.png', { minZoom: 10, maxNativeZoom: 14, maxZoom: 19,
+      relief: packTileLayer(L, 'tiles/hillshade/{z}/{x}/{y}.png', { minZoom: 10, maxNativeZoom: 14, maxZoom: 19,
         bounds: [[46.03, 13.35], [46.30, 13.73]], attribution: 'Relief © Copernicus DEM GLO-30 (ESA/EU)' }),
       wmt: L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', { maxZoom: 18, opacity: 0.7, attribution: '© waymarkedtrails.org' }),
     };
     this.layerCtl?.remove();
     this.layerCtl = L.control.layers(
-      { [t('baseTopo')]: this.bases.topo, [t('baseOsm')]: this.bases.osm, [t('baseSat')]: this.bases.sat },
+      { [t('baseTopo')]: this.bases.topo, [t('baseOsm')]: this.bases.osm, [t('baseSat')]: this.bases.sat,
+        ...(this.offlineBase ? { [t('baseOffline')]: this.offlineBase } : {}) },
       { [t('layerTrails')]: this.groups.trails, [t('layerPois')]: this.groups.pois, [t('layerRelief')]: this._overlays.relief, [t('layerWmt')]: this._overlays.wmt },
       { collapsed: true }).addTo(this.map);
+  }
+
+  // ---------- Fond hors ligne ----------
+  private offlineBase: Leaflet.Layer | null = null;
+  /** fond choisi avant la coupure de réseau, rétabli au retour */
+  private baseBefore: Leaflet.Layer | null = null;
+
+  private async syncOfflineBase(present: boolean): Promise<void> {
+    if (present && !this.offlineBase) {
+      this.offlineBase = await packBasemap(this.L).catch(() => null);
+    } else if (!present && this.offlineBase) {
+      if (this.map.hasLayer(this.offlineBase)) { this.map.removeLayer(this.offlineBase); this.bases.topo.addTo(this.map); }
+      this.offlineBase = null; this.baseBefore = null;
+    }
+    this.buildLayerControl();
+    if (!this.offline.online()) this.switchBase(false);
+  }
+
+  private switchBase(online: boolean): void {
+    const ob = this.offlineBase;
+    if (!ob) return;
+    const bases = Object.values(this.bases);
+    if (!online && !this.map.hasLayer(ob)) {
+      this.baseBefore = bases.find((l) => this.map.hasLayer(l)) ?? this.bases.topo;
+      bases.forEach((l) => this.map.removeLayer(l));
+      ob.addTo(this.map);
+      this.snack.open(this.i18n.t('offlineNow'), undefined, { duration: 4000 });
+    } else if (online && this.baseBefore && this.map.hasLayer(ob)) {
+      this.map.removeLayer(ob);
+      this.baseBefore.addTo(this.map); this.baseBefore = null;
+    }
   }
 
   // ---------- Contour des vallées ----------

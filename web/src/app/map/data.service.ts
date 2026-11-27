@@ -1,5 +1,6 @@
 import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { packFetch } from '../offline/pack';
 import { CATS, Cat, Diff, NETS, Net, diffLevel, lengthOf } from './config';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -34,7 +35,7 @@ export class DataService {
 
   private async load(): Promise<void> {
     const get = <T>(f: string): Promise<T | null> =>
-      fetch(`data/${f}`).then((r) => (r.ok ? (r.json() as Promise<T>) : null)).catch(() => null);
+      packFetch(`data/${f}`).then((r) => (r.ok ? (r.json() as Promise<T>) : null)).catch(() => null);
     const [boundary, pois, trails, paths, meta, featured, cards] = await Promise.all([
       get<Geo>('boundary.geojson'), get<Geo>('pois.geojson'), get<Geo>('trails.geojson'), get<Geo>('paths.geojson'),
       get<{ updated?: string }>('meta.json'), get<Record<string, Featured>>('featured.json'), get<CardInfo[]>('cards.json'),

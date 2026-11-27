@@ -15,6 +15,7 @@ import { DiscoverTab } from '../map/panel/discover-tab';
 import { PoisTab } from '../map/panel/pois-tab';
 import { TrailsTab } from '../map/panel/trails-tab';
 import { RouteTab } from '../map/panel/route-tab';
+import { OfflineTab } from '../offline/offline-tab';
 import { RouteService } from '../map/route.service';
 
 const TABS: Tab[] = ['discover', 'pois', 'trails', 'route', 'offline'];
@@ -26,7 +27,7 @@ const SHEETS: Sheet[] = ['peek', 'half', 'full'];
  */
 @Component({
   selector: 'odo-map-page',
-  imports: [MatTabsModule, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab, RouteTab],
+  imports: [MatTabsModule, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab, RouteTab, OfflineTab],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
   host: { '[class]': '"sheet-" + state.sheet()' },

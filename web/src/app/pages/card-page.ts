@@ -7,6 +7,7 @@ import { I18nService } from '../i18n/i18n.service';
 import { LANGS } from '../i18n/i18n.service';
 import { hm } from '../map/config';
 import { Icon } from '../shell/icon';
+import { PackImg } from '../offline/pack-img';
 import { SeoService } from '../shell/seo.service';
 
 type Labels = (typeof LABELS)['it'];
@@ -17,7 +18,7 @@ type Labels = (typeof LABELS)['it'];
  */
 @Component({
   selector: 'odo-card-page',
-  imports: [RouterLink, MatButtonModule, Icon],
+  imports: [RouterLink, MatButtonModule, Icon, PackImg],
   templateUrl: './card-page.html',
   styleUrl: './card-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

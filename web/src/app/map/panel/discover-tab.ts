@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { I18nService } from '../../i18n/i18n.service';
 import { Icon } from '../../shell/icon';
+import { PackImg } from '../../offline/pack-img';
 import { CATS, NETS } from '../config';
 import { CardInfo, DataService } from '../data.service';
 import { FavoritesService } from '../favorites.service';
@@ -11,7 +12,7 @@ import { MapStateService } from '../map-state.service';
 /** Onglet « Découvrir » : mes favoris, puis les fiches phares (vignette, titre, résumé, « Sur la carte »). */
 @Component({
   selector: 'odo-discover-tab',
-  imports: [RouterLink, MatButtonModule, Icon],
+  imports: [RouterLink, MatButtonModule, Icon, PackImg],
   templateUrl: './discover-tab.html',
   styleUrl: './discover-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

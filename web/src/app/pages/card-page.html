@@ -7,7 +7,7 @@
 
       @if (f.photo; as p) {
         <figure class="hero">
-          <img [src]="p.src" [alt]="t.alt" [width]="p.width" [height]="p.height" />
+          <img odoPackImg [src]="p.src" [alt]="t.alt" [width]="p.width" [height]="p.height" />
           <figcaption>{{ L().photo }} : <a [href]="p.sourceUrl" target="_blank" rel="noopener">{{ p.author }}</a>,
             <a [href]="p.licenseUrl" target="_blank" rel="noopener">{{ p.license }}</a></figcaption>
         </figure>

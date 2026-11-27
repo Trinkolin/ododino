@@ -9,12 +9,15 @@ import { hm, noteUrl, safeUrl } from './config';
 import { DataService, Trail } from './data.service';
 import { FavoritesService } from './favorites.service';
 import { MapStateService } from './map-state.service';
+import { packFetch } from '../offline/pack';
 
 const profiles = new Map<string, Promise<ProfilePoints | null>>();
 /** Profil d'altitude d'un sentier (data/profiles/<id>.json, calculé par tools/enrich_trails.py), chargé une fois. */
 function loadProfile(rid: string): Promise<ProfilePoints | null> {
   if (!profiles.has(rid)) {
-    profiles.set(rid, fetch(`data/profiles/${rid}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null));
+    const p = packFetch(`data/profiles/${rid}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    profiles.set(rid, p);
+    p.then((v) => { if (!v) profiles.delete(rid); }); // sans réseau ni pack : nouvel essai plus tard
   }
   return profiles.get(rid)!;
 }
@@ -61,7 +64,7 @@ function loadProfile(rid: string): Promise<ProfilePoints | null> {
       <div class="actions">
         <button mat-stroked-button class="fav" (click)="favs.toggle(t.id)" [attr.aria-pressed]="favs.has(t.id)">
           <odo-icon [name]="favs.has(t.id) ? 'favorite' : 'favorite_border'" /> {{ i18n.t('fav') }}</button>
-        <a mat-stroked-button [href]="'data/gpx/' + rid() + '.gpx'" [attr.download]="'ododino-' + fileName() + '.gpx'">
+        <a mat-stroked-button [href]="'data/gpx/' + rid() + '.gpx'" [attr.download]="'ododino-' + fileName() + '.gpx'" (click)="gpx($event)">
           <odo-icon name="download" /> {{ i18n.t('gpx') }}</a>
       </div>
       <div class="links">
@@ -114,6 +117,18 @@ export class TrailDetail {
   }
 
   /** « Signaler une erreur » : une note OSM au milieu du sentier */
+  /** Sans réseau, le lien ne mène nulle part : le GPX est alors lu dans le pack hors ligne. */
+  protected async gpx(ev: MouseEvent): Promise<void> {
+    if (navigator.onLine) return;
+    ev.preventDefault();
+    const res = await packFetch(`data/gpx/${this.rid()}.gpx`).catch(() => null);
+    if (!res?.ok) return;
+    const url = URL.createObjectURL(await res.blob());
+    const a = Object.assign(document.createElement('a'), { href: url, download: `ododino-${this.fileName()}.gpx` });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   protected report(): string {
     const part = this.trail().coords[0], mid = part[Math.floor(part.length / 2)];
     return noteUrl(mid[1], mid[0]);

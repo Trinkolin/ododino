@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { I18nService } from '../i18n/i18n.service';
 import { Coord, profile } from '../geo/geo';
+import { packFetch } from '../offline/pack';
 import { MAX_POINTS, PlanResult, RouteOptions, Router, createRouter, decodeRoute, encodeRoute } from '../geo/router';
 
 /** Tracé importé d'un GPX : [lon, lat, altitude|null, SAC] */
@@ -49,7 +50,7 @@ export class RouteService {
   load(): Promise<Router> {
     if (!this.graph) {
       this.loading.set(true); this.loadError.set(false);
-      this.graph = fetch('data/graph.json').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      this.graph = packFetch('data/graph.json').then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
         .then((raw) => { this.router = createRouter(raw); this.loading.set(false); return this.router; })
         .catch((err) => { this.graph = null; this.loading.set(false); this.loadError.set(true); throw err; }); // nouvel essai au prochain clic
     }

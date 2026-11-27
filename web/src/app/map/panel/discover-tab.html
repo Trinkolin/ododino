@@ -18,7 +18,7 @@
   @for (c of cards(); track c.slug) {
     <li class="card" [class.intro]="c.kind === 'intro'">
       <a class="link" [routerLink]="['/', i18n.lang(), c.slug]">
-        @if (c.thumb) { <img [src]="c.thumb" alt="" loading="lazy" width="480" height="320" /> }
+        @if (c.thumb) { <img odoPackImg [src]="c.thumb" alt="" loading="lazy" width="480" height="320" /> }
         @else { <span class="ph" [style.background]="color(c)">{{ icon(c) }}</span> }
         <span class="txt"><strong>{{ c.titles[i18n.lang()] }}</strong><span>{{ summary(c) }}</span></span>
       </a>

@@ -61,7 +61,7 @@
             "server": "src/main.server.ts",
             "outputMode": "static",
             "allowedCommonJsDependencies": [
-              "leaflet"
+              "leaflet", "rbush"
             ]
           },
           "configurations": {
