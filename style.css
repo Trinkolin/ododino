@@ -186,7 +186,7 @@ body.page { display: block; height: auto; }
 .fiche .title { font-size: 34px; margin-top: 10px; }
 .fiche .draft { background: #fff3bf; color: #5c4a00; border: 1px solid #ffe066; border-radius: 8px; padding: 8px 12px; font-weight: 600; }
 .fiche .hero { margin: 12px 0 20px; }
-.fiche .hero img { width: 100%; height: auto; border-radius: 12px; display: block; }
+.fiche .hero img { width: 100%; height: auto; max-height: 70vh; object-fit: cover; border-radius: 12px; display: block; }
 .fiche .hero figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; }
 .fiche .facts { border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: 14px 16px; margin: 0 0 20px; }
 .fiche .facts h2 { margin-top: 0; }

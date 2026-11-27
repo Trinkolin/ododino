@@ -152,8 +152,9 @@ def render(fiche, lang, labels, places, trails, draft):
         f'<a href="../../{l}/{slug}/" lang="{l}" class="{"on" if l == lang else ""}"'
         f'{" aria-current=\"page\"" if l == lang else ""}>{l.upper()}</a>' for l in LANGS)
 
-    rows = [f"<dt>{e(L['altitude'])}</dt><dd>{e(meta['facts']['altitude'])} m</dd>",
-            f"<dt>{e(L['coords'])}</dt><dd>{lat:.5f}, {lon:.5f}</dd>"]
+    altitude = meta.get("facts", {}).get("altitude")  # facultative : sans intérêt pour une église de village
+    rows = ([f"<dt>{e(L['altitude'])}</dt><dd>{e(altitude)} m</dd>"] if altitude is not None else []) + [
+        f"<dt>{e(L['coords'])}</dt><dd>{lat:.5f}, {lon:.5f}</dd>"]
     trail_items = []
     for rid in meta.get("trails", []):
         t = trails.get(rid)

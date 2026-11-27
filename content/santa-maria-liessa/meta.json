@@ -1,0 +1,18 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "way/36686268",
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Petar43",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Chiesa_di_Santa_Maria_del_Buon_Consiglio_(Liessa,_Grimacco).jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – Chiesa di Santa Maria (Grimacco)", "url": "https://it.wikipedia.org/wiki/Chiesa_di_Santa_Maria_(Grimacco)", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Grimacco", "url": "https://it.wikipedia.org/wiki/Grimacco", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org/way/36686268" }
+  ],
+  "_notes": "Data della nuova chiesa : 1870 (voce della chiesa) contro 1830 (voce Grimacco) : riportate entrambe. Portale in bronzo : scultore Giorgio Benedetti (voce Grimacco), santi Ermacora e Paolino (voce chiesa). Organo « a 27 canne » (voce Grimacco) omesso : numero poco plausibile. Foto unica disponibile, piccola (687 px) e sbiadita : da sostituire con una dell'autore. Nessun sentiero segnato vicino."
+}

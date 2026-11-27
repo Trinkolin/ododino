@@ -1,0 +1,20 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "way/36686129",
+  "trails": ["relation/13776980", "relation/14766262"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "YukioSanjo",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:1083_-_Chiesa_San_Quirino.jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – Chiesa di San Quirino (San Pietro al Natisone)", "url": "https://it.wikipedia.org/wiki/Chiesa_di_San_Quirino_(San_Pietro_al_Natisone)", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – San Pietro al Natisone", "url": "https://it.wikipedia.org/wiki/San_Pietro_al_Natisone", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Pulfero (banche di Antro e Merso)", "url": "https://it.wikipedia.org/wiki/Pulfero", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL)", "url": "https://www.openstreetmap.org/way/36686129" }
+  ],
+  "_notes": "Data del rinnovo : 1493 nel testo di Wikipedia, ma la lapide citata dalla stessa voce dice « Anno Domini 1494 – magister Martinus Petrich » : riportati entrambi. Tempio di Diana : « si suppone » (voce San Pietro). Scritta sul cancello del portico non citata (lettura incerta dalla foto). Aggettivo sloveno « mersko » per la banca di Merso da verificare."
+}

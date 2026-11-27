@@ -1,0 +1,19 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "way/36686251",
+  "trails": ["relation/2992792"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Marchetto da Trieste",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Chiesa_dei_Santi_Ermacora_e_Fortunato_(Savogna)_01.jpg"
+  },
+  "sources": [
+    { "title": "Wikipedia (it) – Chiesa dei Santi Ermacora e Fortunato (Savogna)", "url": "https://it.wikipedia.org/wiki/Chiesa_dei_Santi_Ermacora_e_Fortunato_(Savogna)", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Savogna", "url": "https://it.wikipedia.org/wiki/Savogna", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL) · CAI FVG, sentiero 755", "url": "https://www.openstreetmap.org/way/36686251" }
+  ],
+  "_notes": "Monte San Canziano / Svet Kocjan : nome sloveno dalla voce San Pietro al Natisone. Nome sloveno di Brizza non verificato : lasciato in italiano."
+}
