@@ -1,0 +1,20 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "relation/13854295",
+  "trails": ["relation/13863823"],
+  "photo": {
+    "file": "photo.jpg",
+    "author": "Naturpuur",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Wegweiser_Alpe_Adria_Trail_und_Weg_des_Friedens_von_Tolmin,_Slowenien_nach_Castelmonte,_Italien.jpg"
+  },
+  "sources": [
+    { "title": "Alpe Adria Trail – sito ufficiale", "url": "https://www.alpe-adria-trail.com/it/trail/", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (de) – Alpe Adria Trail", "url": "https://de.wikipedia.org/wiki/Alpe_Adria_Trail", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (sl) – Pot Alpe Adria", "url": "https://sl.wikipedia.org/wiki/Pot_Alpe_Adria", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL) · tappe E27 ed E28", "url": "https://www.openstreetmap.org/relation/13854295" }
+  ],
+  "_notes": "Lunghezza delle tappe : 20 km e 6 h (sito ufficiale) ; 17 km (Wikipedia de e sl). Percorso nelle valli : Wikipedia sl lo fa passare per Cuk, San Giovanni, San Nicolò e Cladrecis (valle dello Judrio) ; Wikipedia de e OSM per la valle del Natisone fino a Cividale : seguito OSM, rinvio alla traccia GPX ufficiale. Pagine delle tappe sul sito ufficiale caricate dinamicamente : non lette. Dislivello E28 su OSM (+1163 / −667) incoerente con Tribil (642 m) → Cividale (135 m) : relazione probabilmente ordinata al contrario."
+}

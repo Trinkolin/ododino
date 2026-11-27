@@ -348,6 +348,7 @@
       <div class="row">${row('from', p.from)}${row('to', p.to)}${row('network', T().nets[sel.net])}</div>
       <div id="profile" class="profile">${p.ordered ? '' : `<p class="muted">${esc(t('profileNA'))}</p>`}</div>
       ${p.description ? `<p>${esc(p.description)}</p>` : ''}
+      ${state.featured?.[p.osm] ? `<p class="read-more"><a href="${lang}/${state.featured[p.osm].slug}/">📖 ${esc(t('readMore'))}</a></p>` : ''}
       <div class="actions">
         <a href="data/gpx/${rid}.gpx" download="ododino-${esc((p.ref || rid).replace(/[^\w-]+/g, '_'))}.gpx">⬇ ${esc(t('gpx'))}</a>
         <a href="https://www.openstreetmap.org/${p.osm}" target="_blank" rel="noopener">${esc(t('viewOsm'))} ↗</a>

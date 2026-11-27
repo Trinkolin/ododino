@@ -1,0 +1,13 @@
+{
+  "status": "brouillon",
+  "updated": "2026-11-27",
+  "osm": "node/2696171390",
+  "facts": { "altitude": 912 },
+  "trails": ["relation/7112799", "relation/7113150", "relation/8064220", "relation/2071931"],
+  "sources": [
+    { "title": "Wikipedia (it) – Monte Cum", "url": "https://it.wikipedia.org/wiki/Monte_Cum", "consulted": "2026-11-27" },
+    { "title": "Wikipedia (it) – Stregna", "url": "https://it.wikipedia.org/wiki/Stregna", "consulted": "2026-11-27" },
+    { "title": "OpenStreetMap (ODbL) · Comune di Stregna, Sentiero Hum", "url": "https://www.openstreetmap.org/relation/7112799" }
+  ],
+  "_notes": "Fiche commune aux lieux 3 (Monte Cum / Hum) et 17 (Sentiero Hum) de la liste : le « Sentiero della Grande Guerra del monte Cum » de Wikipedia (anneau depuis 2016, Tribil Superiore – vetta – Rucchin) = le « Sentiero Hum » d'OSM (deux relations, 3,8 + 3,4 km, + variante 1,2 km). Altitude : 912 m (OSM, voce Stregna) contre 917 m (voce Monte Cum). Pas de photo libre exploitable : MonteCum.jpg sur Commons fait 338 px. Noms slovènes : Srednje, Dreka, Svet Štoblank, Zaločilo (OSM), Stara Gora, Arbeč (voce Stregna), Solarji (Wikipedia sl)."
+}

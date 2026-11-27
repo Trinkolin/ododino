@@ -141,11 +141,20 @@ def render(fiche, lang, labels, places, trails, draft):
     L, meta, slug = labels[lang], fiche["meta"], fiche["slug"]
     head, body = fiche["texts"][lang]
     e = lambda s: html.escape(str(s), quote=True)  # noqa: E731
-    place = places.get(meta["osm"])
-    if not place:
-        raise ContentError(f"{slug} : lieu OSM « {meta['osm']} » absent de data/pois.geojson")
-    lon, lat = place
-    map_url = f"../../index.html?lang={lang}#poi={meta['osm']}"
+    # Une fiche décrit un lieu (data/pois.geojson) ou un sentier (data/trails.geojson). Pour un sentier, la
+    # carte s'ouvre sur le sentier, qui vient en tête de la liste « Sentiers », et on n'affiche pas de
+    # coordonnées : le premier point du tracé OSM n'est pas toujours le départ (relation saisie à l'envers).
+    if meta["osm"] in places:
+        lon, lat = places[meta["osm"]]
+        map_url = f"../../index.html?lang={lang}#poi={meta['osm']}"
+        coords = [f"<dt>{e(L['coords'])}</dt><dd>{lat:.5f}, {lon:.5f}</dd>"]
+        trail_ids = meta.get("trails", [])
+    elif meta["osm"] in trails:
+        map_url = f"../../index.html?lang={lang}#trail={meta['osm']}"
+        coords = []
+        trail_ids = [meta["osm"]] + [r for r in meta.get("trails", []) if r != meta["osm"]]
+    else:
+        raise ContentError(f"{slug} : « {meta['osm']} » absent de data/pois.geojson et de data/trails.geojson")
     alternates = "\n".join(
         f'  <link rel="alternate" hreflang="{l}" href="{SITE_URL}/{l}/{slug}/">' for l in LANGS)
     langs_nav = "".join(
@@ -153,10 +162,9 @@ def render(fiche, lang, labels, places, trails, draft):
         f'{" aria-current=\"page\"" if l == lang else ""}>{l.upper()}</a>' for l in LANGS)
 
     altitude = meta.get("facts", {}).get("altitude")  # facultative : sans intérêt pour une église de village
-    rows = ([f"<dt>{e(L['altitude'])}</dt><dd>{e(altitude)} m</dd>"] if altitude is not None else []) + [
-        f"<dt>{e(L['coords'])}</dt><dd>{lat:.5f}, {lon:.5f}</dd>"]
+    rows = ([f"<dt>{e(L['altitude'])}</dt><dd>{e(altitude)} m</dd>"] if altitude is not None else []) + coords
     trail_items = []
-    for rid in meta.get("trails", []):
+    for rid in trail_ids:
         t = trails.get(rid)
         if not t:
             raise ContentError(f"{slug} : sentier « {rid} » absent de data/trails.geojson")
@@ -165,7 +173,9 @@ def render(fiche, lang, labels, places, trails, draft):
         else:
             name = f"CAI {t['ref']}" if t.get("ref") else rid
         st = t.get("stats")
-        facts = f" — {_fmt_km(st['km'], lang)} km, +{st['gain']} m, {e(L['timeEst'])} {_fmt_minutes(st['minutes'])}" if st else ""
+        # montée et descente : un sentier linéaire n'a pas le même dénivelé dans les deux sens
+        facts = (f" — {_fmt_km(st['km'], lang)} km, +{st['gain']} m / −{st['loss']} m, "
+                 f"{e(L['timeEst'])} {_fmt_minutes(st['minutes'])}") if st else ""
         hard = " ⚠ " + e(L["experts"]) if t.get("cai_scale") in ("EE", "EEA") else ""
         trail_items.append(f'<li><a href="../../index.html?lang={lang}#trail={rid}">{e(name)}</a>{facts}{hard}</li>')
     photo = meta.get("photo")
@@ -217,7 +227,7 @@ def render(fiche, lang, labels, places, trails, draft):
     {hero}
     <aside class="facts">
       <h2>{e(L['practical'])}</h2>
-      <dl>{''.join(rows)}</dl>
+      {f"<dl>{''.join(rows)}</dl>" if rows else ''}
       {f"<h3>{e(L['trails'])}</h3><ul>{''.join(trail_items)}</ul>" if trail_items else ''}
       <p><a href="{map_url}">{e(L['viewOnMap'])}</a></p>
     </aside>
