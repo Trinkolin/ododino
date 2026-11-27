@@ -17,7 +17,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
 LANGS = ["it", "sl", "en", "de", "fr"]
-SITE_URL = "https://ododino.it"      # domaine prévu (PLAN.md) : sert aux liens absolus (hreflang, sitemap)
+# Adresse publique du site, pour les liens absolus (canonical, hreflang, sitemap, GPX). Seul endroit à
+# changer le jour où le domaine ododino.it est en place (voir README, « Mise en ligne »).
+SITE_URL = "https://trinkolin.github.io/ododino"
 STATUSES = ("brouillon", "relu")
 
 

@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 from xml.sax.saxutils import escape
 
+import content
 import geo
 from geo import Dem, dist, resample
 
@@ -19,7 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 
 NEAR_M = 250         # rayon des points utiles ajoutés au GPX
-SITE = "https://ododino.it"
+SITE = content.SITE_URL
 WPT_CATS = {"drinking", "hut", "peak"}
 
 

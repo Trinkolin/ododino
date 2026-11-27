@@ -87,7 +87,9 @@ environnement séparé (voir l'en-tête du script).
 4. **Domaine** : acheter `ododino.it` (sinon `ododino.eu`), puis :
    - chez le registrar, ajouter les enregistrements DNS de GitHub Pages : `A` vers 185.199.108.153,
      185.199.109.153, 185.199.110.153 et 185.199.111.153, plus `CNAME www` vers `<compte>.github.io` ;
-   - dans *Settings → Pages → Custom domain*, saisir `ododino.it`, puis cocher *Enforce HTTPS*.
+   - dans *Settings → Pages → Custom domain*, saisir `ododino.it`, puis cocher *Enforce HTTPS* ;
+   - dans `tools/content.py`, remplacer `SITE_URL` (aujourd'hui `https://trinkolin.github.io/ododino`)
+     par `https://ododino.it` : liens canoniques, sitemap et GPX suivent.
 5. **E-mail** : rediriger `contact@ododino.it` vers votre boîte, via le registrar ou Cloudflare Email Routing.
    L'adresse affichée sur le site se modifie dans `i18n.js` (`CONTACT`).
 6. **Statistiques** : créer un compte gratuit sur goatcounter.com avec le code `ododino`.
