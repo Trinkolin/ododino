@@ -11,11 +11,14 @@ Le fait que ce dépôt soit public permet seulement de le consulter (et de le du
 limites des conditions d'utilisation de GitHub). Cela ne donne aucun droit de réutilisation.
 
 Exceptions, qui restent sous leur propre licence :
-- les données OpenStreetMap (data/, tiles/) : © contributeurs OpenStreetMap, licence ODbL
-  (https://www.openstreetmap.org/copyright) ;
+- les données tirées d'OpenStreetMap (lieux, sentiers, fond de carte) : © contributeurs OpenStreetMap,
+  licence ODbL (https://www.openstreetmap.org/copyright) ;
+- le Copernicus DEM GLO-30 (relief, altitudes, tools/dem/) : © DLR e.V. 2010-2014 et © Airbus Defence and
+  Space GmbH 2014-2018, fourni dans le cadre de COPERNICUS par l'Union européenne et l'ESA ;
 - les photos provenant de Wikimedia Commons : auteur et licence indiqués dans le meta.json de chaque fiche ;
-- les bibliothèques tierces (vendor/, dépendances npm de web/) et les polices (fonts/) : licences de leurs
-  auteurs respectifs.
+- les icônes Material Symbols (Google, licence Apache 2.0) ;
+- les bibliothèques tierces (vendor/, dépendances npm de web/) et les polices (fonts/, licence SIL OFL) :
+  licences de leurs auteurs respectifs, jointes dans leurs dossiers.
 
 ENGLISH
 
@@ -28,8 +31,11 @@ This repository being public only allows viewing it (and forking it on GitHub wi
 GitHub Terms of Service). It grants no right of reuse.
 
 Exceptions, which remain under their own licenses:
-- OpenStreetMap data (data/, tiles/): © OpenStreetMap contributors, ODbL
+- data derived from OpenStreetMap (places, trails, base map): © OpenStreetMap contributors, ODbL
   (https://www.openstreetmap.org/copyright);
+- Copernicus DEM GLO-30 (hillshade, elevations, tools/dem/): © DLR e.V. 2010-2014 and © Airbus Defence and
+  Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA;
 - photos from Wikimedia Commons: author and license given in each page's meta.json;
-- third-party libraries (vendor/, npm dependencies of web/) and fonts (fonts/): licenses of their
-  respective authors.
+- Material Symbols icons (Google, Apache License 2.0);
+- third-party libraries (vendor/, npm dependencies of web/) and fonts (fonts/, SIL OFL): licenses of their
+  respective authors, included in their folders.
