@@ -1,0 +1,35 @@
+Copyright (c) 2026 Trinkolin. Tous droits réservés. All rights reserved.
+
+FRANÇAIS
+
+Le code source, les textes des fiches (dossier content/), les photos de l'auteur, le logo et la mise en
+forme du site Ododino sont protégés par le droit d'auteur. Aucune licence n'est accordée : il est interdit
+de les copier, modifier, redistribuer, publier ou réutiliser, en tout ou en partie, à quelque fin que ce
+soit, sans l'autorisation écrite préalable de l'auteur.
+
+Le fait que ce dépôt soit public permet seulement de le consulter (et de le dupliquer sur GitHub dans les
+limites des conditions d'utilisation de GitHub). Cela ne donne aucun droit de réutilisation.
+
+Exceptions, qui restent sous leur propre licence :
+- les données OpenStreetMap (data/, tiles/) : © contributeurs OpenStreetMap, licence ODbL
+  (https://www.openstreetmap.org/copyright) ;
+- les photos provenant de Wikimedia Commons : auteur et licence indiqués dans le meta.json de chaque fiche ;
+- les bibliothèques tierces (vendor/, dépendances npm de web/) et les polices (fonts/) : licences de leurs
+  auteurs respectifs.
+
+ENGLISH
+
+The source code, the texts of the featured pages (content/ folder), the author's photos, the logo and the
+design of the Ododino website are protected by copyright. No license is granted: copying, modifying,
+redistributing, publishing or reusing them, in whole or in part, for any purpose, is prohibited without the
+author's prior written permission.
+
+This repository being public only allows viewing it (and forking it on GitHub within the limits of the
+GitHub Terms of Service). It grants no right of reuse.
+
+Exceptions, which remain under their own licenses:
+- OpenStreetMap data (data/, tiles/): © OpenStreetMap contributors, ODbL
+  (https://www.openstreetmap.org/copyright);
+- photos from Wikimedia Commons: author and license given in each page's meta.json;
+- third-party libraries (vendor/, npm dependencies of web/) and fonts (fonts/): licenses of their
+  respective authors.

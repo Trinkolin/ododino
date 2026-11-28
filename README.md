@@ -119,3 +119,6 @@ d'afficher le site dans le cadre d'un autre site). Le risque reste faible tant q
 ni formulaire ; sinon, placer Cloudflare devant le site.
 
 Données © contributeurs OpenStreetMap, licence ODbL : l'attribution doit rester visible.
+
+Code, textes des fiches et photos de l'auteur : tous droits réservés, aucune réutilisation sans autorisation
+(voir `LICENSE`).
