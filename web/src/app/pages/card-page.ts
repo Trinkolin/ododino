@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, effect, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
 import { FICHES, Fiche } from '../cards/fiche';
 import LABELS from '../cards/generated/labels.json';
 import { I18nService } from '../i18n/i18n.service';
 import { LANGS } from '../i18n/i18n.service';
 import { hm } from '../map/config';
-import { Icon } from '../shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { PackImg } from '../offline/pack-img';
 import { SeoService } from '../shell/seo.service';
 
@@ -18,9 +20,9 @@ type Labels = (typeof LABELS)['it'];
  */
 @Component({
   selector: 'odo-card-page',
-  imports: [RouterLink, MatButtonModule, Icon, PackImg],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatListModule, MatIconModule, PackImg],
   templateUrl: './card-page.html',
-  styleUrl: './card-page.scss',
+  styles: `:host { display: block; } .width { max-width: 760px; margin: 0 auto; }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardPage {
@@ -41,6 +43,8 @@ export class CardPage {
   });
   protected readonly intro = computed(() => (FICHES.intro && FICHES.intro !== this.fiche()?.slug ? FICHES.intro : null));
   protected readonly hm = hm;
+  /** « ← Voir sur la carte » : la flèche est l'icône du bouton */
+  protected readonly back = computed(() => this.L().viewOnMap.replace(/^←\s*/, ''));
 
   constructor() {
     effect(() => {

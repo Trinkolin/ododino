@@ -1,60 +1,17 @@
-:host { display: flex; height: 100%; min-height: 0; position: relative; }
-
-.panel { width: 400px; flex: none; display: flex; flex-direction: column; min-height: 0;
-  border-right: 1px solid var(--mat-sys-outline-variant); background: var(--mat-sys-surface-container-low); }
-.handle { display: none; }
+// Mise en page seulement (tailles, positions) : l'apparence vient des composants Material.
+:host { display: block; height: 100%; }
+.container { height: 100%; }
+.panel { display: flex; flex-direction: column; height: 100%; }
+.safety { margin: 12px 12px 0; }
 .tabs { flex: 1; min-height: 0; }
-// avertissement de sécurité (une fois, gardé dans le navigateur) et pied du panneau
-.safety {
-  display: flex; gap: 10px; align-items: flex-start; flex: none; margin: 10px 12px 0; padding: 9px 11px; border-radius: 12px;
-  background: var(--mat-sys-tertiary-container); color: var(--mat-sys-on-tertiary-container); font: var(--mat-sys-body-small);
-}
-.safety p { margin: 0; flex: 1; }
-.safety a { color: inherit; }
-.safety button { flex: none; }
-.foot {
-  flex: none; padding: 6px 12px 8px; border-top: 1px solid var(--mat-sys-outline-variant);
-  color: var(--mat-sys-on-surface-variant); font: var(--mat-sys-body-small); line-height: 1.6;
-}
-.foot a { color: var(--mat-sys-primary); }
-// le contenu des onglets prend toute la hauteur (listes qui défilent)
 .tabs ::ng-deep .mat-mdc-tab-body-wrapper { flex: 1; min-height: 0; }
 .tabs ::ng-deep .mat-mdc-tab-body-content { height: 100%; overflow: auto; }
-.tabs ::ng-deep .mdc-tab { min-width: 0; padding: 0 9px; }
-// « Itinéraire » et « Hors ligne » : icône seule tant qu'ils ne sont pas ouverts (cinq onglets dans 400 px)
-.tabs ::ng-deep .mdc-tab:nth-child(n + 4):not(.mdc-tab--active) .lbl { display: none; }
-odo-icon { width: 20px; height: 20px; margin-right: 5px; }
-.todo { color: var(--mat-sys-on-surface-variant); padding: 16px; }
-
-.map { flex: 1; position: relative; min-width: 0; }
+.foot { padding: 8px 16px; }
+// légende et carte de sélection posées sur la carte
 .legend { position: absolute; z-index: 850; top: 60px; right: 10px; }
-.sel-card { position: absolute; z-index: 900; left: 14px; bottom: 28px; width: min(400px, calc(100% - 28px)); }
+.sel-card { position: absolute; z-index: 900; left: 14px; bottom: 28px; width: min(400px, calc(100% - 28px)); max-height: calc(100% - 56px); overflow: auto; }
 
-// ---------- Téléphone : carte plein écran, panneau en tiroir ----------
 @media (max-width: 760px) {
-  :host { display: block; }
-  // z-index 0 : les commandes Leaflet (z-index 1000) restent sous le tiroir
-  .map { position: absolute; inset: 0; z-index: 0; }
-  .panel {
-    position: absolute; z-index: 1000; left: 0; right: 0; bottom: 0; width: auto; border-right: 0;
-    border-radius: 18px 18px 0 0; box-shadow: 0 -6px 24px rgba(20, 30, 25, .18); transition: height .25s ease;
-  }
-  .panel.dragging { transition: none; }
-  :host(.sheet-peek) .panel { height: 112px; }
-  :host(.sheet-peek) .safety, :host(.sheet-peek) .foot { display: none; }
-  // pied du panneau : seulement panneau ouvert en grand (la place manque à mi-hauteur)
-  :host(.sheet-half) .foot { display: none; }
-  :host(.sheet-half) .panel { height: 52%; }
-  :host(.sheet-full) .panel { height: calc(100% - 8px); }
-  :host(.sheet-peek) .tabs ::ng-deep .mat-mdc-tab-body-wrapper { display: none; }
-  .handle { display: block; flex: none; width: 100%; height: 24px; border: 0; background: none; cursor: grab; touch-action: none; padding: 8px 0 0; }
-  .handle span { display: block; width: 40px; height: 5px; border-radius: 3px; background: var(--mat-sys-outline-variant); margin: 0 auto; }
-  // onglets : icônes seules, le libellé du seul onglet actif
-  .tabs ::ng-deep .mdc-tab { padding: 0 10px; flex: 1 1 auto; }
-  .tabs ::ng-deep .mdc-tab:not(.mdc-tab--active) .lbl { display: none; }
-  odo-icon { margin-right: 4px; }
-  .legend { top: 10px; right: 54px; }
-  .sel-card { left: 8px; right: 8px; width: auto; bottom: 120px; }
-  :host(.sheet-half) .sel-card, :host(.sheet-full) .sel-card { display: none; }
-  :host ::ng-deep .leaflet-bottom { margin-bottom: 112px; }
+  .legend { top: 10px; right: 56px; }
+  .sel-card { left: 8px; right: 8px; bottom: 24px; width: auto; }
 }

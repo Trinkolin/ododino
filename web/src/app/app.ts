@@ -9,15 +9,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { I18nService, Lang } from './i18n/i18n.service';
-import { Icon } from './shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { InstallService } from './shell/install.service';
+import { MapStateService } from './map/map-state.service';
 
 /** Cadre de l'app : barre du haut (logo, installer l'app, langue) et page courante. */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MatToolbarModule, MatButtonModule, MatMenuModule, MatTooltipModule, Icon],
+  imports: [RouterOutlet, RouterLink, MatToolbarModule, MatButtonModule, MatMenuModule, MatTooltipModule, MatIconModule],
   templateUrl: './app.html',
-  styleUrl: './app.scss',
+  styles: `
+    :host { display: flex; flex-direction: column; height: 100dvh; }
+    .page { flex: 1; min-height: 0; overflow: auto; }
+    .spacer { flex: 1; }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
@@ -25,6 +30,7 @@ export class App {
   protected readonly install = inject(InstallService);
   private readonly router = inject(Router);
   private readonly snack = inject(MatSnackBar);
+  protected readonly map = inject(MapStateService);
 
   constructor() {
     // Statistiques (GoatCounter, sans cookies) : la première page est comptée par count.js, les suivantes ici
@@ -40,6 +46,13 @@ export class App {
     const parts = this.router.url.split(/[?#]/)[0].split('/').filter(Boolean);
     parts[0] = l;
     this.router.navigate(['/', ...parts], { preserveFragment: true });
+  }
+
+  /** Bouton menu (téléphone) : ouvre ou ferme le panneau ; depuis une fiche, revient d'abord à la carte. */
+  protected togglePanel(): void {
+    const onMap = this.router.url.split(/[?#]/)[0].split('/').filter(Boolean).length <= 1;
+    if (!onMap) { this.router.navigate(['/', this.i18n.lang()]); this.map.panelOpen.set(true); return; }
+    this.map.panelOpen.update((v) => !v);
   }
 
   protected installApp(): void {

@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { I18nService, Lang, isLang } from '../i18n/i18n.service';
 
 /** Page d'accueil « / » : dans le navigateur, on passe tout de suite à la langue du visiteur ; la version
  *  pré-rendue (moteurs de recherche, JavaScript lent) propose les 5 langues. */
 @Component({
   selector: 'odo-home-redirect',
-  imports: [RouterLink],
-  template: `<nav class="langs-home" aria-label="Lingua · Jezik · Language · Sprache · Langue">
-    @for (l of i18n.langs; track l.code) { <a [routerLink]="['/', l.code]" [attr.hreflang]="l.code">{{ l.label }}</a> }
+  imports: [RouterLink, MatButtonModule],
+  template: `<nav class="odo-stack" aria-label="Lingua · Jezik · Language · Sprache · Langue">
+    <div class="odo-row">@for (l of i18n.langs; track l.code) { <a mat-stroked-button [routerLink]="['/', l.code]" [attr.hreflang]="l.code">{{ l.label }}</a> }</div>
   </nav>`,
-  styles: `.langs-home { display: flex; gap: 12px; justify-content: center; padding: 48px 16px; font: var(--mat-sys-title-medium); }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeRedirect implements OnInit {

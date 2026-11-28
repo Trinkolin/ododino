@@ -27,12 +27,6 @@ const W = 340, H = 120, L0 = 34, R0 = 6, T0 = 8, B0 = 18;
       </svg>
     }
   `,
-  styles: `
-    svg { width: 100%; height: auto; display: block; touch-action: pan-y; cursor: crosshair; }
-    .ax text { font: 10px Inter, sans-serif; fill: var(--mat-sys-on-surface-variant); }
-    .cursor { stroke: var(--mat-sys-on-surface); stroke-width: 1; stroke-dasharray: 3 3; }
-    .cursor-lbl { font: 600 11px Inter, sans-serif; fill: var(--mat-sys-on-surface); }
-  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ElevationProfile {

@@ -2,13 +2,16 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { I18nService } from '../i18n/i18n.service';
 import { I18N } from '../i18n/messages.generated';
-import { Icon } from '../shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { CATS, dist, hm, noteUrl, safeUrl } from './config';
 import { DataService, Poi, Trail } from './data.service';
 import { FavoritesService } from './favorites.service';
-import { MapStateService } from './map-state.service';
+import { MapStateService, Selection } from './map-state.service';
 import { RouteService } from './route.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -18,9 +21,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
  */
 @Component({
   selector: 'odo-selection-card',
-  imports: [RouterLink, MatCardModule, MatButtonModule, Icon],
+  imports: [RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, MatListModule, MatTooltipModule],
   templateUrl: './selection-card.html',
-  styleUrl: './selection-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectionCard {
@@ -37,6 +39,15 @@ export class SelectionCard {
   protected readonly featured = computed(() => {
     const s = this.sel(); return s ? this.data.featured()[s.item.id] ?? null : null;
   });
+
+  /** En-tête de la carte : couleur, titre, sous-titre (catégorie et autres noms, ou chiffres du sentier) */
+  protected head(s: NonNullable<Selection>): { color: string; title: string; sub: string } {
+    if (s.kind === 'poi') {
+      const alt = this.poiAlt(s.item);
+      return { color: CATS[s.item.cat].color, title: this.state.poiTitle(s.item.p), sub: this.i18n.cat(s.item.cat, true) + (alt ? ` · ${alt}` : '') };
+    }
+    return { color: this.state.trailColor(s.item), title: this.state.trailTitle(s.item.p), sub: this.trailMetrics(s.item) };
+  }
 
   // ---------- Lieu ----------
   protected poiAlt(x: Poi): string {
@@ -89,13 +100,13 @@ export class SelectionCard {
     return [`${this.i18n.num(st ? st.km : x.km, 1)} km`, st && `+${st.gain} m / −${st.loss} m`, st && hm(st.minutes),
       this.state.diffText(x.p)].filter(Boolean).join(' · ');
   }
-  protected details(): void { this.state.tab.set('trails'); this.state.setSheet('half'); }
+  protected details(): void { this.state.tab.set('trails'); this.state.showPanel(true); }
 
   /** « + Itinéraire » : le lieu devient une étape du traceur (recalée sur le chemin le plus proche). */
   protected async addToRoute(x: Poi): Promise<void> {
     this.state.clear();
     this.state.tab.set('route');
-    this.state.setSheet('half');
+    this.state.showPanel(true);
     if (await this.route.add(x.lat, x.lon)) {
       this.snack.open(this.i18n.t('routeAdded').replace('{name}', this.state.poiTitle(x.p)), undefined, { duration: 3500 });
     }

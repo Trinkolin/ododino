@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { I18nService } from '../../i18n/i18n.service';
-import { Icon } from '../../shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { NETS, Net, norm } from '../config';
 import { DataService, Trail } from '../data.service';
 import { FavoritesService } from '../favorites.service';
@@ -15,34 +17,44 @@ import { TrailDetail } from '../trail-detail';
 /** Onglet « Sentiers » : recherche, filtres par réseau, chemins et pistes, liste. (Détail et profil : phase 3.) */
 @Component({
   selector: 'odo-trails-tab',
-  imports: [ScrollingModule, MatFormFieldModule, MatInputModule, MatSlideToggleModule, FilterChips, Icon, TrailDetail],
+  imports: [ScrollingModule, MatListModule, MatDividerModule, MatFormFieldModule, MatInputModule, MatSlideToggleModule, FilterChips, MatIconModule, TrailDetail],
   template: `
     @if (state.selection(); as s) { @if (s.kind === 'trail') { <odo-trail-detail [trail]="s.item" /> } }
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-      <odo-icon matPrefix name="search" />
-      <input matInput type="search" [placeholder]="i18n.t('searchTrail')" [value]="q()" (input)="q.set($any($event.target).value)" autocomplete="off" />
-    </mat-form-field>
-    <odo-filter-chips [chips]="chips()" [selected]="state.nets()" [label]="i18n.t('tabTrails')"
-      (toggle)="toggle($any($event))" (solo)="state.nets.set(single($any($event)))" (all)="all($event)" />
-    <mat-slide-toggle [checked]="state.showPaths()" (change)="state.showPaths.set($event.checked)" class="paths">{{ i18n.t('showPaths') }}</mat-slide-toggle>
-    <cdk-virtual-scroll-viewport itemSize="56" class="vlist">
-      <div *cdkVirtualFor="let x of list(); trackBy: trackId" class="item" role="button" tabindex="0"
-        [class.sel]="state.selectedId() === x.id" (click)="state.selectTrail(x)" (keydown.enter)="state.selectTrail(x)">
-        <span class="ref" [style.background]="state.trailColor(x)">{{ x.p['ref'] || '—' }}</span>
-        <span class="txt">
-          <span class="t">{{ state.trailTitle(x.p) }}@if (favs.has(x.id)) { <span class="heart">♥</span> }</span>
-          <span class="m">{{ sub(x) }}</span>
-        </span>
-      </div>
+    <div class="tools odo-stack">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+        <mat-icon matPrefix svgIcon="search"></mat-icon>
+        <input matInput type="search" [placeholder]="i18n.t('searchTrail')" [value]="q()" (input)="q.set($any($event.target).value)" autocomplete="off" />
+      </mat-form-field>
+      <odo-filter-chips [chips]="chips()" [selected]="state.nets()" [label]="i18n.t('tabTrails')"
+        (toggle)="toggle($any($event))" (solo)="state.nets.set(single($any($event)))" (all)="all($event)" />
+      <mat-slide-toggle [checked]="state.showPaths()" (change)="state.showPaths.set($event.checked)">{{ i18n.t('showPaths') }}</mat-slide-toggle>
+    </div>
+    <mat-divider></mat-divider>
+    <cdk-virtual-scroll-viewport [itemSize]="ITEM" class="vlist">
+      <mat-action-list>
+        <button mat-list-item *cdkVirtualFor="let x of list(); trackBy: trackId" [activated]="state.selectedId() === x.id"
+          (click)="state.selectTrail(x)">
+          <mat-icon matListItemIcon svgIcon="hiking" [style.color]="state.trailColor(x)"></mat-icon>
+          <span matListItemTitle>@if (x.p['ref']) { {{ x.p['ref'] }} · }{{ state.trailTitle(x.p) }}@if (favs.has(x.id)) { ♥ }</span>
+          <span matListItemLine>{{ sub(x) }}</span>
+        </button>
+      </mat-action-list>
     </cdk-virtual-scroll-viewport>
-    @if (!list().length && data.loaded()) { <p class="empty">{{ i18n.t('noTrail') }}</p> }
+    @if (!list().length && data.loaded()) { <p class="mat-body-medium tools">{{ i18n.t('noTrail') }}</p> }
   `,
-  styleUrl: './list-tab.scss',
+  styles: `
+    :host { display: flex; flex-direction: column; height: 100%; }
+    .tools { padding: 16px 16px 8px; }
+    .search { width: 100%; }
+    .vlist { flex: 1; }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrailsTab {
   protected readonly i18n = inject(I18nService);
   protected readonly state = inject(MapStateService);
+  /** hauteur d'une ligne de liste Material à deux lignes (titre + détail) */
+  protected readonly ITEM = 64;
   protected readonly data = inject(DataService);
   protected readonly favs = inject(FavoritesService);
   protected readonly q = signal('');
@@ -50,7 +62,7 @@ export class TrailsTab {
 
   constructor() {
     // la liste a été mesurée onglet masqué (hauteur 0) : on la remesure quand l'onglet s'affiche
-    effect(() => { if (this.state.tab() === 'trails' || this.state.sheet()) setTimeout(() => this.viewport()?.checkViewportSize()); });
+    effect(() => { if (this.state.tab() === 'trails' || this.state.panelOpen()) { setTimeout(() => this.viewport()?.checkViewportSize()); setTimeout(() => this.viewport()?.checkViewportSize(), 400); } });
   }
 
   protected readonly chips = computed<Chip[]>(() => {

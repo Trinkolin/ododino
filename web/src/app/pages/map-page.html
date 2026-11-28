@@ -1,44 +1,45 @@
-<aside class="panel">
-  <button type="button" class="handle" [attr.aria-label]="i18n.t('togglePanel')"
-    (pointerdown)="handleDown($event)" (pointermove)="handleMove($event)" (pointerup)="handleUp()"><span></span></button>
-  @if (!safetyOk()) {
-    <div class="safety" role="note">
-      <p>{{ i18n.t('safety') }} <strong>{{ i18n.t('emergency') }} <a href="tel:112">112</a></strong></p>
-      <button mat-stroked-button (click)="dismissSafety()">{{ i18n.t('ok') }}</button>
+<mat-sidenav-container class="container">
+  <!-- Panneau : à côté de la carte sur ordinateur, par-dessus sur téléphone (bouton menu de la barre du haut) -->
+  <mat-sidenav [mode]="state.handset() ? 'over' : 'side'" [opened]="!state.handset() || state.panelOpen()"
+    (closedStart)="state.panelOpen.set(false)">
+    <div class="panel">
+      @if (!safetyOk()) {
+        <mat-card appearance="outlined" class="safety" role="note">
+          <mat-card-content>
+            <p>{{ i18n.t('safety') }} <strong>{{ i18n.t('emergency') }} <a href="tel:112">112</a></strong></p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-button (click)="dismissSafety()">{{ i18n.t('ok') }}</button>
+          </mat-card-actions>
+        </mat-card>
+      }
+      <mat-tab-group [selectedIndex]="tabIndex()" (selectedIndexChange)="setTab($event)" mat-stretch-tabs
+        class="tabs" preserveContent>
+        @for (t of tabs; track t.key) {
+          <mat-tab [aria-label]="i18n.t(t.label)">
+            <ng-template mat-tab-label><mat-icon [svgIcon]="t.icon" [matTooltip]="i18n.t(t.label)"></mat-icon></ng-template>
+            @switch (t.key) {
+              @case ('discover') { <odo-discover-tab /> }
+              @case ('pois') { <odo-pois-tab /> }
+              @case ('trails') { <odo-trails-tab /> }
+              @case ('route') { <odo-route-tab /> }
+              @case ('offline') { <odo-offline-tab /> }
+            }
+          </mat-tab>
+        }
+      </mat-tab-group>
+      <mat-divider></mat-divider>
+      <footer class="foot mat-body-small">
+        {{ i18n.t('dataBy') }} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">{{ i18n.t('contributors') }}</a> (ODbL)
+        @if (updated()) { · {{ i18n.t('updated') }} {{ updated() }} }<br />
+        <a [routerLink]="['/', i18n.lang(), 'about']">{{ i18n.t('about') }}</a> · <a href="tel:112">SOS 112</a>
+      </footer>
     </div>
-  }
-  <mat-tab-group [selectedIndex]="tabIndex()" (selectedIndexChange)="setTab($event)" mat-stretch-tabs="false"
-    animationDuration="0ms" class="tabs" preserveContent>
-    <mat-tab>
-      <ng-template mat-tab-label><odo-icon name="explore" /><span class="lbl">{{ i18n.t('tabDiscover') }}</span></ng-template>
-      <odo-discover-tab />
-    </mat-tab>
-    <mat-tab>
-      <ng-template mat-tab-label><odo-icon name="location_on" /><span class="lbl">{{ i18n.t('tabPois') }}</span></ng-template>
-      <odo-pois-tab />
-    </mat-tab>
-    <mat-tab>
-      <ng-template mat-tab-label><odo-icon name="hiking" /><span class="lbl">{{ i18n.t('tabTrails') }}</span></ng-template>
-      <odo-trails-tab />
-    </mat-tab>
-    <mat-tab>
-      <ng-template mat-tab-label><odo-icon name="route" /><span class="lbl">{{ i18n.t('tabRoute') }}</span></ng-template>
-      <odo-route-tab />
-    </mat-tab>
-    <mat-tab>
-      <ng-template mat-tab-label><odo-icon name="download" /><span class="lbl">{{ i18n.t('offline') }}</span></ng-template>
-      <odo-offline-tab />
-    </mat-tab>
-  </mat-tab-group>
-  <footer class="foot">
-    {{ i18n.t('dataBy') }} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">{{ i18n.t('contributors') }}</a> (ODbL)
-    @if (updated()) { · {{ i18n.t('updated') }} {{ updated() }} }<br />
-    <a [routerLink]="['/', i18n.lang(), 'about']">{{ i18n.t('about') }}</a> · <a href="tel:112">SOS 112</a>
-  </footer>
-</aside>
+  </mat-sidenav>
 
-<section class="map">
-  <odo-map-view />
-  <odo-legend class="legend" />
-  <odo-selection-card class="sel-card" />
-</section>
+  <mat-sidenav-content>
+    <odo-map-view />
+    <odo-legend class="legend" />
+    <odo-selection-card class="sel-card" />
+  </mat-sidenav-content>
+</mat-sidenav-container>

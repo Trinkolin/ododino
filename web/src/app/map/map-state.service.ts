@@ -1,11 +1,13 @@
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { map } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { CATS, Cat, HIDDEN_BY_DEFAULT, NETS, Net, DIFF } from './config';
 import { DataService, Poi, Props, Trail } from './data.service';
 import { I18nService } from '../i18n/i18n.service';
 
 export type Tab = 'discover' | 'pois' | 'trails' | 'route' | 'offline';
-export type Sheet = 'peek' | 'half' | 'full';
 export type Selection = { kind: 'poi'; item: Poi } | { kind: 'trail'; item: Trail } | null;
 
 /** Ce que la carte sait faire pour le reste de l'app (fourni par MapView une fois Leaflet prêt). */
@@ -26,7 +28,8 @@ export class MapStateService {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly tab = signal<Tab>('discover');
-  readonly sheet = signal<Sheet>('half');
+  /** Téléphone : panneau ouvert par-dessus la carte (mat-sidenav « over ») ; ignoré sur ordinateur (« side ») */
+  readonly panelOpen = signal(false);
   readonly selection = signal<Selection>(null);
   readonly cats = signal<ReadonlySet<Cat>>(new Set((Object.keys(CATS) as Cat[]).filter((k) => !HIDDEN_BY_DEFAULT.includes(k))));
   readonly nets = signal<ReadonlySet<Net>>(new Set(Object.keys(NETS) as Net[]));
@@ -36,7 +39,10 @@ export class MapStateService {
 
   readonly trailColor = (t: Trail): string => (this.colorBy() === 'diff' ? DIFF[t.level] : NETS[t.net].color);
 
-  readonly isMobile = (): boolean => this.browser && matchMedia('(max-width: 760px)').matches;
+  /** Écran étroit (téléphone) : panneau par-dessus la carte */
+  readonly handset = toSignal(inject(BreakpointObserver).observe('(max-width: 760px)').pipe(map((r) => r.matches)),
+    { initialValue: false });
+  readonly isMobile = (): boolean => this.browser && this.handset();
 
   // ---------- Noms (selon la langue courante) ----------
   poiTitle(p: Props): string {
@@ -64,12 +70,12 @@ export class MapStateService {
   selectPoi(item: Poi, move = true): void {
     this.selection.set({ kind: 'poi', item });
     if (move) this.map?.flyTo(item.lat, item.lon, 15);
-    this.setSheet('peek');
+    this.showPanel(false);
   }
   selectTrail(item: Trail, fit = true): void {
     this.selection.set({ kind: 'trail', item });
     if (fit) this.map?.fitTrail(item);
-    this.setSheet('peek');
+    this.showPanel(false);
   }
   clear(): void { this.selection.set(null); }
 
@@ -81,5 +87,6 @@ export class MapStateService {
     if (trail) this.selectTrail(trail);
   }
 
-  setSheet(s: Sheet): void { if (this.isMobile()) this.sheet.set(s); }
+  /** Téléphone : ouvre ou ferme le panneau (sur ordinateur, il reste à côté de la carte) */
+  showPanel(open: boolean): void { if (this.isMobile()) this.panelOpen.set(open); }
 }

@@ -46,5 +46,5 @@ Thumbs.db
 # Ododino : fichiers générés par scripts/prepare.mjs
 /.site
 /src/app/i18n/messages.generated.ts
-/public/m
+/src/app/shell/icons.generated.ts
 /src/app/cards/generated/

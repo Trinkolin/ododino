@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import type * as Leaflet from 'leaflet';
 import { I18nService } from '../i18n/i18n.service';
-import { Icon } from '../shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { CATS, MINOR, SAC } from './config';
 import { DataService } from './data.service';
 import { MapStateService } from './map-state.service';
@@ -22,19 +22,23 @@ type LeafletNS = typeof Leaflet;
  */
 @Component({
   selector: 'odo-map-view',
-  imports: [MatButtonModule, MatTooltipModule, Icon],
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule],
   template: `
     <div #host class="leaflet-host" [attr.aria-label]="i18n.t('map')"></div>
     <div class="tools">
       <button mat-mini-fab class="tool" [class.on]="gpsOn()" (click)="toggleGps()"
         [matTooltip]="i18n.t('locate')" matTooltipPosition="right" [attr.aria-label]="i18n.t('locate')" [attr.aria-pressed]="gpsOn()">
-        <odo-icon name="my_location" /></button>
+        <mat-icon svgIcon="my_location"></mat-icon></button>
       <button mat-mini-fab class="tool" (click)="state.map?.fitHome()"
         [matTooltip]="i18n.t('recenter')" matTooltipPosition="right" [attr.aria-label]="i18n.t('recenter')">
-        <odo-icon name="fit_screen" /></button>
+        <mat-icon svgIcon="fit_screen"></mat-icon></button>
     </div>
   `,
-  styleUrl: './map-view.scss',
+  styles: `
+    :host { position: relative; display: block; height: 100%; }
+    .leaflet-host { position: absolute; inset: 0; }
+    .tools { position: absolute; z-index: 800; top: 84px; left: 10px; display: flex; flex-direction: column; }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapView {
@@ -126,10 +130,9 @@ export class MapView {
     };
   }
 
-  /** Marges du cadrage : sur mobile, le tiroir couvre le bas de la carte. */
+  /** Marges du cadrage autour du sentier ou des étapes */
   private padding(p: number): Leaflet.FitBoundsOptions {
-    const covered = this.state.isMobile() ? (document.querySelector('.panel')?.getBoundingClientRect().height ?? 0) : 0;
-    return { paddingTopLeft: [p, p], paddingBottomRight: [p, p + covered] };
+    return { paddingTopLeft: [p, p], paddingBottomRight: [p, p] };
   }
 
   private get bases(): Record<'topo' | 'osm' | 'sat', Leaflet.TileLayer> {

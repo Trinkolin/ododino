@@ -5,11 +5,15 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { I18nService } from '../i18n/i18n.service';
-import { Icon } from '../shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { DataService } from '../map/data.service';
 import { Legend } from '../map/legend';
-import { MapStateService, Sheet, Tab } from '../map/map-state.service';
+import { MapStateService, Tab } from '../map/map-state.service';
 import { MapView } from '../map/map-view';
 import { SelectionCard } from '../map/selection-card';
 import { DiscoverTab } from '../map/panel/discover-tab';
@@ -20,7 +24,6 @@ import { OfflineTab } from '../offline/offline-tab';
 import { RouteService } from '../map/route.service';
 
 const TABS: Tab[] = ['discover', 'pois', 'trails', 'route', 'offline'];
-const SHEETS: Sheet[] = ['peek', 'half', 'full'];
 
 /**
  * Page principale : panneau à onglets + carte. Sur téléphone, la carte occupe tout l'écran et le panneau
@@ -28,10 +31,9 @@ const SHEETS: Sheet[] = ['peek', 'half', 'full'];
  */
 @Component({
   selector: 'odo-map-page',
-  imports: [MatTabsModule, MatButtonModule, RouterLink, Icon, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab, RouteTab, OfflineTab],
+  imports: [MatSidenavModule, MatTabsModule, MatButtonModule, MatCardModule, MatDividerModule, MatTooltipModule, RouterLink, MatIconModule, MapView, Legend, SelectionCard, DiscoverTab, PoisTab, TrailsTab, RouteTab, OfflineTab],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
-  host: { '[class]': '"sheet-" + state.sheet()' },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapPage {
@@ -43,6 +45,11 @@ export class MapPage {
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly mapView = viewChild(MapView);
   protected readonly tabIndex = computed(() => TABS.indexOf(this.state.tab()));
+  protected readonly tabs: { key: Tab; icon: string; label: string }[] = [
+    { key: 'discover', icon: 'explore', label: 'tabDiscover' }, { key: 'pois', icon: 'location_on', label: 'tabPois' },
+    { key: 'trails', icon: 'hiking', label: 'tabTrails' }, { key: 'route', icon: 'route', label: 'tabRoute' },
+    { key: 'offline', icon: 'download', label: 'offline' },
+  ];
   /** Avertissement de sécurité fermé (localStorage « ododino.safetyOk ») : lu après l'affichage, pour que la
    *  page pré-rendue et celle du navigateur partent du même état */
   protected readonly safetyOk = signal(true);
@@ -79,37 +86,11 @@ export class MapPage {
       const h = r ? `#route=${r}` : s ? `#${s.kind}=${s.item.id}` : '';
       if (location.hash !== h) history.replaceState(history.state, '', location.pathname + location.search + h);
     });
-    // la carte change de taille quand le tiroir bouge : Leaflet doit le savoir
-    effect(() => { this.state.sheet(); setTimeout(() => this.mapView()?.invalidate(), 260); });
+    // la carte change de taille quand le panneau passe à côté / par-dessus : Leaflet doit le savoir
+    effect(() => { this.state.handset(); setTimeout(() => this.mapView()?.invalidate(), 300); });
   }
 
   protected setTab(i: number): void {
     this.state.tab.set(TABS[i]);
-    if (this.state.sheet() === 'peek') this.state.setSheet('half');
-  }
-
-  // ---------- Poignée du tiroir : tap = état suivant, glisser = hauteur libre puis état le plus proche ----------
-  private drag: { y0: number; h0: number; moved: boolean; panel: HTMLElement } | null = null;
-  protected handleDown(e: PointerEvent): void {
-    if (!this.state.isMobile()) return;
-    const panel = (e.currentTarget as HTMLElement).closest('.panel') as HTMLElement;
-    this.drag = { y0: e.clientY, h0: panel.getBoundingClientRect().height, moved: false, panel };
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    panel.classList.add('dragging');
-  }
-  protected handleMove(e: PointerEvent): void {
-    const d = this.drag; if (!d) return;
-    const dy = d.y0 - e.clientY;
-    if (Math.abs(dy) > 6) d.moved = true;
-    d.panel.style.height = `${Math.max(96, Math.min(innerHeight - 48, d.h0 + dy))}px`;
-  }
-  protected handleUp(): void {
-    const d = this.drag; if (!d) return;
-    this.drag = null;
-    d.panel.classList.remove('dragging');
-    const r = d.panel.getBoundingClientRect().height / innerHeight;
-    d.panel.style.height = '';
-    if (!d.moved) this.state.sheet.set(SHEETS[(SHEETS.indexOf(this.state.sheet()) + 1) % SHEETS.length]);
-    else this.state.sheet.set(r < 0.3 ? 'peek' : r < 0.7 ? 'half' : 'full');
   }
 }

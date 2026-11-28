@@ -1,65 +1,85 @@
 @if (fiche(); as f) {
   @if (text(); as t) {
-    <article [attr.lang]="i18n.lang()">
-      <a class="back" [routerLink]="['/', i18n.lang()]" [fragment]="mapFragment()">{{ L().viewOnMap }}</a>
-      @if (f.draft) { <p class="draft">{{ L().draft }}</p> }
-      <h1>{{ t.title }}</h1>
+    <article class="width odo-stack" [attr.lang]="i18n.lang()">
+      <div><a mat-button [routerLink]="['/', i18n.lang()]" [fragment]="mapFragment()"><mat-icon svgIcon="arrow_back"></mat-icon> {{ back() }}</a></div>
+      @if (f.draft) { <mat-card appearance="outlined"><mat-card-content><p>{{ L().draft }}</p></mat-card-content></mat-card> }
+      <h1 class="mat-headline-large">{{ t.title }}</h1>
 
       @if (f.photo; as p) {
-        <figure class="hero">
-          <img odoPackImg [src]="p.src" [alt]="t.alt" [width]="p.width" [height]="p.height" />
-          <figcaption>{{ L().photo }} : <a [href]="p.sourceUrl" target="_blank" rel="noopener">{{ p.author }}</a>,
-            <a [href]="p.licenseUrl" target="_blank" rel="noopener">{{ p.license }}</a></figcaption>
-        </figure>
+        <mat-card appearance="outlined">
+          <img mat-card-image odoPackImg [src]="p.src" [alt]="t.alt" />
+          <mat-card-content>
+            <p class="mat-body-small">{{ L().photo }} : <a [href]="p.sourceUrl" target="_blank" rel="noopener">{{ p.author }}</a>,
+              <a [href]="p.licenseUrl" target="_blank" rel="noopener">{{ p.license }}</a></p>
+          </mat-card-content>
+        </mat-card>
       }
 
       @if (f.altitude != null || f.lonLat || f.trails.length) {
-        <aside class="facts">
-          <h2>{{ L().practical }}</h2>
-          @if (f.altitude != null || f.lonLat) {
-            <dl>
-              @if (f.altitude != null) { <dt>{{ L().altitude }}</dt><dd>{{ i18n.num(f.altitude) }} m</dd> }
-              @if (f.lonLat; as c) { <dt>{{ L().coords }}</dt><dd>{{ c[1].toFixed(5) }}, {{ c[0].toFixed(5) }}</dd> }
-            </dl>
-          }
-          @if (f.trails.length) {
-            <h3>{{ L().trails }}</h3>
-            <ul class="trails">
-              @for (tr of f.trails; track tr.id) {
-                <li>
-                  <a [routerLink]="['/', i18n.lang()]" [fragment]="'trail=' + tr.id">{{ tr.name }}</a>
-                  @if (tr.km != null) {
-                    <span class="muted"> — {{ i18n.num(tr.km, 1) }} km, +{{ tr.gain }} m / −{{ tr.loss }} m, {{ L().timeEst }} {{ hm(tr.minutes ?? 0) }}</span>
-                  }
-                  @if (tr.experts) { <span class="experts"> ⚠ {{ L().experts }}</span> }
-                </li>
-              }
-            </ul>
-          }
-          <a mat-stroked-button [routerLink]="['/', i18n.lang()]" [fragment]="mapFragment()"><odo-icon name="map" /> {{ L().viewOnMap.replace('← ', '') }}</a>
-        </aside>
+        <mat-card appearance="outlined">
+          <mat-card-header><mat-card-title>{{ L().practical }}</mat-card-title></mat-card-header>
+          <mat-card-content>
+            @if (f.altitude != null || f.lonLat) {
+              <mat-list>
+                @if (f.altitude != null) {
+                  <mat-list-item><span matListItemTitle>{{ i18n.num(f.altitude) }} m</span><span matListItemLine>{{ L().altitude }}</span></mat-list-item>
+                }
+                @if (f.lonLat; as c) {
+                  <mat-list-item><span matListItemTitle>{{ c[1].toFixed(5) }}, {{ c[0].toFixed(5) }}</span><span matListItemLine>{{ L().coords }}</span></mat-list-item>
+                }
+              </mat-list>
+            }
+            @if (f.trails.length) {
+              <h3 class="mat-title-small">{{ L().trails }}</h3>
+              <mat-nav-list>
+                @for (tr of f.trails; track tr.id) {
+                  <a mat-list-item [routerLink]="['/', i18n.lang()]" [fragment]="'trail=' + tr.id" [lines]="tr.experts ? 3 : 2">
+                    <mat-icon matListItemIcon svgIcon="hiking"></mat-icon>
+                    <span matListItemTitle>{{ tr.name }}</span>
+                    @if (tr.km != null) {
+                      <span matListItemLine>{{ i18n.num(tr.km, 1) }} km · +{{ tr.gain }} m / −{{ tr.loss }} m · {{ L().timeEst }} {{ hm(tr.minutes ?? 0) }}</span>
+                    }
+                    @if (tr.experts) { <span matListItemLine>⚠ {{ L().experts }}</span> }
+                  </a>
+                }
+              </mat-nav-list>
+            }
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button [routerLink]="['/', i18n.lang()]" [fragment]="mapFragment()"><mat-icon svgIcon="map"></mat-icon> {{ back() }}</a>
+          </mat-card-actions>
+        </mat-card>
       }
 
-      <!-- HTML produit par le Markdown réduit (tools/content.py) : aucune balise venue du texte -->
-      <div class="body" [innerHTML]="t.body" (click)="bodyClick($event)"></div>
+      <!-- HTML produit par le Markdown réduit (tools/content.py) ; titres et paragraphes mis en forme par mat-typography -->
+      <div [innerHTML]="t.body" (click)="bodyClick($event)"></div>
 
       @if (intro(); as slug) {
-        <p class="intro-link"><a [routerLink]="['/', i18n.lang(), slug]">{{ L().intro }}</a></p>
+        <div><a mat-stroked-button [routerLink]="['/', i18n.lang(), slug]"><mat-icon svgIcon="explore"></mat-icon> {{ L().intro.replace('→ ', '') }}</a></div>
       }
-      <p class="safety">{{ L().safety }} <strong>112</strong></p>
+      <mat-card appearance="outlined" role="note">
+        <mat-list>
+          <a mat-list-item href="tel:112" lines="3"><mat-icon matListItemIcon svgIcon="warning"></mat-icon>
+            <span matListItemTitle>112</span><span matListItemLine>{{ L().safety }}</span></a>
+        </mat-list>
+      </mat-card>
 
-      <h2>{{ L().sources }}</h2>
-      <ul class="sources">
+      <h2 class="mat-headline-small">{{ L().sources }}</h2>
+      <mat-nav-list>
         @for (s of f.sources; track s.url) {
-          <li><a [href]="s.url" target="_blank" rel="noopener">{{ s.title }}</a>@if (s.consulted) { ({{ L().consulted }} {{ date(s.consulted) }}) }</li>
+          <a mat-list-item [href]="s.url" target="_blank" rel="noopener">
+            <mat-icon matListItemIcon svgIcon="open_in_new"></mat-icon>
+            <span matListItemTitle>{{ s.title }}</span>
+            @if (s.consulted) { <span matListItemLine>{{ L().consulted }} {{ date(s.consulted) }}</span> }
+          </a>
         }
-      </ul>
-      <p class="muted">{{ L().updated }} {{ date(f.updated) }}</p>
+      </mat-nav-list>
+      <p class="mat-body-small">{{ L().updated }} {{ date(f.updated) }}</p>
     </article>
   }
 } @else {
-  <article>
-    <a class="back" [routerLink]="['/', i18n.lang()]">{{ L().viewOnMap }}</a>
-    <h1>404</h1>
+  <article class="width odo-stack">
+    <div><a mat-button [routerLink]="['/', i18n.lang()]"><mat-icon svgIcon="arrow_back"></mat-icon> {{ back() }}</a></div>
+    <h1 class="mat-headline-large">404</h1>
   </article>
 }

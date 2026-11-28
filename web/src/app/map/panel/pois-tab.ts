@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { I18nService } from '../../i18n/i18n.service';
-import { Icon } from '../../shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { CATS, Cat, norm } from '../config';
 import { DataService, Poi } from '../data.service';
 import { FavoritesService } from '../favorites.service';
@@ -13,32 +15,42 @@ import { Chip, FilterChips } from './filter-chips';
 /** Onglet « Lieux » : recherche, filtres par catégorie, liste (lieux à fiche d'abord, ★). */
 @Component({
   selector: 'odo-pois-tab',
-  imports: [ScrollingModule, MatFormFieldModule, MatInputModule, FilterChips, Icon],
+  imports: [ScrollingModule, MatListModule, MatDividerModule, MatFormFieldModule, MatInputModule, FilterChips, MatIconModule],
   template: `
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-      <odo-icon matPrefix name="search" />
-      <input matInput type="search" [placeholder]="i18n.t('searchPoi')" [value]="q()" (input)="q.set($any($event.target).value)" autocomplete="off" />
-    </mat-form-field>
-    <odo-filter-chips [chips]="chips()" [selected]="state.cats()" [label]="i18n.t('tabPois')"
-      (toggle)="toggle($any($event))" (solo)="state.cats.set(single($any($event)))" (all)="all($event)" />
-    <cdk-virtual-scroll-viewport itemSize="56" class="vlist">
-      <div *cdkVirtualFor="let x of list(); trackBy: trackId" class="item" role="button" tabindex="0"
-        [class.sel]="state.selectedId() === x.id" (click)="state.selectPoi(x)" (keydown.enter)="state.selectPoi(x)">
-        <span class="ico" [style.background]="CATS[x.cat].color">{{ CATS[x.cat].icon }}</span>
-        <span class="txt">
-          <span class="t">{{ state.poiTitle(x.p) }}@if (x.star) { <span class="star">★</span> }@if (favs.has(x.id)) { <span class="heart">♥</span> }</span>
-          <span class="m">{{ sub(x) }}</span>
-        </span>
-      </div>
+    <div class="tools odo-stack">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+        <mat-icon matPrefix svgIcon="search"></mat-icon>
+        <input matInput type="search" [placeholder]="i18n.t('searchPoi')" [value]="q()" (input)="q.set($any($event.target).value)" autocomplete="off" />
+      </mat-form-field>
+      <odo-filter-chips [chips]="chips()" [selected]="state.cats()" [label]="i18n.t('tabPois')"
+        (toggle)="toggle($any($event))" (solo)="state.cats.set(single($any($event)))" (all)="all($event)" />
+    </div>
+    <mat-divider></mat-divider>
+    <cdk-virtual-scroll-viewport [itemSize]="ITEM" class="vlist">
+      <mat-action-list>
+        <button mat-list-item *cdkVirtualFor="let x of list(); trackBy: trackId" [activated]="state.selectedId() === x.id"
+          (click)="state.selectPoi(x)">
+          <mat-icon matListItemIcon svgIcon="location_on" [style.color]="CATS[x.cat].color"></mat-icon>
+          <span matListItemTitle>{{ state.poiTitle(x.p) }}@if (x.star) { ★ }@if (favs.has(x.id)) { ♥ }</span>
+          <span matListItemLine>{{ sub(x) }}</span>
+        </button>
+      </mat-action-list>
     </cdk-virtual-scroll-viewport>
-    @if (!list().length && data.loaded()) { <p class="empty">{{ i18n.t('noResult') }}</p> }
+    @if (!list().length && data.loaded()) { <p class="mat-body-medium tools">{{ i18n.t('noResult') }}</p> }
   `,
-  styleUrl: './list-tab.scss',
+  styles: `
+    :host { display: flex; flex-direction: column; height: 100%; }
+    .tools { padding: 16px 16px 8px; }
+    .search { width: 100%; }
+    .vlist { flex: 1; }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoisTab {
   protected readonly i18n = inject(I18nService);
   protected readonly state = inject(MapStateService);
+  /** hauteur d'une ligne de liste Material à deux lignes (titre + détail) */
+  protected readonly ITEM = 64;
   protected readonly data = inject(DataService);
   protected readonly favs = inject(FavoritesService);
   protected readonly CATS = CATS;
@@ -47,7 +59,7 @@ export class PoisTab {
 
   constructor() {
     // la liste a été mesurée onglet masqué (hauteur 0) : on la remesure quand l'onglet s'affiche
-    effect(() => { if (this.state.tab() === 'pois' || this.state.sheet()) setTimeout(() => this.viewport()?.checkViewportSize()); });
+    effect(() => { if (this.state.tab() === 'pois' || this.state.panelOpen()) { setTimeout(() => this.viewport()?.checkViewportSize()); setTimeout(() => this.viewport()?.checkViewportSize(), 400); } });
   }
 
   protected readonly chips = computed<Chip[]>(() => {

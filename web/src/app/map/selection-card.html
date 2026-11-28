@@ -1,57 +1,58 @@
 @if (sel(); as s) {
   <mat-card appearance="raised">
-    <div class="head">
-      @if (s.kind === 'poi') {
-        <span class="tag" [style.background]="CATS[s.item.cat].color">{{ i18n.cat(s.item.cat, true) }}</span>
-      } @else {
-        <span class="ref" [style.background]="state.trailColor(s.item)">{{ s.item.p['ref'] || '—' }}</span>
-      }
-      <button mat-icon-button class="close" (click)="state.clear()" [attr.aria-label]="i18n.t('close')"><odo-icon name="close" /></button>
-    </div>
+    <mat-card-header>
+      <mat-icon mat-card-avatar [svgIcon]="s.kind === 'poi' ? 'location_on' : 'hiking'" [style.color]="head(s).color"></mat-icon>
+      <mat-card-title>{{ head(s).title }}</mat-card-title>
+      <mat-card-subtitle>{{ head(s).sub }}</mat-card-subtitle>
+    </mat-card-header>
 
     @if (s.kind === 'poi') {
-      <h3>{{ state.poiTitle(s.item.p) }}</h3>
-      @if (poiAlt(s.item)) { <p class="alt">{{ poiAlt(s.item) }}</p> }
-      <dl>
-        @for (r of poiRows(s.item); track r.k) { <dt>{{ i18n.t(r.k) }}</dt><dd [class]="r.cls">{{ r.v }}</dd> }
-        @if (phone(s.item)) { <dt>{{ i18n.t('phone') }}</dt><dd><a [href]="'tel:' + phone(s.item)">{{ phone(s.item) }}</a></dd> }
+      <mat-card-content>
+        <mat-list>
+          @for (r of poiRows(s.item); track r.k) {
+            <mat-list-item><span matListItemTitle>{{ r.v }}</span><span matListItemLine>{{ i18n.t(r.k) }}</span></mat-list-item>
+          }
+          @if (phone(s.item)) {
+            <a mat-list-item [href]="'tel:' + phone(s.item)"><mat-icon matListItemIcon svgIcon="call"></mat-icon>
+              <span matListItemTitle>{{ phone(s.item) }}</span><span matListItemLine>{{ i18n.t('phone') }}</span></a>
+          }
+        </mat-list>
         @if (near(s.item).length) {
-          <dt>{{ i18n.t('trails') }}</dt>
-          <dd>@for (n of near(s.item); track n.id; let last = $last) {
-            <a href="#" (click)="$event.preventDefault(); state.selectTrail(n)" [style.color]="state.trailColor(n)">{{ n.p['ref'] || state.trailTitle(n.p) }}</a>{{ last ? '' : ', ' }}
-          }</dd>
+          <mat-chip-set [attr.aria-label]="i18n.t('trails')">
+            @for (n of near(s.item); track n.id) {
+              <mat-chip (click)="state.selectTrail(n)"><mat-icon matChipAvatar svgIcon="hiking" [style.color]="state.trailColor(n)"></mat-icon>{{ n.p['ref'] || state.trailTitle(n.p) }}</mat-chip>
+            }
+          </mat-chip-set>
         }
-      </dl>
-      @if (s.item.p['description']) { <p class="desc">{{ s.item.p['description'] }}</p> }
-      @if (isWater(s.item)) { <p class="water">⚠ {{ i18n.t('waterNote') }}</p> }
-    } @else {
-      <h3>{{ state.trailTitle(s.item.p) }}</h3>
-      <p class="metrics">{{ trailMetrics(s.item) }}</p>
+        @if (s.item.p['description']) { <p>{{ s.item.p['description'] }}</p> }
+        @if (isWater(s.item)) { <p><mat-icon svgIcon="warning" inline></mat-icon> {{ i18n.t('waterNote') }}</p> }
+      </mat-card-content>
     }
 
-    <div class="actions">
+    <mat-card-actions>
       @if (featured(); as f) {
-        <a mat-flat-button [routerLink]="['/', i18n.lang(), f.slug]"><odo-icon name="menu_book" /> {{ i18n.t('readMore') }}</a>
+        <a mat-flat-button [routerLink]="['/', i18n.lang(), f.slug]"><mat-icon svgIcon="menu_book"></mat-icon> {{ i18n.t('readMore') }}</a>
       }
       @if (s.kind === 'trail') {
-        <button mat-stroked-button (click)="details()"><odo-icon name="info" /> {{ i18n.t('details') }}</button>
+        <button mat-button (click)="details()"><mat-icon svgIcon="info"></mat-icon> {{ i18n.t('details') }}</button>
       } @else {
-        <button mat-stroked-button (click)="addToRoute(s.item)"><odo-icon name="add_location_alt" /> {{ i18n.t('addToRoute') }}</button>
+        <button mat-button (click)="addToRoute(s.item)"><mat-icon svgIcon="add_location_alt"></mat-icon> {{ i18n.t('addToRoute') }}</button>
       }
-      <button mat-stroked-button (click)="favs.toggle(s.item.id)" [attr.aria-pressed]="favs.has(s.item.id)"
-        [attr.title]="i18n.t(favs.has(s.item.id) ? 'favRemove' : 'favAdd')" class="fav" [class.on]="favs.has(s.item.id)">
-        <odo-icon [name]="favs.has(s.item.id) ? 'favorite' : 'favorite_border'" /> {{ i18n.t('fav') }}</button>
-    </div>
+      <button mat-icon-button (click)="favs.toggle(s.item.id)" [attr.aria-pressed]="favs.has(s.item.id)"
+        [attr.aria-label]="i18n.t(favs.has(s.item.id) ? 'favRemove' : 'favAdd')" [matTooltip]="i18n.t(favs.has(s.item.id) ? 'favRemove' : 'favAdd')">
+        <mat-icon [svgIcon]="favs.has(s.item.id) ? 'favorite' : 'favorite_border'"></mat-icon></button>
+      <button mat-icon-button (click)="state.clear()" [attr.aria-label]="i18n.t('close')" [matTooltip]="i18n.t('close')"><mat-icon svgIcon="close"></mat-icon></button>
+    </mat-card-actions>
 
     @if (s.kind === 'poi') {
-      <div class="links">
-        <a [href]="'https://www.openstreetmap.org/directions?to=' + s.item.lat + ',' + s.item.lon" target="_blank" rel="noopener">{{ i18n.t('goThere') }} ↗</a>
-        @if (web(s.item)) { <a [href]="web(s.item)" target="_blank" rel="noopener noreferrer">{{ i18n.t('website') }} ↗</a> }
-        @if (wiki(s.item)) { <a [href]="wiki(s.item)" target="_blank" rel="noopener">Wikipedia ↗</a> }
-        @if (s.item.cat === 'bus') { <a [href]="timetableUrl" target="_blank" rel="noopener">{{ i18n.t('timetable') }} ↗</a> }
-        <a [href]="'https://www.openstreetmap.org/' + s.item.id" target="_blank" rel="noopener">OSM ↗</a>
-        <a class="report" [href]="note(s.item.lat, s.item.lon)" target="_blank" rel="noopener">⚑ {{ i18n.t('report') }}</a>
-      </div>
+      <mat-card-actions>
+        <a mat-button [href]="'https://www.openstreetmap.org/directions?to=' + s.item.lat + ',' + s.item.lon" target="_blank" rel="noopener"><mat-icon svgIcon="directions"></mat-icon> {{ i18n.t('goThere') }}</a>
+        @if (web(s.item)) { <a mat-button [href]="web(s.item)" target="_blank" rel="noopener noreferrer"><mat-icon svgIcon="language"></mat-icon> {{ i18n.t('website') }}</a> }
+        @if (wiki(s.item)) { <a mat-button [href]="wiki(s.item)" target="_blank" rel="noopener"><mat-icon svgIcon="open_in_new"></mat-icon> Wikipedia</a> }
+        @if (s.item.cat === 'bus') { <a mat-button [href]="timetableUrl" target="_blank" rel="noopener"><mat-icon svgIcon="schedule"></mat-icon> {{ i18n.t('timetable') }}</a> }
+        <a mat-button [href]="'https://www.openstreetmap.org/' + s.item.id" target="_blank" rel="noopener"><mat-icon svgIcon="open_in_new"></mat-icon> OSM</a>
+        <a mat-button [href]="note(s.item.lat, s.item.lon)" target="_blank" rel="noopener"><mat-icon svgIcon="flag"></mat-icon> {{ i18n.t('report') }}</a>
+      </mat-card-actions>
     }
   </mat-card>
 }

@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
 import { I18nService } from '../../i18n/i18n.service';
-import { Icon } from '../../shell/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { PackImg } from '../../offline/pack-img';
 import { CATS, NETS } from '../config';
 import { CardInfo, DataService } from '../data.service';
@@ -12,9 +14,8 @@ import { MapStateService } from '../map-state.service';
 /** Onglet « Découvrir » : mes favoris, puis les fiches phares (vignette, titre, résumé, « Sur la carte »). */
 @Component({
   selector: 'odo-discover-tab',
-  imports: [RouterLink, MatButtonModule, Icon, PackImg],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatListModule, MatIconModule, PackImg],
   templateUrl: './discover-tab.html',
-  styleUrl: './discover-tab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiscoverTab {
@@ -25,10 +26,10 @@ export class DiscoverTab {
 
   protected readonly favItems = computed(() => [...this.favs.ids()].map((id) => {
     const poi = this.data.pois().find((x) => x.id === id);
-    if (poi) return { id, title: this.state.poiTitle(poi.p), sub: this.i18n.cat(poi.cat, true), color: CATS[poi.cat].color, icon: CATS[poi.cat].icon };
+    if (poi) return { id, title: this.state.poiTitle(poi.p), sub: this.i18n.cat(poi.cat, true), color: CATS[poi.cat].color, icon: 'location_on' };
     const tr = this.data.trails().find((x) => x.id === id);
     if (tr) return { id, title: this.state.trailTitle(tr.p), sub: [tr.p['ref'], `${this.i18n.num(tr.p['stats']?.km ?? tr.km, 1)} km`].filter(Boolean).join(' · '),
-      color: this.state.trailColor(tr), icon: '🥾' };
+      color: this.state.trailColor(tr), icon: 'hiking' };
     return null;
   }).filter((x) => x !== null));
 
@@ -40,7 +41,7 @@ export class DiscoverTab {
   protected color(c: CardInfo): string {
     return c.kind === 'trail' ? NETS.lwn.color : c.cat ? CATS[c.cat].color : 'var(--mat-sys-primary)';
   }
-  protected icon(c: CardInfo): string { return c.kind === 'trail' ? '🥾' : c.kind === 'intro' ? '✦' : c.cat ? CATS[c.cat].icon : '★'; }
+  protected icon(c: CardInfo): string { return c.kind === 'trail' ? 'hiking' : c.kind === 'intro' ? 'explore' : 'location_on'; }
   /** La description d'une fiche (faite pour les moteurs de recherche) répète le titre avant « : ». */
   protected summary(c: CardInfo): string {
     const d = c.descriptions[this.i18n.lang()] ?? '';

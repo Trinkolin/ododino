@@ -33,21 +33,25 @@ fs.writeFileSync(target,
   + `export const I18N = ${JSON.stringify(out, null, 1)} as const;\n`);
 
 // ---------- 2. Icônes ----------
-// Ajouter ici le nom Material Symbols d'une nouvelle icône (https://fonts.google.com/icons), puis relancer.
+// Icônes Material Symbols pour <mat-icon svgIcon="…">, enregistrées dans MatIconRegistry (shell/icons.ts).
+// Ajouter ici le nom d'une nouvelle icône (https://fonts.google.com/icons), puis relancer.
 const ICONS = [
   'explore', 'location_on', 'hiking', 'route', 'download', 'download_done', 'translate', 'install_desktop', 'mobile',
   'favorite', 'favorite_border', 'close', 'my_location', 'fit_screen', 'search', 'menu_book',
-  'add_location_alt', 'layers', 'info', 'arrow_back', 'tune', 'map',
+  'add_location_alt', 'layers', 'info', 'arrow_back', 'tune', 'map', 'menu', 'warning', 'open_in_new', 'star', 'flag',
+  'call', 'undo', 'delete', 'upload', 'check_circle', 'remove', 'directions', 'language', 'schedule', 'near_me', 'circle', 'trip',
 ];
 const src = path.join(web, 'node_modules', '@material-symbols', 'svg-400', 'outlined');
-const dest = path.join(web, 'public', 'm');
-fs.rmSync(dest, { recursive: true, force: true });
-fs.mkdirSync(dest, { recursive: true });
-for (const name of ICONS) {
+const svgs = Object.fromEntries(ICONS.map((name) => {
   // favorite_border n'existe plus dans Material Symbols : c'est « favorite » non rempli
   const file = name === 'favorite_border' ? 'favorite.svg' : name === 'favorite' ? 'favorite-fill.svg' : `${name}.svg`;
-  fs.copyFileSync(path.join(src, file), path.join(dest, `${name}.svg`));
-}
+  return [name, fs.readFileSync(path.join(src, file), 'utf8').replace(/ width="48" height="48"/, '')];
+}));
+fs.rmSync(path.join(web, 'public', 'm'), { recursive: true, force: true }); // ancien emplacement (masques CSS)
+fs.writeFileSync(path.join(web, 'src', 'app', 'shell', 'icons.generated.ts'),
+  '// Généré par scripts/prepare.mjs (Material Symbols) — ne pas modifier à la main.\n'
+  + `export const ICON_SVGS: Record<string, string> = ${JSON.stringify(svgs, null, 1)};\n`);
+
 // ---------- 3. Fichiers du site partagés avec les outils Python ----------
 // Angular n'accepte que des fichiers sous web/ : copie de data/, fonts/, tiles/ et icons/ dans web/.site/
 // (ignoré par git), déclaré dans angular.json.

@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { I18nService } from '../i18n/i18n.service';
 import { DIFF, Diff, NETS, Net } from './config';
 import { MapStateService } from './map-state.service';
@@ -7,28 +10,21 @@ import { MapStateService } from './map-state.service';
 /** Légende des sentiers posée sur la carte, avec le choix de la couleur : difficulté (par défaut) ou réseau. */
 @Component({
   selector: 'odo-legend',
-  imports: [MatButtonToggleModule],
+  imports: [MatButtonToggleModule, MatExpansionModule, MatIconModule, MatListModule],
   template: `
-    <details [open]="open()" (toggle)="open.set($any($event.target).open)">
-      <summary>{{ i18n.t('legend') }}</summary>
+    <mat-expansion-panel [expanded]="open()" (opened)="open.set(true)" (closed)="open.set(false)">
+      <mat-expansion-panel-header><mat-panel-title>{{ i18n.t('legend') }}</mat-panel-title></mat-expansion-panel-header>
       <mat-button-toggle-group hideSingleSelectionIndicator [value]="state.colorBy()" (change)="state.colorBy.set($event.value)"
         [attr.aria-label]="i18n.t('legend')">
         <mat-button-toggle value="diff">{{ i18n.t('byDiff') }}</mat-button-toggle>
         <mat-button-toggle value="net">{{ i18n.t('byNet') }}</mat-button-toggle>
       </mat-button-toggle-group>
-      <ul>
-        @for (r of rows(); track r.label) { <li><span class="sw" [style.background]="r.color"></span>{{ r.label }}</li> }
-      </ul>
-    </details>
-  `,
-  styles: `
-    :host { display: block; background: var(--mat-sys-surface-container-lowest); color: var(--mat-sys-on-surface);
-      border-radius: 14px; padding: 6px 10px; box-shadow: var(--mat-sys-level2); font: var(--mat-sys-body-small); min-width: 170px; }
-    summary { cursor: pointer; font: var(--mat-sys-label-large); }
-    mat-button-toggle-group { margin: 6px 0; --mat-button-toggle-height: 28px; font: var(--mat-sys-label-small); }
-    ul { list-style: none; margin: 0; padding: 0; }
-    li { display: flex; align-items: center; gap: 7px; margin: 3px 0; }
-    .sw { width: 18px; height: 4px; border-radius: 2px; flex: none; }
+      <mat-list>
+        @for (r of rows(); track r.label) {
+          <mat-list-item><mat-icon matListItemIcon svgIcon="remove" [style.color]="r.color"></mat-icon><span matListItemTitle>{{ r.label }}</span></mat-list-item>
+        }
+      </mat-list>
+    </mat-expansion-panel>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
